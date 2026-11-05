@@ -31,15 +31,22 @@
 
 /* ---------- sample bank: loaded once, shared by all instances ---------- */
 enum { G_CLA_AH, G_CLA_OH, G_CLA_IH, G_MIR_AH, G_MIR_OH, G_MIR_IH, G_SVE_AH, G_SVE_OH, G_SVE_IH,
-       G_FL_P, G_FL_F, G_FL_VIB, G_OC_STD, G_OC_VIB, G_SAX_P, G_SAX_F, NGROUPS };
+       G_FL_P, G_FL_F, G_FL_VIB, G_OC_STD, G_OC_VIB, G_SAX_P, G_SAX_F,
+       G_CL_P, G_CL_F, G_OB_P, G_OB_F, G_OB_VIB, G_HORN_P, G_HORN_F, G_MTR_P, G_MTR_F, G_TBN_P, G_TBN_F,
+       G_STR_VLN, G_STR_VLA, G_STR_VC, G_TRM_VLN, G_TRM_VLA, G_TRM_VC,
+       G_TUB_P, G_TUB_F, G_VIB_P, G_VIB_F, G_BVIB, G_GLASS, NGROUPS };
 static const char *GROUP_NAMES[NGROUPS] = {
     "choir/claudia_ah", "choir/claudia_oh", "choir/claudia_ih", "choir/mirko_ah", "choir/mirko_oh", "choir/mirko_ih",
     "choir/sven_ah", "choir/sven_oh", "choir/sven_ih", "flute/nv_p", "flute/nv_f", "flute/vib",
-    "ocarina/std", "ocarina/vib", "sax/p", "sax/f"};
+    "ocarina/std", "ocarina/vib", "sax/p", "sax/f",
+    "clarinet/p", "clarinet/f", "oboe/nv_p", "oboe/nv_f", "oboe/vib", "horn/p", "horn/f", "mtrumpet/p", "mtrumpet/f",
+    "trombone/p", "trombone/f", "strings/vln", "strings/vla", "strings/vc", "trem/vln", "trem/vla", "trem/vc",
+    "tubular/p", "tubular/f", "vibes/p", "vibes/f", "bowedvibes/std", "glass/std"};
 
-typedef struct { float pitch; int ls, le, frames; int16_t *pcm; } zone_t;   /* pitch = root + cents/100 */
+/* pitch = root + cents/100; a one-shot (struck) zone plays to its end and stops instead of looping */
+typedef struct { float pitch; int ls, le, frames, oneshot; int16_t *pcm; } zone_t;
 typedef struct { zone_t *z; int n; } group_t;
-typedef struct { group_t g[NGROUPS]; float lo[3], hi[3]; long bytes; int ok; char err[96]; } bank_t;
+typedef struct { group_t g[NGROUPS]; float lo[3], hi[3], glo[NGROUPS], ghi[NGROUPS]; long bytes; int ok; char err[96]; } bank_t;
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 static int g_refs;
@@ -99,15 +106,20 @@ static void *loader(void *arg) {
         int16_t *pcm = load_wav(path, &got);
         if (!pcm) continue;
         if (le > got) le = got;
-        if (ls >= le) ls = 0;
-        pcm[le] = pcm[ls]; pcm[le + 1] = pcm[ls + 1];   /* the interpolator reads 2 past the loop end: continue the loop */
+        int oneshot = ls >= le;                          /* manifest: loop_start == loop_end for struck sounds */
+        if (oneshot) { ls = le = got; }
+        else pcm[le] = pcm[ls], pcm[le + 1] = pcm[ls + 1];   /* the interpolator reads 2 past the loop end: continue the loop */
         group_t *g = &b->g[gi];
         if (g->n == cap[gi]) { cap[gi] = cap[gi] ? cap[gi] * 2 : 16; g->z = realloc(g->z, cap[gi] * sizeof *g->z); }
-        g->z[g->n++] = (zone_t){root + cents / 100.0f, ls, le, got, pcm};
+        g->z[g->n++] = (zone_t){root + cents / 100.0f, ls, le, got, oneshot, pcm};
         b->bytes += (long)got * 2;
     }
     fclose(m);
-    for (int i = 0; i < NGROUPS; i++) if (b->g[i].n) qsort(b->g[i].z, b->g[i].n, sizeof(zone_t), cmp_zone);
+    for (int i = 0; i < NGROUPS; i++) {
+        if (b->g[i].n) qsort(b->g[i].z, b->g[i].n, sizeof(zone_t), cmp_zone);
+        b->glo[i] = b->g[i].n ? b->g[i].z[0].pitch : 999;
+        b->ghi[i] = b->g[i].n ? b->g[i].z[b->g[i].n - 1].pitch : -999;
+    }
     for (int s = 0; s < 3; s++) {   /* each singer's range over its vowels */
         b->lo[s] = 999; b->hi[s] = -999;
         for (int v = 0; v < 3; v++) {
@@ -203,9 +215,9 @@ static float note_hz(float n) { return 440.0f * exp2f((n - 69.0f) / 12.0f); }
 /* ---------- voices ---------- */
 #define NP 8                 /* bell partials */
 #define NGRAIN 6             /* grains per voice */
-enum { L_CHOIR, L_VOWELS, L_WINDS, L_BELLS, L_SCAPE, L_TEXTURE, NLAYERS };
+enum { L_CHOIR, L_VOWELS, L_WINDS, L_BELLS, L_SCAPE, L_TEXTURE, L_STRINGS, L_SAMPLED, L_SYNTH, NLAYERS };
 
-typedef struct { const zone_t *z; int i; float fr, inc_base, inc, g, gl, gr; } src_t;
+typedef struct { const zone_t *z; int i, done; float fr, inc_base, inc, g, gl, gr; } src_t;
 typedef struct { const zone_t *z; float pos, inc, ph, dph, gl, gr; int on; } grain_t;
 
 typedef struct {
@@ -227,11 +239,28 @@ typedef struct {
     int next_grain;
     svf_t wind[3], airband;
     float gust, gust_ph, wdrift[3];
+    /* sampled extras: tremolo phase (Shimmer), damping (Decay) */
+    float trem_ph;
+    /* synth */
+    float sph[3], pwm_ph, glide, fenv;
+    svf_t flt[2];
+    int fstage;
 } voice_t;
 
+/* the Juno-style chorus: two modulated delays per slot, one triangle LFO */
+#define CH_MAX 2048
+typedef struct { float l[CH_MAX], r[CH_MAX]; int w; float ph; } chorus_t;
+
 /* one slot's settings, read once per block */
-enum { T_OFF, T_CHOIR, T_VOWELS, T_FLUTE, T_OCARINA, T_SAX, T_BELLS, T_WIND, T_TEXTURE };
-typedef struct { int type, layer, inst, oct; float k1, k2, k3, gain; } slot_t;
+/* every sound, in the order of the a_sound/b_sound options */
+enum { S_OFF, S_CHOIR, S_VOWELS, S_FLUTE, S_OCARINA, S_SAX, S_CLARINET, S_OBOE, S_HORN, S_MTRUMPET, S_TROMBONE,
+       S_STRINGS, S_TREMOLO, S_CHURCH, S_TUBULAR, S_VIBES, S_BOWEDVIBES, S_GLASS, S_SYNPAD, S_SYNLEAD, S_SYNBRASS,
+       S_WIND, S_TEXTURE, NSOUNDS };
+#define NCATS 8
+/* category -> its first sound; a category's selector picks an offset from there */
+static const int CAT_FIRST[NCATS] = {S_OFF, S_CHOIR, S_FLUTE, S_HORN, S_STRINGS, S_CHURCH, S_SYNPAD, S_WIND};
+static const int CAT_COUNT[NCATS] = {1, 2, 5, 3, 2, 5, 3, 2};
+typedef struct { int type, layer, inst, oct; float k1, k2, k3, gain; } slot_t;   /* type: the sound (S_*) */
 
 typedef struct {
     float val[NPARAMS];
@@ -243,6 +272,9 @@ typedef struct {
     unsigned char keys[128];          /* held keys, for the sub */
     float lp1_l, lp1_r, lp2_l, lp2_r, air_l, air_r;
     reverb_t *rv;
+    chorus_t *ch[2];
+    float bus_l[2][128], bus_r[2][128];      /* synth voices per slot, before their chorus */
+    unsigned key_time[128];                  /* when each key went down, for the mono lead's note priority */
     /* delay */
     float *dly_l, *dly_r, dly_time, dly_lp_l, dly_lp_r;
     int dly_w;
@@ -267,7 +299,7 @@ static int idx_of(const char *key) {
 static int I_master, I_blend, I_breath, I_attack, I_release, I_air, I_dark, I_space, I_motion,
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
     I_sb_level, I_sb_tune, I_sb_drop, I_orb;
-static int I_type[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
+static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
 static int g_idx_done;
 static void init_idx(void) {
     if (g_idx_done) return;
@@ -276,10 +308,14 @@ static void init_idx(void) {
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
     X(sb_level); X(sb_tune); X(sb_drop); X(orb);
 #undef X
+    static const char *CATKEY[NCATS] = {"", "voices", "winds", "brass", "strings", "bells", "synth", "air"};
     for (int sl = 0; sl < 2; sl++) {
-        char k[16];
+        char k[24];
         const char *pre = sl ? "b" : "a";
-        snprintf(k, sizeof k, "%s_type", pre); I_type[sl] = idx_of(k);
+        snprintf(k, sizeof k, "%s_cat", pre); I_cat[sl] = idx_of(k);
+        I_sel[sl][0] = -1;
+        for (int c = 1; c < NCATS; c++) { snprintf(k, sizeof k, "%s_%s", pre, CATKEY[c]); I_sel[sl][c] = idx_of(k); }
+        snprintf(k, sizeof k, "%s_sound", pre); I_sound[sl] = idx_of(k);
         snprintf(k, sizeof k, "%s_oct", pre); I_oct[sl] = idx_of(k);
         snprintf(k, sizeof k, "%s_k1", pre); I_k1[sl] = idx_of(k);
         snprintf(k, sizeof k, "%s_k2", pre); I_k2[sl] = idx_of(k);
@@ -290,36 +326,63 @@ static void init_idx(void) {
     g_idx_done = 1;
 }
 
-/* each sound's level relative to the others, so a slot at the same Level sounds about as loud whatever it plays */
-static const float TYPE_GAIN[9] = {0, 0.98f, 0.91f, 1.15f, 1.35f, 0.95f, 1.6f, 1.03f, 0.88f};
-static const int TYPE_LAYER[9] = {-1, L_CHOIR, L_VOWELS, L_WINDS, L_WINDS, L_WINDS, L_BELLS, L_SCAPE, L_TEXTURE};
+/* per sound: which engine plays it, the instrument within that engine, and a level so sounds at the same Level
+ * knob come out about equally loud */
+static const int SOUND_LAYER[NSOUNDS] = {-1, L_CHOIR, L_VOWELS, L_WINDS, L_WINDS, L_WINDS, L_WINDS, L_WINDS,
+    L_WINDS, L_WINDS, L_WINDS, L_STRINGS, L_STRINGS, L_BELLS, L_SAMPLED, L_SAMPLED, L_SAMPLED, L_SAMPLED,
+    L_SYNTH, L_SYNTH, L_SYNTH, L_SCAPE, L_TEXTURE};
+/* winds: 0 flute 1 ocarina 2 sax 3 clarinet 4 oboe 5 horn 6 mute trumpet 7 trombone; strings: 0 sustain 1 tremolo;
+ * sampled: 0 tubular 1 vibes 2 bowed vibes 3 glass; synth: 0 pad 1 lead 2 brass */
+static const int SOUND_INST[NSOUNDS] = {0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 0, 0, 1, 2, 3, 0, 1, 2, 0, 0};
+static const float SOUND_GAIN[NSOUNDS] = {0, 0.98f, 1.79f, 1.40f, 1.25f, 0.92f, 0.61f, 0.97f, 0.56f, 0.92f, 0.34f,
+    1.53f, 1.46f, 2.57f, 1.15f, 0.73f, 2.48f, 1.09f, 1.19f, 1.17f, 0.94f, 2.09f, 2.54f};   /* measured: 4-note chords level */
 
 static void read_slots(oxz_t *s) {
     float blend = P(blend);
     for (int i = 0; i < 2; i++) {
         slot_t *x = &s->slot[i];
-        x->type = (int)(s->val[I_type[i]] + 0.5f);
-        if (x->type < 0 || x->type > T_TEXTURE) x->type = T_OFF;
-        x->layer = TYPE_LAYER[x->type];
-        x->inst = x->type - T_FLUTE;                 /* 0 flute, 1 ocarina, 2 sax (winds only) */
+        int cat = (int)(s->val[I_cat[i]] + 0.5f);
+        if (cat < 0 || cat >= NCATS) cat = 0;
+        int snd = S_OFF;
+        if (cat > 0) {
+            int sel = (int)(s->val[I_sel[i][cat]] + 0.5f);
+            if (sel < 0) sel = 0;
+            if (sel >= CAT_COUNT[cat]) sel = CAT_COUNT[cat] - 1;
+            snd = CAT_FIRST[cat] + sel;
+        }
+        if ((int)(s->val[I_sound[i]] + 0.5f) != snd) {   /* the derived Sound the skin's labels follow */
+            s->val[I_sound[i]] = (float)snd;
+            s->rev++;
+        }
+        x->type = snd;
+        x->layer = SOUND_LAYER[snd];
+        x->inst = SOUND_INST[snd];
         x->oct = (int)(s->val[I_oct[i]] + 0.5f) - 2;
         x->k1 = s->val[I_k1[i]] * 0.01f; x->k2 = s->val[I_k2[i]] * 0.01f; x->k3 = s->val[I_k3[i]] * 0.01f;
         float side = i ? fminf(1.0f, 2.0f * blend) : fminf(1.0f, 2.0f * (1.0f - blend));   /* Blend: both full at 50 */
-        x->gain = TYPE_GAIN[x->type] * s->val[I_level[i]] * 0.01f * side;
+        x->gain = SOUND_GAIN[snd] * s->val[I_level[i]] * 0.01f * side;
     }
 }
 
-/* what the three knobs mean for each sound, for MPC's parameter names */
-static const char *KNOB_NAMES[9][3] = {
+/* what the three knobs mean for each sound, for MPC's parameter names (the skin's labels match) */
+static const char *KNOB_NAMES[NSOUNDS][3] = {
     {"Knob 1", "Knob 2", "Knob 3"}, {"Vowel", "Spread", "Attack"}, {"Morph", "Formant", "Attack"},
     {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"},
-    {"Strike", "Decay", "Shimmer"}, {"Density", "Drift", "Width"}, {"Grain", "Pitch", "Smear"}};
+    {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"},
+    {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"},
+    {"Ensemble", "Swell", "Tone"}, {"Ensemble", "Swell", "Tone"},
+    {"Strike", "Decay", "Shimmer"}, {"Decay", "Shimmer", "Tone"}, {"Decay", "Shimmer", "Tone"},
+    {"Swell", "Shimmer", "Tone"}, {"Swell", "Shimmer", "Tone"},
+    {"Cutoff", "Shape", "Chorus"}, {"Cutoff", "Glide", "Chorus"}, {"Cutoff", "Bloom", "Chorus"},
+    {"Density", "Drift", "Width"}, {"Grain", "Pitch", "Smear"}};
 
 static void *create(const char *data_dir) {
     init_idx();
     oxz_t *s = calloc(1, sizeof *s);
     if (!s) return NULL;
     s->rv = calloc(1, sizeof *s->rv);
+    s->ch[0] = calloc(1, sizeof(chorus_t));
+    s->ch[1] = calloc(1, sizeof(chorus_t));
     s->dly_l = calloc(DLY_MAX, sizeof(float));
     s->dly_r = calloc(DLY_MAX, sizeof(float));
     for (int i = 0; i < NPARAMS; i++)   /* params.h keeps defaults normalized 0..1; set_param() gets real units */
@@ -348,7 +411,7 @@ static void destroy(void *inst) {
         __atomic_store_n(&g_bank, (bank_t *)NULL, __ATOMIC_RELEASE);
     }
     pthread_mutex_unlock(&g_lock);
-    free(s->rv); free(s->dly_l); free(s->dly_r);
+    free(s->rv); free(s->ch[0]); free(s->ch[1]); free(s->dly_l); free(s->dly_r);
     free(s);
 }
 
@@ -356,7 +419,7 @@ static void destroy(void *inst) {
  * growing, which keeps long release tails from piling up on the MPC's CPU */
 static voice_t *alloc_voice(oxz_t *s, int slot, int layer) {
     voice_t *best = NULL;
-    int cap = layer == L_BELLS ? 14 : layer == L_SCAPE || layer == L_TEXTURE ? 8 : 12, count = 0;
+    int cap = layer == L_BELLS || layer == L_SAMPLED ? 14 : layer == L_SCAPE || layer == L_TEXTURE ? 8 : 12, count = 0;
     for (int k = 0; k < MAXV; k++) count += s->v[k].active && s->v[k].slot == slot;
     if (count >= cap) {
         for (int k = 0; k < MAXV; k++) {
@@ -422,8 +485,14 @@ static void choir_sources(oxz_t *s, const bank_t *b, voice_t *v) {
     }
 }
 
+/* a soft/loud pair crossfaded by velocity */
+static void pair_sources(const bank_t *b, voice_t *v, int gp, int gf, float loud) {
+    add_src(v, nearest(b, gp, v->note), v->note, cosf(loud * (float)M_PI / 2), 0, 0);
+    add_src(v, nearest(b, gf, v->note), v->note, sinf(loud * (float)M_PI / 2), 0, 0);
+}
+
 static void winds_sources(oxz_t *s, const bank_t *b, voice_t *v) {
-    int inst = v->inst;                            /* 0 flute, 1 ocarina, 2 sax */
+    int inst = v->inst;                            /* 0 flute 1 ocarina 2 sax 3 clarinet 4 oboe 5 horn 6 mute trumpet 7 trombone */
     float vib = s->slot[v->slot].k1, loud = fminf(1.0f, fmaxf(0.0f, (v->vel - 0.3f) / 0.55f));
     float rec_vib = fminf(1.0f, fmaxf(0.0f, (vib - 0.35f) * 2.5f));   /* recorded vibrato fades in above ~35% */
     if (inst == 0) {
@@ -434,9 +503,43 @@ static void winds_sources(oxz_t *s, const bank_t *b, voice_t *v) {
     } else if (inst == 1) {
         add_src(v, nearest(b, G_OC_STD, v->note), v->note, cosf(rec_vib * (float)M_PI / 2), 0, 0);
         add_src(v, nearest(b, G_OC_VIB, v->note), v->note, sinf(rec_vib * (float)M_PI / 2), 0, 0);
+    } else if (inst == 4) {                        /* oboe: like the flute, with a recorded-vibrato layer */
+        float plain = cosf(rec_vib * (float)M_PI / 2);
+        add_src(v, nearest(b, G_OB_P, v->note), v->note, plain * cosf(loud * (float)M_PI / 2), 0, 0);
+        add_src(v, nearest(b, G_OB_F, v->note), v->note, plain * sinf(loud * (float)M_PI / 2), 0, 0);
+        add_src(v, nearest(b, G_OB_VIB, v->note), v->note, sinf(rec_vib * (float)M_PI / 2), 0, 0);
     } else {
-        add_src(v, nearest(b, G_SAX_P, v->note), v->note, cosf(loud * (float)M_PI / 2), 0, 0);
-        add_src(v, nearest(b, G_SAX_F, v->note), v->note, sinf(loud * (float)M_PI / 2), 0, 0);
+        static const int GP[8] = {0, 0, G_SAX_P, G_CL_P, 0, G_HORN_P, G_MTR_P, G_TBN_P};
+        pair_sources(b, v, GP[inst], GP[inst] + 1, loud);
+    }
+}
+
+/* strings: violins, violas and cellos, each on the notes its section covers (like the choir's singers);
+ * Ensemble spreads them across the stereo field (violins left, cellos right) and detunes them a little */
+static void strings_sources(oxz_t *s, const bank_t *b, voice_t *v) {
+    const slot_t *sl = &s->slot[v->slot];
+    int g0 = v->inst ? G_TRM_VLN : G_STR_VLN;
+    static const float PAN[3] = {-0.55f, 0.0f, 0.55f}, DET[3] = {5.0f, -3.0f, -6.0f};
+    float ens = sl->k1, gs[3];
+    int n = 0;
+    for (int k = 0; k < 3; k++) {
+        gs[k] = v->note >= b->glo[g0 + k] - 3 && v->note <= b->ghi[g0 + k] + 3;
+        n += gs[k] > 0;
+    }
+    if (!n) { gs[v->note > b->ghi[g0] ? 0 : 2] = 1; n = 1; }
+    for (int k = 0; k < 3; k++)
+        if (gs[k]) add_src(v, nearest(b, g0 + k, v->note), v->note, 1.0f / sqrtf((float)n), PAN[k] * ens * 1.5f, DET[k] * ens * 1.6f);
+}
+
+/* tubular bells and vibes (struck, soft/loud by velocity), bowed vibes and glass (sustained) */
+static void sampled_sources(oxz_t *s, const bank_t *b, voice_t *v) {
+    (void)s;
+    float loud = fminf(1.0f, fmaxf(0.0f, (v->vel - 0.3f) / 0.55f));
+    switch (v->inst) {
+    case 0: pair_sources(b, v, G_TUB_P, G_TUB_F, loud); break;
+    case 1: pair_sources(b, v, G_VIB_P, G_VIB_F, loud); break;
+    case 2: add_src(v, nearest(b, G_BVIB, v->note), v->note, 1.0f, 0, 0); break;
+    default: add_src(v, nearest(b, G_GLASS, v->note), v->note, 1.0f, 0, 0); break;
     }
 }
 
@@ -469,12 +572,21 @@ static void note_on(oxz_t *s, int key, float vel) {
     float am = attack_mult(s), br = P(breath);
     for (int si = 0; si < 2; si++) {
         const slot_t *sl = &s->slot[si];
-        if (sl->type == T_OFF || sl->gain < 0.001f) continue;
+        if (sl->type == S_OFF || sl->gain < 0.001f) continue;
         int layer = sl->layer;
-        int needs_bank = layer != L_BELLS && layer != L_VOWELS;
+        int needs_bank = layer != L_BELLS && layer != L_VOWELS && layer != L_SYNTH;
         if (needs_bank && (!b || !b->ok)) continue;
         int note = key + 12 * sl->oct;
         if (note < 12 || note > 120) continue;
+        if (layer == L_SYNTH && sl->inst == 1) {   /* the lead is mono: a held lead glides to the new note */
+            voice_t *mono = NULL;
+            for (int k = 0; k < MAXV; k++)
+                if (s->v[k].active && s->v[k].slot == si && s->v[k].layer == L_SYNTH && s->v[k].inst == 1) mono = &s->v[k];
+            if (mono && (mono->held || mono->pedal)) {
+                mono->key = key; mono->note = note; mono->held = 1; mono->vel = vel; mono->vg = vel_gain(vel);
+                continue;
+            }
+        }
         voice_t *v = alloc_voice(s, si, layer);
         memset(v, 0, sizeof *v);
         v->active = 1; v->held = 1; v->key = key; v->note = note; v->slot = si; v->inst = sl->inst; v->layer = layer;
@@ -493,19 +605,33 @@ static void note_on(oxz_t *s, int key, float vel) {
                        v->gust_ph = frand(&v->seed) * 6.2831853f;
                        for (int k = 0; k < 3; k++) v->wdrift[k] = frand(&v->seed) * 6.2831853f;
                        break;
+        case L_STRINGS: secs = 0.03f + 2.2f * sl->k2 * sl->k2; strings_sources(s, b, v); break;   /* Swell */
+        case L_SAMPLED: secs = v->inst < 2 ? 0.0f : 0.05f + 2.5f * sl->k1 * sl->k1; sampled_sources(s, b, v); break;
+        case L_SYNTH:   secs = v->inst == 0 ? 0.25f + 1.2f * br : v->inst == 1 ? 0.004f : 0.05f + 0.1f * br;
+                        v->glide = (float)note; v->sph[0] = frand(&v->seed); v->sph[1] = frand(&v->seed);
+                        v->pwm_ph = frand(&v->seed); v->fenv = 1.0f;
+                        break;
         default:       secs = 0.05f + 1.2f * br * br; break;
         }
         v->att = secs <= 0.0f ? 1.0f : 1.0f / (SR * secs * am);
-        if (layer != L_BELLS && layer != L_WINDS) v->att *= 0.6f + 0.8f * vel;   /* harder: the swell speaks sooner */
+        if (layer != L_BELLS && layer != L_WINDS && layer != L_SAMPLED && layer != L_SYNTH)
+            v->att *= 0.6f + 0.8f * vel;            /* harder: the swell speaks sooner */
     }
 }
 
 static void note_off(oxz_t *s, int key) {
-    for (int k = 0; k < MAXV; k++)
-        if (s->v[k].active && s->v[k].held && s->v[k].key == key) {
-            s->v[k].held = 0;
-            s->v[k].pedal = s->pedal_down;
+    for (int k = 0; k < MAXV; k++) {
+        voice_t *v = &s->v[k];
+        if (!v->active || !v->held || v->key != key) continue;
+        if (v->layer == L_SYNTH && v->inst == 1) {   /* mono lead: fall back to the newest key still held */
+            int back = -1;
+            for (int n = 0; n < 128; n++)
+                if (n != key && s->keys[n] == 1 && (back < 0 || s->key_time[n] > s->key_time[back])) back = n;
+            if (back >= 0) { v->key = back; v->note = back + 12 * s->slot[v->slot].oct; continue; }
         }
+        v->held = 0;
+        v->pedal = s->pedal_down;
+    }
 }
 
 static int lowest_key(oxz_t *s) {
@@ -521,7 +647,8 @@ static void midi(void *inst, const uint8_t *m, int n) {
     if (n < 3) return;
     if (st == 0x90 && m[2] > 0) {
         int was = lowest_key(s);
-        s->keys[m[1]] = 1 | (s->pedal_down ? 0 : 0);
+        s->keys[m[1]] = 1;
+        s->key_time[m[1]] = ++s->clock;
         note_on(s, m[1], m[2] / 127.0f);
         int low = lowest_key(s);
         if (low != was || was < 0) {                 /* the sub follows the lowest held note, dropping in */
@@ -530,8 +657,8 @@ static void midi(void *inst, const uint8_t *m, int n) {
             if (was < 0) s->sub_ph = 0.0f;
         }
     } else if (st == 0x80 || st == 0x90) {
-        note_off(s, m[1]);
         if (!s->pedal_down) s->keys[m[1]] = 0; else s->keys[m[1]] = 2;   /* 2: held by the pedal */
+        note_off(s, m[1]);
         int low = lowest_key(s);
         if (low >= 0) s->sub_target = low;
     } else if (st == 0xB0) {
@@ -586,8 +713,9 @@ static int get_param(void *inst, const char *key, char *b, int n) {
     size_t kl = strlen(key);
     if (kl > 5 && !strcmp(key + kl - 5, "_name") && (key[0] == 'a' || key[0] == 'b') && key[1] == '_' && key[2] == 'k') {
         int sl = key[0] == 'b', k = key[3] - '1';            /* "a_k2_name" -> slot A, knob 2 */
-        int t = (int)(s->val[I_type[sl]] + 0.5f);
-        if (k < 0 || k > 2 || t < 0 || t > T_TEXTURE) return 0;
+        read_slots(s);
+        int t = s->slot[sl].type;
+        if (k < 0 || k > 2 || t < 0 || t >= NSOUNDS) return 0;
         return snprintf(b, n, "%s %s", sl ? "B" : "A", KNOB_NAMES[t][k]);
     }
     int i = idx_of(key);
@@ -610,7 +738,8 @@ static inline float hermite(const int16_t *d, int i, float t) {
 
 /* ---------- per-layer renderers: add one voice's block into L/R ---------- */
 static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
-    int choir = v->layer == L_CHOIR;
+    int choir = v->layer == L_CHOIR, winds = v->layer == L_WINDS, sampled = v->layer == L_SAMPLED;
+    int strings = v->layer == L_STRINGS, linear = choir || strings;
     const slot_t *sl = &s->slot[v->slot];
     /* brightness follows velocity: the choir has one recorded dynamic, so harder playing opens a filter on it; the
      * winds keep their Tone knob, scaled by velocity (most for the ocarina, which has no soft/loud recordings) */
@@ -618,30 +747,45 @@ static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames,
     /* the choir: a tilt around 1.2 kHz, ~-5 dB up top when soft, ~+6 dB when hard (its energy sits low, so a plain
      * low-pass would change little); the winds: the Tone low-pass, opened by velocity, most for the ocarina */
     float cutoff = choir ? 1200.0f
-                         : (1500.0f + 16000.0f * sl->k3 * sl->k3) * (v->inst == 1 ? 0.25f + 0.75f * powf(vb, 1.5f) : 0.7f + 0.3f * vb);
+                 : winds ? (1500.0f + 16000.0f * sl->k3 * sl->k3) * (v->inst == 1 ? 0.25f + 0.75f * powf(vb, 1.5f) : 0.7f + 0.3f * vb)
+                 :         (900.0f + 17000.0f * sl->k3 * sl->k3) * (0.45f + 0.55f * powf(vb, 1.2f));   /* strings, sampled: Tone */
     float tone_a = 1.0f - expf(-2.0f * (float)M_PI * cutoff / SR);
     float tilt = 0.4f + 2.1f * powf(vb, 1.5f);     /* highs: x0.4 at velocity 0, x0.77 at 40, x2.5 at 127 */
+    /* sampled extras: Shimmer = amplitude tremolo (a vibraphone's motor), Decay = extra damping on struck sounds */
+    float shimmer = sampled ? sl->k2 : 0.0f;
+    float trem_inc = 6.2831853f * (2.0f + 4.5f * shimmer) / SR;
+    float damp = (sampled && v->inst < 2 && sl->k1 < 0.97f) ? expf(-1.0f / (SR * (0.15f + 7.0f * sl->k1 * sl->k1))) : 1.0f;
     float breath_amt = sl->k2 * (0.4f + 0.8f * P(breath));
     svfc_t bc = svf_coef(3.0f * note_hz((float)v->note), 1.4f);
     for (int q = 0; q < v->nsrc; q++) v->s[q].inc = v->s[q].inc_base * pmul;
     for (int f = 0; f < frames; f++) {
         if (v->held || v->pedal) { v->env += v->att; if (v->env > 1.0f) v->env = 1.0f; }
         else v->env *= rel_mul;
+        v->env *= damp;
         float l = 0, r = 0;
         for (int q = 0; q < v->nsrc; q++) {
             src_t *x = &v->s[q];
+            if (x->done) continue;
             const zone_t *z = x->z;
             const int16_t *d = z->pcm + x->i;
-            /* choir zones sit a semitone apart, so the shift is tiny: linear is enough there */
-            float smp = (choir ? d[0] + (d[1] - d[0]) * x->fr : hermite(z->pcm, x->i, x->fr)) * x->g;
+            /* choir and string zones sit close together, so the shift is small: linear is enough there */
+            float smp = (linear ? d[0] + (d[1] - d[0]) * x->fr : hermite(z->pcm, x->i, x->fr)) * x->g;
             l += smp * x->gl; r += smp * x->gr;
             x->fr += x->inc;
             if (x->fr >= 1.0f) { int k = (int)x->fr; x->i += k; x->fr -= (float)k; }
-            if (x->i >= z->le) x->i -= (z->le - z->ls);
+            if (x->i >= z->le - 2) {
+                if (z->oneshot) { x->done = 1; x->i = z->le - 2; }   /* struck: rang out */
+                else if (x->i >= z->le) x->i -= (z->le - z->ls);
+            }
+        }
+        if (shimmer > 0.001f) {
+            v->trem_ph += trem_inc; if (v->trem_ph > 6.2831853f) v->trem_ph -= 6.2831853f;
+            float tr = 1.0f - shimmer * shimmer * 0.55f * (1.0f - cosf(v->trem_ph));   /* gentle at 50, deep at 100 */
+            l *= tr; r *= tr;
         }
         float a = v->env * v->vg * lg * (1.0f / 32768.0f);
         l *= a; r *= a;
-        if (!choir) {   /* breath: band-passed noise around the note, strongest at the onset */
+        if (winds) {    /* breath: band-passed noise around the note, strongest at the onset */
             float nz = nrand(&s->noise);
             float tr = 1.0f + 2.5f * expf(-v->t * 9.0f);
             float br = svf_bp(&v->breath, &bc, nz) * breath_amt * 0.06f * tr * v->env * lg;
@@ -850,6 +994,73 @@ static void render_texture(oxz_t *s, voice_t *v, float *L, float *R, int frames,
     }
 }
 
+
+/* ---------- the Juno-style synth: two oscillators and a sub into a 24 dB low-pass, then the slot's chorus ----------
+ * Pad: Cutoff, Shape (saw -> pulse with slow PWM), Chorus. Lead (mono): Cutoff, Glide, Chorus.
+ * Brass: Cutoff, Bloom (how far and how slowly the filter opens), Chorus. Velocity opens the filter too. */
+static inline float saw_blep(float ph, float dt) { return 2.0f * ph - 1.0f - polyblep(ph, dt); }
+
+static void render_synth(oxz_t *s, voice_t *v, float *bl, float *br, int frames, float lg, float pmul, float rel_mul) {
+    const slot_t *sl = &s->slot[v->slot];
+    float dt = frames / SR;
+    int inst = v->inst;
+    /* glide (the lead only) */
+    float tau = inst == 1 ? 0.002f + 0.45f * sl->k2 * sl->k2 : 0.0f;
+    v->glide = tau > 0.0025f ? v->note + (v->glide - v->note) * expf(-dt / tau) : (float)v->note;
+    float f0 = note_hz(v->glide) * pmul;
+    float d0 = f0 / SR, d1 = f0 * (inst == 1 ? 1.0015f : 1.0048f) / SR, dsub = f0 * 0.5f / SR;
+    /* filter: Cutoff knob, key tracking, velocity, and the filter envelope */
+    float bloom = inst == 2 ? sl->k2 : 0.0f;
+    float env_oct = inst == 0 ? 1.0f : inst == 1 ? 2.2f : 1.5f + 4.0f * bloom;
+    float fatk = inst == 2 ? 0.01f + 0.5f * bloom : inst == 0 ? 0.6f : 0.005f;
+    float fdec = inst == 2 ? 0.4f + 1.2f * bloom : inst == 0 ? 2.0f : 0.35f;
+    float fsus = inst == 1 ? 0.35f : 0.25f;
+    if (v->fstage == 0) { v->fenv += dt / fatk; if (v->fenv >= 1.0f) { v->fenv = 1.0f; v->fstage = 1; } }
+    else v->fenv = fsus + (v->fenv - fsus) * expf(-dt / fdec);
+    float base = 55.0f * exp2f(sl->k1 * 8.5f) * exp2f((v->glide - 60.0f) / 24.0f) * exp2f(v->vel * 1.2f - 0.6f);
+    float fc = base * exp2f(env_oct * v->fenv);
+    svfc_t c = svf_coef(fc, inst == 1 ? 1.6f : inst == 0 ? 0.62f : 0.8f);
+    /* oscillator mix */
+    float shape = inst == 0 ? sl->k2 : inst == 1 ? 0.45f : 0.0f;
+    float sub = inst == 0 ? 0.3f : inst == 1 ? 0.4f : 0.25f;
+    v->pwm_ph += dt * 6.2831853f * 0.55f;
+    float pw = 0.5f + 0.38f * sinf(v->pwm_ph) * (inst == 0 ? 1.0f : 0.0f);
+    float amp = v->vg * lg * 0.22f;
+    for (int f = 0; f < frames; f++) {
+        if (v->held || v->pedal) { v->env += v->att; if (v->env > 1.0f) v->env = 1.0f; }
+        else v->env *= rel_mul;
+        float sa = saw_blep(v->sph[0], d0);
+        float p2 = v->sph[0] + pw; if (p2 >= 1.0f) p2 -= 1.0f;
+        float pulse = sa - saw_blep(p2, d0);
+        float sb = saw_blep(v->sph[1], d1);
+        float sq = v->sph[2] < 0.5f ? 1.0f : -1.0f;
+        v->sph[0] += d0; if (v->sph[0] >= 1.0f) v->sph[0] -= 1.0f;
+        v->sph[1] += d1; if (v->sph[1] >= 1.0f) v->sph[1] -= 1.0f;
+        v->sph[2] += dsub; if (v->sph[2] >= 1.0f) v->sph[2] -= 1.0f;
+        float x = (sa * (1.0f - shape) + pulse * shape * 0.7f) + sb * (inst == 1 ? 0.25f : 0.6f) + sq * sub;
+        x = svf_lp(&v->flt[1], &c, svf_lp(&v->flt[0], &c, x));
+        x *= v->env * amp;
+        bl[f] += x; br[f] += x;
+    }
+}
+
+/* chorus: a delay swept by a triangle LFO, opposite on the two sides; Chorus knob sets depth, rate and mix */
+static void chorus_block(chorus_t *c, float amount, const float *inl, const float *inr, float *L, float *R, int frames) {
+    float mix = fminf(1.0f, amount * 1.6f), rate = 0.45f + 0.45f * amount, depth = (1.2f + 3.0f * amount) * 44.1f;
+    float base = 3.2f * 44.1f;
+    for (int f = 0; f < frames; f++) {
+        float x = (inl[f] + inr[f]) * 0.5f;
+        c->l[c->w] = x;
+        c->ph += rate / SR; if (c->ph >= 1.0f) c->ph -= 1.0f;
+        float tri = c->ph < 0.5f ? c->ph * 2.0f : 2.0f - c->ph * 2.0f;
+        float wl = rd_frac(c->l, CH_MAX, c->w, base + depth * tri);
+        float wr = rd_frac(c->l, CH_MAX, c->w, base + depth * (1.0f - tri));
+        if (++c->w == CH_MAX) c->w = 0;
+        L[f] += inl[f] * (1.0f - 0.45f * mix) + wl * mix * 0.8f;
+        R[f] += inr[f] * (1.0f - 0.45f * mix) + wr * mix * 0.8f;
+    }
+}
+
 static void reverb_block(oxz_t *s, float *L, float *R, int frames) {
     reverb_t *r = s->rv;
     if (!r) return;
@@ -969,6 +1180,7 @@ static void render(void *inst, int16_t *out, int frames) {
     const bank_t *b = __atomic_load_n(&g_bank, __ATOMIC_ACQUIRE);
     float L[128], R[128];
     memset(L, 0, sizeof L); memset(R, 0, sizeof R);
+    memset(s->bus_l, 0, sizeof s->bus_l); memset(s->bus_r, 0, sizeof s->bus_r);
     if (frames > 128) frames = 128;
     float dt = frames / SR, motion = P(motion);
     read_slots(s);
@@ -981,16 +1193,16 @@ static void render(void *inst, int16_t *out, int frames) {
         if (!v->active) continue;
         int L_ = v->layer;
         const slot_t *sl = &s->slot[v->slot];
-        if (L_ != L_BELLS && L_ != L_VOWELS && (!b || !b->ok)) { v->active = 0; continue; }
+        if (L_ != L_BELLS && L_ != L_VOWELS && L_ != L_SYNTH && (!b || !b->ok)) { v->active = 0; continue; }
         held_any |= v->held || v->pedal;
         if (sl->layer != L_ || sl->inst != v->inst) { v->held = 0; v->pedal = 0; }   /* the slot changed sound: let it go */
         float lgain = sl->layer == L_ ? sl->gain : 0.0f;
         v->t += dt;
         float pm = s->bend;
-        if (L_ == L_CHOIR || L_ == L_TEXTURE) {
+        if (L_ == L_CHOIR || L_ == L_TEXTURE || L_ == L_STRINGS) {
             v->drift += dt * (0.3f + 0.4f * motion);
             pm += sinf(v->drift) * 0.06f * (0.3f + motion);      /* slow ensemble drift */
-        } else if (L_ == L_WINDS || L_ == L_VOWELS) {
+        } else if (L_ == L_WINDS || L_ == L_VOWELS || (L_ == L_SYNTH && v->inst == 1)) {
             v->lfo += dt * 6.2831853f * (4.6f + 1.2f * motion);
             float onset = fminf(1.0f, fmaxf(0.0f, (v->t - 0.25f) / 0.6f));   /* vibrato grows after the attack */
             float depth = (L_ == L_WINDS ? sl->k1 * 0.35f + motion * 0.25f : 0.12f + 0.3f * motion) * 0.6f
@@ -999,16 +1211,25 @@ static void render(void *inst, int16_t *out, int frames) {
         }
         float pmul = exp2f(pm / 12.0f);
         switch (L_) {
-        case L_CHOIR: case L_WINDS: render_samples(s, v, L, R, frames, lgain, pmul, rel_mul); break;
+        case L_CHOIR: case L_WINDS: case L_STRINGS: case L_SAMPLED:
+                        render_samples(s, v, L, R, frames, lgain, pmul, rel_mul); break;
+        case L_SYNTH:   render_synth(s, v, s->bus_l[v->slot], s->bus_r[v->slot], frames, lgain, pmul, rel_mul); break;
         case L_VOWELS:  render_vowels(s, v, L, R, frames, lgain, pmul, rel_mul); break;
         case L_BELLS:   render_bells(s, v, L, R, frames, lgain, pmul, rel_mul); break;
         case L_SCAPE:   render_scape(s, v, L, R, frames, lgain, pmul, rel_mul, b); break;
         default:        render_texture(s, v, L, R, frames, lgain, pmul, rel_mul, b); break;
         }
         if (L_ == L_BELLS) { if (v->env < 0.0005f) v->active = 0; }
+        else if (L_ == L_SAMPLED && v->inst < 2) {   /* struck: done once every source has rung out, or damped away */
+            int live = 0;
+            for (int q = 0; q < v->nsrc; q++) live |= !v->s[q].done;
+            if (!live || v->env < 0.0005f) v->active = 0;
+        }
         else if (!v->held && !v->pedal && v->env < 0.001f) v->active = 0;     /* -60 dB: the reverb carries the rest */
     }
 
+    for (int i = 0; i < 2; i++)                 /* each slot's synth voices through its own chorus */
+        if (s->slot[i].layer == L_SYNTH) chorus_block(s->ch[i], s->slot[i].k3, s->bus_l[i], s->bus_r[i], L, R, frames);
     drive_block(s, L, R, frames);
     /* tone: Dark (12 dB low-pass) and Air (lift above ~5 kHz) */
     float dark = P(dark), air = P(air);

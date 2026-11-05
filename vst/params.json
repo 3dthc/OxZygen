@@ -74,7 +74,101 @@
    "display": "int"
   },
   {
-   "key": "a_type",
+   "key": "a_cat",
+   "name": "A Category",
+   "options": [
+    "Off",
+    "Voices",
+    "Winds",
+    "Brass",
+    "Strings",
+    "Bells",
+    "Synth",
+    "Air"
+   ],
+   "default": "Voices",
+   "refresh_display": true
+  },
+  {
+   "key": "a_voices",
+   "name": "A Voices",
+   "options": [
+    "Choir",
+    "Vowels"
+   ],
+   "default": "Choir",
+   "refresh_display": true
+  },
+  {
+   "key": "a_winds",
+   "name": "A Winds",
+   "options": [
+    "Flute",
+    "Ocarina",
+    "Sax",
+    "Clarinet",
+    "Oboe"
+   ],
+   "default": "Flute",
+   "refresh_display": true
+  },
+  {
+   "key": "a_brass",
+   "name": "A Brass",
+   "options": [
+    "Horn",
+    "Mute Trumpet",
+    "Trombone"
+   ],
+   "default": "Horn",
+   "refresh_display": true
+  },
+  {
+   "key": "a_strings",
+   "name": "A Strings",
+   "options": [
+    "Sustain",
+    "Tremolo"
+   ],
+   "default": "Sustain",
+   "refresh_display": true
+  },
+  {
+   "key": "a_bells",
+   "name": "A Bells",
+   "options": [
+    "Church",
+    "Tubular",
+    "Vibes",
+    "Bowed Vibes",
+    "Glass"
+   ],
+   "default": "Church",
+   "refresh_display": true
+  },
+  {
+   "key": "a_synth",
+   "name": "A Synth",
+   "options": [
+    "Pad",
+    "Lead",
+    "Brass"
+   ],
+   "default": "Pad",
+   "refresh_display": true
+  },
+  {
+   "key": "a_air",
+   "name": "A Air",
+   "options": [
+    "Wind",
+    "Texture"
+   ],
+   "default": "Wind",
+   "refresh_display": true
+  },
+  {
+   "key": "a_sound",
    "name": "A Sound",
    "options": [
     "Off",
@@ -83,12 +177,26 @@
     "Flute",
     "Ocarina",
     "Sax",
-    "Bells",
+    "Clarinet",
+    "Oboe",
+    "Horn",
+    "Mute Trumpet",
+    "Trombone",
+    "Strings",
+    "Tremolo",
+    "Church Bells",
+    "Tubular",
+    "Vibes",
+    "Bowed Vibes",
+    "Glass",
+    "Synth Pad",
+    "Synth Lead",
+    "Synth Brass",
     "Wind",
     "Texture"
    ],
    "default": "Choir",
-   "refresh_display": true
+   "live": true
   },
   {
    "key": "a_oct",
@@ -138,7 +246,101 @@
    "display": "int"
   },
   {
-   "key": "b_type",
+   "key": "b_cat",
+   "name": "B Category",
+   "options": [
+    "Off",
+    "Voices",
+    "Winds",
+    "Brass",
+    "Strings",
+    "Bells",
+    "Synth",
+    "Air"
+   ],
+   "default": "Off",
+   "refresh_display": true
+  },
+  {
+   "key": "b_voices",
+   "name": "B Voices",
+   "options": [
+    "Choir",
+    "Vowels"
+   ],
+   "default": "Choir",
+   "refresh_display": true
+  },
+  {
+   "key": "b_winds",
+   "name": "B Winds",
+   "options": [
+    "Flute",
+    "Ocarina",
+    "Sax",
+    "Clarinet",
+    "Oboe"
+   ],
+   "default": "Flute",
+   "refresh_display": true
+  },
+  {
+   "key": "b_brass",
+   "name": "B Brass",
+   "options": [
+    "Horn",
+    "Mute Trumpet",
+    "Trombone"
+   ],
+   "default": "Horn",
+   "refresh_display": true
+  },
+  {
+   "key": "b_strings",
+   "name": "B Strings",
+   "options": [
+    "Sustain",
+    "Tremolo"
+   ],
+   "default": "Sustain",
+   "refresh_display": true
+  },
+  {
+   "key": "b_bells",
+   "name": "B Bells",
+   "options": [
+    "Church",
+    "Tubular",
+    "Vibes",
+    "Bowed Vibes",
+    "Glass"
+   ],
+   "default": "Church",
+   "refresh_display": true
+  },
+  {
+   "key": "b_synth",
+   "name": "B Synth",
+   "options": [
+    "Pad",
+    "Lead",
+    "Brass"
+   ],
+   "default": "Pad",
+   "refresh_display": true
+  },
+  {
+   "key": "b_air",
+   "name": "B Air",
+   "options": [
+    "Wind",
+    "Texture"
+   ],
+   "default": "Wind",
+   "refresh_display": true
+  },
+  {
+   "key": "b_sound",
    "name": "B Sound",
    "options": [
     "Off",
@@ -147,12 +349,26 @@
     "Flute",
     "Ocarina",
     "Sax",
-    "Bells",
+    "Clarinet",
+    "Oboe",
+    "Horn",
+    "Mute Trumpet",
+    "Trombone",
+    "Strings",
+    "Tremolo",
+    "Church Bells",
+    "Tubular",
+    "Vibes",
+    "Bowed Vibes",
+    "Glass",
+    "Synth Pad",
+    "Synth Lead",
+    "Synth Brass",
     "Wind",
     "Texture"
    ],
    "default": "Off",
-   "refresh_display": true
+   "live": true
   },
   {
    "key": "b_oct",
@@ -335,7 +551,15 @@
   {
    "label": "Slot A",
    "keys": [
-    "a_type",
+    "a_cat",
+    "a_voices",
+    "a_winds",
+    "a_brass",
+    "a_strings",
+    "a_bells",
+    "a_synth",
+    "a_air",
+    "a_sound",
     "a_oct",
     "a_k1",
     "a_k2",
@@ -346,7 +570,15 @@
   {
    "label": "Slot B",
    "keys": [
-    "b_type",
+    "b_cat",
+    "b_voices",
+    "b_winds",
+    "b_brass",
+    "b_strings",
+    "b_bells",
+    "b_synth",
+    "b_air",
+    "b_sound",
     "b_oct",
     "b_k1",
     "b_k2",

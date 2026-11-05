@@ -52,3 +52,10 @@ tilts its highs (x0.77 soft to x2.5 hard around 1.2 kHz; a low-pass did nothing,
 vowels get a brighter glottal source, ocarina and winds open their Tone filter, Wind gets breathier, flute and sax
 crossfade soft/loud recordings, bells strike brighter. Choir, Vowels, Wind and Texture speak faster when hit harder.
 No Velocity control: MPC's own pad sensitivity and Full Level cover that. Presets re-levelled for the new curve.
+
+## 0.5.0: categories and new sounds (2026-11-05)
+- Each slot picks a category (Voices, Winds, Brass, Strings, Bells, Synth, Air), then a sound in it: 22 sounds.
+- New sampled sounds (CC0, VSCO 2 CE and VCSL): clarinet, oboe, horn, mute trumpet, trombone, sustained and tremolo
+  strings, tubular bells, vibes, bowed vibes, wine glasses.
+- New synth engine (Juno-style): Pad (PWM), mono Lead with glide, Brass with filter bloom, per-slot chorus.
+- 15 new presets (34 total), levelled. Library about 131 MB. Parameters reset: 0.4 projects don't carry over.

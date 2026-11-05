@@ -7,8 +7,8 @@ Every coordinate lives here, so the baked artwork and MPC's live controls always
   art/bg_player.png, art/bg_sound.png, art/bg_fx.png  tab backgrounds, 1280x628 (the plugin area)
   art/knob48.png                                     knob filmstrip, 128 frames (light fixed, pointer and arc turn)
   art/orb.png                                        orb meter filmstrip: 2 energy levels x 17 frames, 360x360
-  art/seg_type_*.png, art/seg_oct_*.png              sound and octave selector segments, off and on
-  art/lbl_<sound>.png                                the three knob labels for each sound (shown by a picture widget)
+  art/seg_cat_*.png, art/seg_snd<n>_*.png, art/seg_oct_*.png   category, sound (n per row) and octave segments
+  art/lbl_<sound>.png                                the three knob labels for each sound (a picture follows the sound)
   layout.conf
 
 Coordinates are MPC screen pixels (1280x800). The plugin area is y=86..714, so backgrounds subtract 86.
@@ -50,13 +50,28 @@ PLAYER = {
 PLAYER_R, PLAYER_VS, PLAYER_BW = 48, 24, 130
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
-SOUNDS = ["Off", "Choir", "Vowels", "Flute", "Ocarina", "Sax", "Bells", "Wind", "Texture"]
+# categories and their sounds (must match params.json); SOUNDS is the derived a_sound/b_sound list, in order
+CATS = ["Off", "Voices", "Winds", "Brass", "Strings", "Bells", "Synth", "Air"]
+PER = {"Voices": ["Choir", "Vowels"], "Winds": ["Flute", "Ocarina", "Sax", "Clarinet", "Oboe"],
+       "Brass": ["Horn", "Mute Trumpet", "Trombone"], "Strings": ["Sustain", "Tremolo"],
+       "Bells": ["Church", "Tubular", "Vibes", "Bowed Vibes", "Glass"], "Synth": ["Pad", "Lead", "Brass"],
+       "Air": ["Wind", "Texture"]}
+SOUNDS = ["Off", "Choir", "Vowels", "Flute", "Ocarina", "Sax", "Clarinet", "Oboe", "Horn", "Mute Trumpet", "Trombone",
+          "Strings", "Tremolo", "Church Bells", "Tubular", "Vibes", "Bowed Vibes", "Glass", "Synth Pad", "Synth Lead",
+          "Synth Brass", "Wind", "Texture"]
+WIND3 = ["Vibrato", "Breath", "Tone"]
 KNOB_LABELS = {"Off": ["", "", ""], "Choir": ["Vowel", "Spread", "Attack"], "Vowels": ["Morph", "Formant", "Attack"],
-               "Flute": ["Vibrato", "Breath", "Tone"], "Ocarina": ["Vibrato", "Breath", "Tone"],
-               "Sax": ["Vibrato", "Breath", "Tone"], "Bells": ["Strike", "Decay", "Shimmer"],
+               "Flute": WIND3, "Ocarina": WIND3, "Sax": WIND3, "Clarinet": WIND3, "Oboe": WIND3,
+               "Horn": WIND3, "Mute Trumpet": WIND3, "Trombone": WIND3,
+               "Strings": ["Ensemble", "Swell", "Tone"], "Tremolo": ["Ensemble", "Swell", "Tone"],
+               "Church Bells": ["Strike", "Decay", "Shimmer"], "Tubular": ["Decay", "Shimmer", "Tone"],
+               "Vibes": ["Decay", "Shimmer", "Tone"], "Bowed Vibes": ["Swell", "Shimmer", "Tone"],
+               "Glass": ["Swell", "Shimmer", "Tone"], "Synth Pad": ["Cutoff", "Shape", "Chorus"],
+               "Synth Lead": ["Cutoff", "Glide", "Chorus"], "Synth Brass": ["Cutoff", "Bloom", "Chorus"],
                "Wind": ["Density", "Drift", "Width"], "Texture": ["Grain", "Pitch", "Smear"]}   # must match engine.c
 SLOTS = [("a", "Sound A", 20, 100), ("b", "Sound B", 650, 100)]
-TYPE_SW, TYPE_SH = 186, 42             # 3 x 3 grid of sounds
+CAT_SW, CAT_SH = 140, 40               # 4 x 2 grid of categories
+SND_ROW, SND_H = 560, 42               # a category's sounds share one row this wide
 OCT_SW, OCT_SH = 80, 38                # five octave segments
 SLOT_KNOB_DX, SLOT_KNOB_DY = 132, 448  # four knobs 132 px apart, centred in the panel, at y0 + 425
 SLOT_R, SLOT_VS, SLOT_BW = 48, 24, 120
@@ -66,7 +81,13 @@ LBL_W, LBL_H = 3 * SLOT_KNOB_DX, 28    # the label strip under knobs 1-3
 def slot_geom(x0, y0):
     cx = x0 + 305
     knobs = [(cx + int((i - 1.5) * SLOT_KNOB_DX), y0 + SLOT_KNOB_DY) for i in range(4)]
-    return {"type": (cx, y0 + 112), "oct": (x0 + 360, y0 + 262), "oct_label": (x0 + 24, y0 + 262), "knobs": knobs}
+    return {"cat": (cx, y0 + 98), "snd": (cx, y0 + 214), "oct": (x0 + 360, y0 + 282), "oct_label": (x0 + 24, y0 + 282),
+            "knobs": knobs}
+
+
+def snd_sw(n):
+    """Segment width for a row of n sounds (2 px gaps)."""
+    return (SND_ROW - 2 * (n - 1)) // n
 
 
 def slot_knobs():
@@ -290,6 +311,8 @@ def bg_sound():
         h.append("<div class='title' style='left:%dpx;top:%dpx'>SOUND <b>%s</b></div>" % (x0 + 22, y0 - Y0 + 18, p.upper()))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
                  "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
+                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 178))
         lx, ly = g["oct_label"]
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:110px;font-size:18px'>OCTAVE</div>" % (lx, ly - Y0 - 12))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
@@ -345,7 +368,9 @@ def render_art():
         strip(frames, ORB_SIZE).save(os.path.join(ART, "orb.png"), optimize=True)
 
         # selector segments, two sizes
-        for kind, w, h in (("type", TYPE_SW, TYPE_SH), ("oct", OCT_SW, OCT_SH)):
+        sizes = [("cat", CAT_SW, CAT_SH), ("oct", OCT_SW, OCT_SH)] + \
+                [("snd%d" % n, snd_sw(n), SND_H) for n in sorted({len(v) for v in PER.values()})]
+        for kind, w, h in sizes:
             for on in (0, 1):
                 pg.set_content("<style>body{margin:0;background:transparent}</style>" + seg_html(on, w, h))
                 shot = pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": h}, omit_background=True)
@@ -385,13 +410,19 @@ def write_layout():
     L.append("art file=art/bg_sound.png fit=stretch")
     for p, name, x0, y0 in SLOTS:
         g = slot_geom(x0, y0)
-        L.append('enum_h cx=%d cy=%d label="" key=%s_type options="%s" rows=3 sw=%d sh=%d '
-                 'img=art/seg_type_off.png img_on=art/seg_type_on.png'
-                 % (g["type"][0], g["type"][1], p, ",".join(x.upper() for x in SOUNDS), TYPE_SW, TYPE_SH))
+        L.append('enum_h cx=%d cy=%d label="" key=%s_cat options="%s" rows=2 sw=%d sh=%d '
+                 'img=art/seg_cat_off.png img_on=art/seg_cat_on.png'
+                 % (g["cat"][0], g["cat"][1], p, ",".join(x.upper() for x in CATS), CAT_SW, CAT_SH))
+        for c in CATS[1:]:   # only the chosen category's sounds are shown
+            n = len(PER[c])
+            L.append('enum_h cx=%d cy=%d label="" key=%s_%s options="%s" sw=%d sh=%d '
+                     'img=art/seg_snd%d_off.png img_on=art/seg_snd%d_on.png when=%s_cat:%s'
+                     % (g["snd"][0], g["snd"][1], p, c.lower(), ",".join(x.upper().replace("BOWED VIBES", "BOWED") for x in PER[c]), snd_sw(n), SND_H,
+                        n, n, p, c))
         L.append('enum_h cx=%d cy=%d label="" key=%s_oct options="-2,-1,0,+1,+2" sw=%d sh=%d '
                  'img=art/seg_oct_off.png img_on=art/seg_oct_on.png' % (g["oct"][0], g["oct"][1], p, OCT_SW, OCT_SH))
         (cx1, cy1) = g["knobs"][0]
-        L.append('picture x=%d y=%d w=%d h=%d key=%s_type files="%s"'
+        L.append('picture x=%d y=%d w=%d h=%d key=%s_sound files="%s"'
                  % (cx1 - SLOT_KNOB_DX // 2, label_top(cy1) - 3, LBL_W, LBL_H, p,
                     ",".join("art/lbl_%s.png" % x.lower() for x in SOUNDS)))
     for key, label, cx, cy in slot_knobs():
@@ -413,7 +444,8 @@ def check_keys():
     """Every key the layout uses must exist in params.json (the build would fail later, less clearly)."""
     keys = {p["key"] for p in json.load(open(os.path.join(HERE, "..", "params.json")))["params"]}
     used = [k for k, *_ in PLAYER["knobs"]] + [k for k, *_ in slot_knobs()] + [k for k, *_ in fx_knobs()] + \
-           ["orb", "a_type", "b_type", "a_oct", "b_oct"]
+           ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_sound", "b_sound"] + \
+           ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]]
     missing = [k for k in used if k not in keys]
     if missing:
         raise SystemExit("make_skin: keys not in params.json: %s" % ", ".join(missing))

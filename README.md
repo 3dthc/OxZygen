@@ -1,7 +1,7 @@
 # OxZygen
 
-A dark, cinematic VST2 instrument for Akai MPC standalone units: choirs, vowels, flutes, ocarina, sax, bells,
-soundscapes and textures, with a crystal-ball orb that reacts as you play.
+A dark, cinematic VST2 instrument for Akai MPC standalone units: choirs, vowels, flutes, reeds, brass, atmospheric
+strings, bells, Juno-style synths, soundscapes and textures, with a crystal-ball orb that reacts as you play.
 
 Work in progress. Built with the [MPC VST toolchain](https://github.com/open-mpc/mpc-vst-plugins).
 
