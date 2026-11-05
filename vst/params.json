@@ -152,7 +152,7 @@
    "name": "Vowels Level",
    "min": 0,
    "max": 100,
-   "default": 75,
+   "default": 0,
    "display": "int"
   },
   {
@@ -252,7 +252,7 @@
    "name": "Bells Level",
    "min": 0,
    "max": 100,
-   "default": 75,
+   "default": 0,
    "display": "int"
   },
   {
@@ -302,7 +302,7 @@
    "name": "Soundscape Level",
    "min": 0,
    "max": 100,
-   "default": 75,
+   "default": 0,
    "display": "int"
   },
   {
@@ -352,7 +352,7 @@
    "name": "Texture Level",
    "min": 0,
    "max": 100,
-   "default": 75,
+   "default": 0,
    "display": "int"
   },
   {
@@ -410,7 +410,7 @@
    "name": "Delay Feedback",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 35,
    "display": "int"
   },
   {
@@ -418,7 +418,7 @@
    "name": "Delay Mix",
    "min": 0,
    "max": 100,
-   "default": 30,
+   "default": 0,
    "display": "int"
   },
   {
@@ -426,7 +426,7 @@
    "name": "Drive Amount",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 30,
    "display": "int"
   },
   {
@@ -434,7 +434,7 @@
    "name": "Drive Tone",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 60,
    "display": "int"
   },
   {
@@ -442,7 +442,7 @@
    "name": "Drive Mix",
    "min": 0,
    "max": 100,
-   "default": 30,
+   "default": 0,
    "display": "int"
   },
   {
@@ -450,7 +450,7 @@
    "name": "Sub Level",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 0,
    "display": "int"
   },
   {
@@ -466,7 +466,7 @@
    "name": "Sub Drop",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 30,
    "display": "int"
   },
   {

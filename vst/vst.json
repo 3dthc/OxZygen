@@ -2,7 +2,7 @@
   "name": "OxZygen",
   "vendor": "oxzygen",
   "uid": "OxZy",
-  "version": 200,
+  "version": 300,
   "so": "oxzygen.so",
   "params": "params.json",
   "layout": "skin/layout.conf",
@@ -27,5 +27,6 @@
     "cflags_arm": [
       "-mfpu=neon-vfpv4"
     ]
-  }
+  },
+  "presets": "presets.json"
 }

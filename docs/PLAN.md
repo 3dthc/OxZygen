@@ -19,9 +19,13 @@ importable library.
    a. [done, 0.2.0, offline] Choir (Claudia, Mirko, Sven; Vowel blends ah/oh/ih) and Winds (flute, ocarina, alto
       sax) from 306 looped zones (62 MB RAM, shared between instances, loaded on a background thread), Dark/Air
       tone, 8-line FDN reverb, project save/restore. Host CPU 71 us per block at 16 voices; device bench pending.
-   b. Vowels layer: formant synthesis over the recorded vowels.
-   c. Bells (synthesized), Soundscape and Texture (granular from the samples).
-   d. Delay, Drive, Sub; presets.
+   b. [done, 0.3.0, offline] Vowels: formant synthesis (two glottal oscillators, four formants, u-o-a-e-i).
+   c. [done, 0.3.0, offline] Bells: eight-partial modal synthesis. Soundscape: pitched wind resonances plus a
+      granular choir cloud. Texture: granular voices with musical pitch steps and reverse grains.
+   d. [done, 0.3.0, offline] Drive, ping-pong Delay, Sub (follows the lowest note, Drop glide); 16 presets in
+      MPC's PRESET menu (vst/make_presets.py), levelled to within ~1 dB.
+   Per-layer polyphony caps (10/8/6/12/6/6), 32 voices total. Host CPU, median per block: 56-90 us across presets.
+   Device bench still pending.
 6. [in progress] MPC skin (vst/skin): Player (orb + 8 macros), Edit (6 layer cards), FX (4 modules). Built and
    checked offline, not yet seen on the device. The orb is a 34-frame meter filmstrip (2 energy levels x 17
    frames) the engine steps about every 0.1 to 0.3 s. Plugin area is 1280x628; MPC draws the tabs and preset menu.
