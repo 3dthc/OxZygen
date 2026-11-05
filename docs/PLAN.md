@@ -74,3 +74,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.5.4: 65 presets, tagged by category (2026-11-05)
 - 30 new presets. Names start with a category tag (VOX, WND, BRS, STR, BEL, SYN, AIR) and the list is grouped in that order.
+
+## 0.5.5: late-night R&B presets (2026-11-05)
+- 16 dark R&B presets (81 total): low octaves, murky filters, long delays and reverb, sub and drive.
