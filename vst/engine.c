@@ -234,6 +234,7 @@ typedef struct {
     svf_t fm[4];
     /* bells */
     float pc[NP], ps[NP], pa[NP], pdec[NP], beat[NP], click;
+    float cons, bhp, blp, blp2;          /* Vowels: strength of the sung "d" onset, and its burst filter */
     /* soundscape and texture */
     grain_t gr[NGRAIN];
     int next_grain;
@@ -599,7 +600,12 @@ static void note_on(oxz_t *s, int key, float vel) {
         switch (layer) {
         case L_CHOIR:  secs = attack_secs(sl->k3, br); choir_sources(s, b, v); break;
         case L_WINDS:  secs = 0.012f + 0.2f * br * br + 0.04f * sl->k2; winds_sources(s, b, v); break;
-        case L_VOWELS: secs = attack_secs(sl->k3, br); v->ph[0] = frand(&v->seed); v->ph[1] = frand(&v->seed); break;
+        case L_VOWELS: secs = attack_secs(sl->k3, br); v->ph[0] = frand(&v->seed); v->ph[1] = frand(&v->seed);
+                       /* a short Attack sings a "d" first (doo, dah, dee): stronger with lower Attack and harder hits */
+                       v->cons = sl->k3 < 0.25f ? (1.0f - sl->k3 / 0.25f) * (0.55f + 0.45f * v->vel) : 0.0f;
+                       v->bhp = v->blp = v->blp2 = 0.0f;
+                       if (v->cons > 0.0f) secs = 0.004f;
+                       break;
         case L_BELLS:  secs = 0.0f; bells_start(s, v); break;     /* struck: full at once */
         case L_SCAPE:  secs = 0.5f + 1.5f * br;
                        v->gust_ph = frand(&v->seed) * 6.2831853f;
@@ -816,8 +822,12 @@ static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, 
     float scale = 0.72f + 0.62f * sl->k2;                    /* Formant: larger to smaller voice */
     svfc_t c[4];
     float amp[4];
+    static const float DLOC[4] = {220, 1750, 2700, 3600};          /* where the tongue tip puts the formants on "d" */
+    float tb = v->t - dt;                                           /* time since note-on at this block's start */
+    float glide = v->cons * expf(-fmaxf(0.0f, tb - 0.012f) / 0.028f);
     for (int k = 0; k < 4; k++) {
         float fz = (VF[a][k] + (VF[a + 1][k] - VF[a][k]) * w) * scale;
+        fz += (DLOC[k] * scale - fz) * glide;
         float bw = (VB[a][k] + (VB[a + 1][k] - VB[a][k]) * w) * (0.8f + 0.4f * scale);
         float db = VA[a][k] + (VA[a + 1][k] - VA[a][k]) * w;
         c[k] = svf_coef(fz, fz / bw);
@@ -837,7 +847,21 @@ static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, 
         v->ph[1] += dt1; if (v->ph[1] >= 1.0f) v->ph[1] -= 1.0f;
         v->glot += glot_a * ((x0 + x1) * 0.5f - v->glot);
         float src = v->glot + nrand(&s->noise) * asp;
-        float y = 0;
+        float burst = 0.0f;
+        if (v->cons > 0.0f) {
+            float tt = tb + f / SR;
+            /* closure (voice bar only), release burst at ~12 ms, then the voice opens into the vowel */
+            float open = fminf(1.0f, fmaxf(0.0f, (tt - 0.010f) / 0.022f));
+            src *= 0.12f + 0.88f * open * open;
+            if (tt > 0.010f && tt < 0.040f) {
+                float n = nrand(&s->noise);
+                v->bhp += 0.35f * (n - v->bhp);                        /* hiss above ~3 kHz ... */
+                v->blp += 0.55f * ((n - v->bhp) - v->blp);              /* ... and below ~6 kHz: a "d", not a click */
+                v->blp2 += 0.55f * (v->blp - v->blp2);
+                burst = v->blp2 * v->cons * 0.55f * expf(-(tt - 0.010f) / 0.007f);
+            }
+        }
+        float y = burst;
         for (int k = 0; k < 4; k++) y += svf_bp(&v->fm[k], &c[k], src) * amp[k];
         y *= v->env * v->vg * lg * 1.75f;
         L[f] += y * gl; R[f] += y * gr;

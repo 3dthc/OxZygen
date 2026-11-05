@@ -31,7 +31,7 @@ Y0 = 86                      # top of the plugin area
 W, H = 1280, 628
 
 # palette (the prototype's)
-BEZEL, PANEL, FG, DIM, LIVE, BRASS = "#12161d", "#0e1218", "#e4e9f1", "#6f7a8c", "#6fe0d6", "#d1a85c"
+BEZEL, PANEL, FG, DIM, LIVE, BRASS = "#1b1e23", "#16191e", "#eef1f5", "#8a919c", "#5cc8ff", "#d1a85c"
 
 ORB_PHASES, ORB_LEVELS, ORB_SIZE = 17, 2, 360   # 34 frames x 360 px = 12240 px, under MPC's 12288 px strip limit
 
@@ -187,7 +187,7 @@ function orb(S, phase, phases, level) {
     if (k >= N) continue;
     const u = (t * w.m + w.o) % 1, env = Math.pow(Math.sin(Math.PI * u), 1.4);
     const pos = q => [w.x0 + w.A * Math.sin(2 * Math.PI * (w.wf * q + w.ph)) + w.drift * q, C + R * .62 - w.rise * q];
-    const steps = 36, tail = .32, col = w.hue ? '111,224,214' : '138,127,230';
+    const steps = 36, tail = .32, col = w.hue ? '92,200,255' : '138,127,230';
     let prev = null;
     for (let j = 0; j <= steps; j++) {
       const q = u - tail + tail * j / steps; if (q < 0) { prev = null; continue; }
@@ -199,7 +199,7 @@ function orb(S, phase, phases, level) {
     }
   }
   const core = x.createRadialGradient(C, C + 12, 0, C, C + 12, 90);
-  core.addColorStop(0, 'rgba(111,224,214,' + (level ? .17 : .06) + ')'); core.addColorStop(1, 'rgba(111,224,214,0)');
+  core.addColorStop(0, 'rgba(92,200,255,' + (level ? .17 : .06) + ')'); core.addColorStop(1, 'rgba(92,200,255,0)');
   x.fillStyle = core; x.fillRect(0, 0, S, S);
   x.save(); x.translate(C - 54, C - 62); x.rotate(-.6);               // hard window reflection
   x.beginPath(); x.ellipse(0, 0, 32, 9, 0, 0, 2 * Math.PI); x.fillStyle = 'rgba(235,245,255,.18)'; x.fill(); x.restore();
@@ -210,7 +210,7 @@ function orb(S, phase, phases, level) {
     const a = i * 6 * Math.PI / 180 - Math.PI / 2, major = i % 5 === 0;
     const r0 = 176, r1 = major ? 160 : 166;
     x.beginPath(); x.moveTo(C + Math.cos(a) * r0, C + Math.sin(a) * r0); x.lineTo(C + Math.cos(a) * r1, C + Math.sin(a) * r1);
-    x.strokeStyle = level ? (major ? LIVE : 'rgba(111,224,214,.35)') : (major ? '#6b7588' : '#3a4352');
+    x.strokeStyle = level ? (major ? LIVE : 'rgba(92,200,255,.35)') : (major ? '#6b7588' : '#3a4352');
     x.lineWidth = major ? 1.8 : 1.2; x.lineCap = 'butt'; x.stroke();
   }
   return c.toDataURL('image/png');
@@ -231,10 +231,18 @@ def strip(frames, size):
 
 def seg_html(on, w, h):
     """A blank segment plate; the renderer writes the option name on it (skin.css sets the font)."""
-    bg = "linear-gradient(180deg,#3a2f1c,#1d1810)" if on else "linear-gradient(180deg,#1a2029,#0e1218)"
-    hi = "#6b5630" if on else "#2f3746"
-    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border:1px solid #000;border-radius:3px;"
-            "background:%s;box-shadow:inset 0 1px 0 %s'></div>" % (w, h, bg, hi))
+    if on:
+        bg = ("linear-gradient(180deg,rgba(92,200,255,.30),rgba(92,200,255,.10) 55%,rgba(20,60,90,.35)),"
+              "linear-gradient(180deg,#2c3a48,#141c25)")
+        sh = "inset 0 1px 0 rgba(170,225,255,.55),inset 0 0 12px rgba(92,200,255,.35),0 0 8px rgba(92,200,255,.25)"
+        border = "#2f86b8"
+    else:
+        bg = ("repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 2px),"
+              "linear-gradient(180deg,#4a5059 0%,#30353d 48%,#262a31 52%,#1d2026 100%)")
+        sh = "inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.5)"
+        border = "#07080a"
+    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border:1px solid %s;border-radius:3px;"
+            "background:%s;box-shadow:%s'></div>" % (w, h, border, bg, sh))
 
 
 def labels_html(names):
@@ -269,18 +277,28 @@ PAGE_CSS = """
 %(fonts)s
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { width: 1280px; height: 628px; overflow: hidden; position: relative;
-  background: radial-gradient(900px 520px at 50%% 45%%, #18212f 0%%, transparent 70%%), linear-gradient(180deg, #141922, #0b0e13); }
-.grain { position: absolute; inset: 0; opacity: .05;
-  background-image: repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 3px); mix-blend-mode: overlay; }
+  background: radial-gradient(1000px 420px at 50%% 0%%, rgba(255,255,255,.07), transparent 70%%),
+    linear-gradient(180deg, #2a2e35, #1a1d22 60%%, #121418); }
+.grain { position: absolute; inset: 0; opacity: .10;
+  background-image: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 2px, #000 2px 3px, transparent 3px 4px);
+  mix-blend-mode: overlay; }
 .vbox { position: absolute; background: #03060a; border: 1px solid #000; border-radius: 2px;
   box-shadow: inset 0 2px 5px #000, 0 1px 0 rgba(255,255,255,.05); }
 .klabel { position: absolute; text-align: center; font-family: BC, sans-serif; font-weight: 600; color: %(FG)s;
   letter-spacing: .12em; text-transform: uppercase; }
 .heading { position: absolute; display: flex; align-items: center; gap: 12px; font: 600 20px BC, sans-serif;
   letter-spacing: .24em; color: %(DIM)s; }
-.heading::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #2c3442, transparent); }
-.well { position: absolute; background: %(PANEL)s; border: 1px solid #000; border-radius: 3px;
-  box-shadow: inset 0 1px 0 #232a35, inset 0 0 40px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.03); }
+.heading::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #4a515c, transparent); }
+.well { position: absolute; border: 1px solid #050608; border-radius: 4px;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, #23272d, %(PANEL)s 40%%, #111317);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 -1px 0 rgba(0,0,0,.6), inset 0 0 30px rgba(0,0,0,.3),
+    0 2px 6px rgba(0,0,0,.6); }
+.well::before { content: ""; position: absolute; inset: 7px; pointer-events: none;   /* corner screws */
+  background: radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 0 0 / 10px 10px no-repeat,
+    radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 100%% 0 / 10px 10px no-repeat,
+    radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 0 100%% / 10px 10px no-repeat,
+    radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 100%% 100%% / 10px 10px no-repeat; }
 .title { position: absolute; font: 700 22px BC, sans-serif; letter-spacing: .22em; color: %(FG)s; text-transform: uppercase; }
 .title b { color: %(LIVE)s; font-weight: 700; }
 """ % {"fonts": FONT_CSS, "FG": FG, "DIM": DIM, "PANEL": PANEL, "LIVE": LIVE}
@@ -310,13 +328,13 @@ def bg_sound():
         h.append("<div class='well' style='left:%dpx;top:%dpx;width:610px;height:600px'></div>" % (x0, y0 - Y0))
         h.append("<div class='title' style='left:%dpx;top:%dpx'>SOUND <b>%s</b></div>" % (x0 + 22, y0 - Y0 + 18, p.upper()))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
+                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 178))
+                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 178))
         lx, ly = g["oct_label"]
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:110px;font-size:18px'>OCTAVE</div>" % (lx, ly - Y0 - 12))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 330))
+                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 330))
         for i, (cx, cy) in enumerate(g["knobs"]):
             top, vh, box = value_box(cx, cy, SLOT_R, SLOT_VS, 74)
             h.append(box)
@@ -332,7 +350,7 @@ def bg_fx():
         h.append("<div class='well' style='left:%dpx;top:%dpx;width:610px;height:296px'></div>" % (x0, y0 - Y0))
         h.append("<div class='title' style='left:%dpx;top:%dpx'>%s</div>" % (x0 + 22, y0 - Y0 + 18, name))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
+                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
     for key, label, cx, cy in fx_knobs():
         h.append(knob_block(key, label, cx, cy, FX_R, FX_VS, 74, 19))
     return "".join(h)

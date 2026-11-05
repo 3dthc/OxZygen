@@ -69,6 +69,8 @@ DESIGNS = [
         release=75, dark=60, air=30, space=88, rv_size=85, rv_decay=85, rv_mix=45, motion=35)),
     ("Doo Choir", dict(**A("Vowels", k1=15, k2=50, k3=8, level=70), **B("Choir", k1=50, k2=40, k3=15, level=40),
         attack=30, release=25, dark=35, air=50, space=40, rv_decay=35, rv_mix=25, motion=30)),
+    ("Scat Doos", dict(**A("Vowels", k1=4, k2=55, k3=0, level=80), **B("Vowels", oct="-1", k1=4, k2=40, k3=0, level=35),
+        attack=0, release=12, dark=30, air=45, space=30, rv_size=40, rv_decay=30, rv_mix=18, motion=20)),
     # --- bells ---
     ("Glass Cathedral", dict(**A("Bells", k1=55, k2=70, k3=50), **B("Choir", oct="+1", k1=100, k2=60, k3=60, level=35),
         release=70, air=60, dark=20, space=85, rv_size=80, rv_decay=80, rv_mix=40)),
