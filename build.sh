@@ -12,7 +12,7 @@ TARGET="${1:-oxzygen}"
 
 LICENSE_ARGS=()
 case "$TARGET" in
-  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.1.0"; ABOUT="OxZygen interface build: the full skin with a placeholder pad sound" ;;
+  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.1.1"; ABOUT="OxZygen interface build: the full skin with a placeholder pad sound" ;;
   sdtest)  CFG="$HERE/tests/sdtest/vst.json"; VER="1.0.0"; ABOUT="OxZygen SD card access test"; LICENSE_ARGS=(--license MIT) ;;
   *) echo "Unknown target '$TARGET'. Targets: oxzygen, sdtest"; exit 1 ;;
 esac

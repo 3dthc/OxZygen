@@ -249,8 +249,10 @@ def bg_player():
     # the orb's shadow on the panel (the orb itself is the live meter on top)
     h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:300px;height:300px;border-radius:50%%;"
              "background:#000;box-shadow:0 24px 56px 6px rgba(0,0,0,.8)'></div>" % (ox - 150, oy - Y0 - 150))
-    h.append("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:30px;"
-             "letter-spacing:.3em'>OX<b>ZYGEN</b></div>" % (150 - Y0))
+    # wordmark: mixed case, the Z carries the emphasis (larger, accent colour)
+    h.append("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:32px;"
+             "letter-spacing:.16em;text-transform:none;line-height:40px'>Ox<b style='font-size:44px;"
+             "vertical-align:-3px;letter-spacing:.1em'>Z</b>ygen</div>" % (144 - Y0))
     for text, x0, x1, y in PLAYER["headings"]:
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
     for key, label, cx, cy in PLAYER["knobs"]:
