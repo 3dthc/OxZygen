@@ -96,3 +96,7 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.7.0: Aluminum Cobalt skin (2026-11-05)
 - Brushed aluminum panels, graphite machined knobs (r 59 Player, 56 Sound/FX), cobalt arcs and buttons, ice-blue readouts, bigger names.
+
+## Builds for every device (2026-11-05)
+- vst.json targets armv7 + aarch64; build.sh packages Gen1 OS3, Gen1 OS2 (SHADOW_SKIN_MPC_OS=2 skin, passes skin_compat for 2.x and 3.x) and Gen2 OS3.
+- Not yet tested on a Gen2 unit or an OS 2 unit.

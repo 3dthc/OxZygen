@@ -4,7 +4,10 @@
 #   ./build.sh sdtest     the SD card access test plugin
 # Needs the toolchain checked out (default ~/mpc-vst-plugins; override with MPC_VST=/path) and Docker running.
 # The first OxZygen build also downloads the toolchain's skin renderer image (Chromium), which takes a while once.
-# Output: dist/<Name>-<version>-mpc-armv7.zip, also copied to your Windows Desktop when run in WSL.
+# Output (dist/, also copied to your Windows Desktop when run in WSL):
+#   ...-Gen1-MPC-OS3.zip  MPC Live / Live II / One / X / Force on MPC OS 3.x
+#   ...-Gen1-MPC-OS2.zip  the same devices still on MPC OS 2.x
+#   ...-Gen2-MPC-OS3.zip  MPC Live III and the other 64-bit models (they run MPC OS 3.x only)
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MPC_VST="${MPC_VST:-$HOME/mpc-vst-plugins}"
@@ -14,7 +17,7 @@ LICENSE_ARGS=()
 EXTRA_ARGS=()
 case "$TARGET" in
   oxzygen) CFG="$HERE/vst/vst.json"; VER="0.7.0"
-           ABOUT="OxZygen 0.4: two sound slots (choir, vowels, flute, ocarina, sax, bells, wind, texture), drive, delay, reverb, sub; 19 presets"
+           ABOUT="OxZygen 0.7: two sound slots (voices, winds, brass, strings, bells, synth, air: 22 sounds), filter, lo-fi, drive, delay, reverb, sub; 96 presets"
            EXTRA_ARGS=(--extra "$HERE/vst/data:samples")
            [ -f "$HERE/vst/data/manifest.txt" ] || { echo "vst/data is missing: run samples/fetch_sources.sh, samples/trim.sh, then python3 samples/prepare.py"; exit 1; } ;;
   sdtest)  CFG="$HERE/tests/sdtest/vst.json"; VER="1.0.0"; ABOUT="OxZygen SD card access test"; LICENSE_ARGS=(--license MIT) ;;
@@ -30,22 +33,44 @@ DIR="$(dirname "$CFG")"
 NAME="$(python3 -c 'import json,sys; c=json.load(open(sys.argv[1])); print(c["vendor"]+" - VST - "+c["name"])' "$CFG")"
 SO="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["so"])' "$CFG")"
 
-echo "== build ($TARGET)"
-"$MPC_VST/tools/build_port.sh" "$CFG"
-echo "== offline test"
-"$MPC_VST/tools/test_port.sh" "$CFG"
-echo "== package"
+pkg() {   # pkg <so> <skin dir> <label>: one release zip, renamed so the three builds don't collide
+  local out="$HERE/dist/.tmp"; rm -rf "$out"; mkdir -p "$out"
+  python3 "$MPC_VST/tools/release.py" --so "$1" --skin "$2" \
+    --entry "$DIR/build/pluginlist-entry.xml" --version "$VER" --about "$ABOUT" \
+    ${LICENSE_ARGS[@]+"${LICENSE_ARGS[@]}"} ${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"} --repo 3dthc/OxZygen -o "$out"
+  local z; z="$(ls "$out"/*.zip | head -n 1)"
+  mv "$z" "$HERE/dist/$(basename "$z" .zip | sed -E 's/-mpc-(armv7|aarch64)$//')-$3.zip"
+  ZIPS+=("$HERE/dist/$(basename "$z" .zip | sed -E 's/-mpc-(armv7|aarch64)$//')-$3.zip")
+  rm -rf "$out"
+}
 mkdir -p "$HERE/dist"
-python3 "$MPC_VST/tools/release.py" --so "$DIR/build/$SO" --skin "$DIR/build/skin/$NAME" \
-  --entry "$DIR/build/pluginlist-entry.xml" --version "$VER" --about "$ABOUT" \
-  ${LICENSE_ARGS[@]+"${LICENSE_ARGS[@]}"} ${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"} --repo 3dthc/OxZygen -o "$HERE/dist"
+ZIPS=()
 
-ZIP="$(ls -t "$HERE"/dist/*.zip | head -n 1)"
-echo "== zip: $ZIP"
+if [ "$TARGET" = oxzygen ]; then
+  # Gen1 (32-bit: Live, Live II, One, X, Force) and Gen2 (64-bit: Live III and later), MPC OS 3.x skin
+  echo "== build: Gen1 + Gen2, MPC OS 3 skin"
+  "$MPC_VST/tools/build_port.sh" "$CFG" all
+  echo "== offline test"
+  "$MPC_VST/tools/test_port.sh" "$CFG"
+  echo "== package"
+  pkg "$DIR/build/$SO" "$DIR/build/skin/$NAME" "Gen1-MPC-OS3"
+  pkg "$DIR/build/aarch64/$SO" "$DIR/build/skin/$NAME" "Gen2-MPC-OS3"
+  # Gen1 on MPC OS 2.x: same plugin (built to load on 2.x), skin written in the 2.x file format
+  echo "== build: Gen1, MPC OS 2 skin"
+  SHADOW_SKIN_MPC_OS=2 "$MPC_VST/tools/build_port.sh" "$CFG" armv7
+  pkg "$DIR/build/$SO" "$DIR/build/skin/$NAME" "Gen1-MPC-OS2"
+else
+  echo "== build ($TARGET)"
+  "$MPC_VST/tools/build_port.sh" "$CFG"
+  echo "== offline test"
+  "$MPC_VST/tools/test_port.sh" "$CFG"
+  pkg "$DIR/build/$SO" "$DIR/build/skin/$NAME" "Gen1"
+fi
+echo "== zips:"; printf '   %s\n' "${ZIPS[@]}"
 
 # In WSL, put a copy where Windows can see it.
 if [ -d "/mnt/c/Users/$USER" ]; then
   for d in "/mnt/c/Users/$USER/OneDrive/Desktop" "/mnt/c/Users/$USER/Desktop"; do
-    if [ -d "$d" ]; then cp "$ZIP" "$d/"; echo "== copied to Windows: $d/$(basename "$ZIP")"; break; fi
+    if [ -d "$d" ]; then cp "${ZIPS[@]}" "$d/"; echo "== copied to Windows: $d"; break; fi
   done
 fi

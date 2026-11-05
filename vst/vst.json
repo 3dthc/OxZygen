@@ -27,7 +27,12 @@
     ],
     "cflags_arm": [
       "-mfpu=neon-vfpv4"
-    ]
+    ],
+    "cflags_aarch64": []
   },
-  "presets": "presets.json"
+  "presets": "presets.json",
+  "targets": [
+    "armv7",
+    "aarch64"
+  ]
 }

@@ -32,3 +32,13 @@ The skin artwork is pre-rendered and committed. To change the design, edit `vst/
 - `ui/prototype.html`: clickable UI prototype (open in a browser)
 - `docs/PLAN.md`: plan and device budget
 - `CREDITS.md`: every sample source and its license
+
+## Which zip?
+
+`./build.sh` makes three, all the same plugin and sounds:
+
+| Zip | For |
+|---|---|
+| `...-Gen1-MPC-OS3.zip` | MPC Live, Live II, One, X, Force on MPC OS 3.x |
+| `...-Gen1-MPC-OS2.zip` | the same devices still on MPC OS 2.x (skin written in the 2.x file format) |
+| `...-Gen2-MPC-OS3.zip` | MPC Live III and the other 64-bit models (they run MPC OS 3.x only) |
