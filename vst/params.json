@@ -1,0 +1,606 @@
+{
+ "name": "OxZygen",
+ "params": [
+  {
+   "key": "master",
+   "name": "Level",
+   "min": 0,
+   "max": 100,
+   "default": 80,
+   "display": "int"
+  },
+  {
+   "key": "voice",
+   "name": "Voice",
+   "min": 0,
+   "max": 100,
+   "default": 42,
+   "display": "int"
+  },
+  {
+   "key": "breath",
+   "name": "Breath",
+   "min": 0,
+   "max": 100,
+   "default": 58,
+   "display": "int"
+  },
+  {
+   "key": "choir",
+   "name": "Choir",
+   "min": 0,
+   "max": 100,
+   "default": 70,
+   "display": "int"
+  },
+  {
+   "key": "bells",
+   "name": "Bells",
+   "min": 0,
+   "max": 100,
+   "default": 35,
+   "display": "int"
+  },
+  {
+   "key": "air",
+   "name": "Air",
+   "min": 0,
+   "max": 100,
+   "default": 62,
+   "display": "int"
+  },
+  {
+   "key": "dark",
+   "name": "Dark",
+   "min": 0,
+   "max": 100,
+   "default": 55,
+   "display": "int"
+  },
+  {
+   "key": "space",
+   "name": "Space",
+   "min": 0,
+   "max": 100,
+   "default": 66,
+   "display": "int"
+  },
+  {
+   "key": "motion",
+   "name": "Motion",
+   "min": 0,
+   "max": 100,
+   "default": 48,
+   "display": "int"
+  },
+  {
+   "key": "ch_vowel",
+   "name": "Choir Vowel",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "ch_attack",
+   "name": "Choir Attack",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "ch_spread",
+   "name": "Choir Spread",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "ch_level",
+   "name": "Choir Level",
+   "min": 0,
+   "max": 100,
+   "default": 75,
+   "display": "int"
+  },
+  {
+   "key": "ch_mute",
+   "name": "Choir Mute",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "ch_solo",
+   "name": "Choir Solo",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "vo_morph",
+   "name": "Vowels Morph",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "vo_attack",
+   "name": "Vowels Attack",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "vo_formant",
+   "name": "Vowels Formant",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "vo_level",
+   "name": "Vowels Level",
+   "min": 0,
+   "max": 100,
+   "default": 75,
+   "display": "int"
+  },
+  {
+   "key": "vo_mute",
+   "name": "Vowels Mute",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "vo_solo",
+   "name": "Vowels Solo",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "wi_breath",
+   "name": "Winds Breath",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "wi_vibrato",
+   "name": "Winds Vibrato",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "wi_tone",
+   "name": "Winds Tone",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "wi_level",
+   "name": "Winds Level",
+   "min": 0,
+   "max": 100,
+   "default": 75,
+   "display": "int"
+  },
+  {
+   "key": "wi_mute",
+   "name": "Winds Mute",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "wi_solo",
+   "name": "Winds Solo",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "be_strike",
+   "name": "Bells Strike",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "be_decay",
+   "name": "Bells Decay",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "be_shimmer",
+   "name": "Bells Shimmer",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "be_level",
+   "name": "Bells Level",
+   "min": 0,
+   "max": 100,
+   "default": 75,
+   "display": "int"
+  },
+  {
+   "key": "be_mute",
+   "name": "Bells Mute",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "be_solo",
+   "name": "Bells Solo",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "sc_density",
+   "name": "Soundscape Density",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "sc_drift",
+   "name": "Soundscape Drift",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "sc_width",
+   "name": "Soundscape Width",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "sc_level",
+   "name": "Soundscape Level",
+   "min": 0,
+   "max": 100,
+   "default": 75,
+   "display": "int"
+  },
+  {
+   "key": "sc_mute",
+   "name": "Soundscape Mute",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "sc_solo",
+   "name": "Soundscape Solo",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "tx_grain",
+   "name": "Texture Grain",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "tx_pitch",
+   "name": "Texture Pitch",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "tx_smear",
+   "name": "Texture Smear",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "tx_level",
+   "name": "Texture Level",
+   "min": 0,
+   "max": 100,
+   "default": 75,
+   "display": "int"
+  },
+  {
+   "key": "tx_mute",
+   "name": "Texture Mute",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "tx_solo",
+   "name": "Texture Solo",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "rv_size",
+   "name": "Reverb Size",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "rv_decay",
+   "name": "Reverb Decay",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "rv_mix",
+   "name": "Reverb Mix",
+   "min": 0,
+   "max": 100,
+   "default": 30,
+   "display": "int"
+  },
+  {
+   "key": "dl_time",
+   "name": "Delay Time",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "dl_feedback",
+   "name": "Delay Feedback",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "dl_mix",
+   "name": "Delay Mix",
+   "min": 0,
+   "max": 100,
+   "default": 30,
+   "display": "int"
+  },
+  {
+   "key": "dr_amount",
+   "name": "Drive Amount",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "dr_tone",
+   "name": "Drive Tone",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "dr_mix",
+   "name": "Drive Mix",
+   "min": 0,
+   "max": 100,
+   "default": 30,
+   "display": "int"
+  },
+  {
+   "key": "sb_level",
+   "name": "Sub Level",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "sb_tune",
+   "name": "Sub Tune",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "sb_drop",
+   "name": "Sub Drop",
+   "min": 0,
+   "max": 100,
+   "default": 50,
+   "display": "int"
+  },
+  {
+   "key": "orb",
+   "name": "Orb",
+   "min": 0,
+   "max": 33,
+   "default": 0,
+   "display": "int"
+  }
+ ],
+ "sections": [
+  {
+   "label": "Master",
+   "keys": [
+    "master"
+   ]
+  },
+  {
+   "label": "Player",
+   "keys": [
+    "voice",
+    "breath",
+    "choir",
+    "bells",
+    "air",
+    "dark",
+    "space",
+    "motion"
+   ]
+  },
+  {
+   "label": "Choir",
+   "keys": [
+    "ch_vowel",
+    "ch_attack",
+    "ch_spread",
+    "ch_level",
+    "ch_mute",
+    "ch_solo"
+   ]
+  },
+  {
+   "label": "Vowels",
+   "keys": [
+    "vo_morph",
+    "vo_attack",
+    "vo_formant",
+    "vo_level",
+    "vo_mute",
+    "vo_solo"
+   ]
+  },
+  {
+   "label": "Winds",
+   "keys": [
+    "wi_breath",
+    "wi_vibrato",
+    "wi_tone",
+    "wi_level",
+    "wi_mute",
+    "wi_solo"
+   ]
+  },
+  {
+   "label": "Bells",
+   "keys": [
+    "be_strike",
+    "be_decay",
+    "be_shimmer",
+    "be_level",
+    "be_mute",
+    "be_solo"
+   ]
+  },
+  {
+   "label": "Soundscape",
+   "keys": [
+    "sc_density",
+    "sc_drift",
+    "sc_width",
+    "sc_level",
+    "sc_mute",
+    "sc_solo"
+   ]
+  },
+  {
+   "label": "Texture",
+   "keys": [
+    "tx_grain",
+    "tx_pitch",
+    "tx_smear",
+    "tx_level",
+    "tx_mute",
+    "tx_solo"
+   ]
+  },
+  {
+   "label": "Reverb",
+   "keys": [
+    "rv_size",
+    "rv_decay",
+    "rv_mix"
+   ]
+  },
+  {
+   "label": "Delay",
+   "keys": [
+    "dl_time",
+    "dl_feedback",
+    "dl_mix"
+   ]
+  },
+  {
+   "label": "Drive",
+   "keys": [
+    "dr_amount",
+    "dr_tone",
+    "dr_mix"
+   ]
+  },
+  {
+   "label": "Sub",
+   "keys": [
+    "sb_level",
+    "sb_tune",
+    "sb_drop"
+   ]
+  },
+  {
+   "label": "Orb",
+   "keys": [
+    "orb"
+   ]
+  }
+ ]
+}

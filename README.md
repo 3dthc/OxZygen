@@ -10,14 +10,21 @@ Work in progress. Built with the [MPC VST toolchain](https://github.com/open-mpc
 Needs the toolchain checked out at `~/mpc-vst-plugins` (or set `MPC_VST`) and Docker running.
 
 ```bash
-./build.sh sdtest
+./build.sh            # OxZygen
+./build.sh sdtest     # the SD card access test plugin
 ```
 
 This builds, runs the offline test, and writes the install zip to `dist/`. In WSL it also copies the zip to your
-Windows Desktop. Install the zip with the MPC plugin installer app.
+Windows Desktop. Install the zip with the MPC plugin installer app. The first OxZygen build downloads the
+toolchain's skin renderer image (Chromium), which takes a few minutes once.
+
+The skin artwork is pre-rendered and committed. To change the design, edit `vst/skin/make_skin.py` and run
+`python3 vst/skin/make_skin.py` (needs Python with Playwright and Pillow), then build.
 
 ## Layout
-- `tests/sdtest/`: SD card access test plugin
+- `vst/`: the plugin: `engine.c` (placeholder pad sound for now), `params.json` (parameter order is fixed; saved
+  projects depend on it), `skin/make_skin.py` (all skin artwork and `layout.conf`)
+- `tests/sdtest/`: SD card access test plugin (passed on an MPC Live II, 2026-11-05)
 - `samples/`: scripts to fetch the CC0 sources and trim them to the built-in set (`MANIFEST.md`)
 - `ui/prototype.html`: clickable UI prototype (open in a browser)
 - `docs/PLAN.md`: plan and device budget

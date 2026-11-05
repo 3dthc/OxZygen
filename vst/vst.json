@@ -1,0 +1,12 @@
+{
+  "name": "OxZygen",
+  "vendor": "oxzygen",
+  "uid": "OxZy",
+  "version": 100,
+  "so": "oxzygen.so",
+  "params": "params.json",
+  "layout": "skin/layout.conf",
+  "art": "html",
+  "defines": {"HAS_DISPLAY_REV": 1, "DISPLAY_REV_NO_UPDATE": 1},
+  "build": {"root": ".", "sources": ["engine.c"], "cflags": [], "libs": ["-lm"]}
+}

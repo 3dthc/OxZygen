@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 # Build, test and package an OxZygen target with the MPC VST toolchain (open-mpc/mpc-vst-plugins).
-#   ./build.sh sdtest
+#   ./build.sh            OxZygen itself (vst/)
+#   ./build.sh sdtest     the SD card access test plugin
 # Needs the toolchain checked out (default ~/mpc-vst-plugins; override with MPC_VST=/path) and Docker running.
+# The first OxZygen build also downloads the toolchain's skin renderer image (Chromium), which takes a while once.
 # Output: dist/<Name>-<version>-mpc-armv7.zip, also copied to your Windows Desktop when run in WSL.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MPC_VST="${MPC_VST:-$HOME/mpc-vst-plugins}"
-TARGET="${1:-sdtest}"
+TARGET="${1:-oxzygen}"
 
+LICENSE_ARGS=()
 case "$TARGET" in
-  sdtest) CFG="$HERE/tests/sdtest/vst.json"; VER="1.0.0"; ABOUT="OxZygen SD card access test" ;;
-  *) echo "Unknown target '$TARGET'. Targets: sdtest"; exit 1 ;;
+  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.1.0"; ABOUT="OxZygen interface build: the full skin with a placeholder pad sound" ;;
+  sdtest)  CFG="$HERE/tests/sdtest/vst.json"; VER="1.0.0"; ABOUT="OxZygen SD card access test"; LICENSE_ARGS=(--license MIT) ;;
+  *) echo "Unknown target '$TARGET'. Targets: oxzygen, sdtest"; exit 1 ;;
 esac
 
 if [ ! -x "$MPC_VST/tools/build_port.sh" ]; then
@@ -30,7 +34,7 @@ echo "== package"
 mkdir -p "$HERE/dist"
 python3 "$MPC_VST/tools/release.py" --so "$DIR/build/$SO" --skin "$DIR/build/skin/$NAME" \
   --entry "$DIR/build/pluginlist-entry.xml" --version "$VER" --about "$ABOUT" \
-  --license MIT --repo 3dthc/OxZygen -o "$HERE/dist"
+  ${LICENSE_ARGS[@]+"${LICENSE_ARGS[@]}"} --repo 3dthc/OxZygen -o "$HERE/dist"
 
 ZIP="$(ls -t "$HERE"/dist/*.zip | head -n 1)"
 echo "== zip: $ZIP"
