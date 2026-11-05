@@ -67,3 +67,7 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.5.2: CRT orb (2026-11-05)
 - The orb picture runs through a CRT pass: tube bulge, RGB fringe, scanlines, phosphor triads, rolling refresh band, flicker.
+
+## 0.5.3: mod wheel on every sound (2026-11-05)
+- Winds, brass, Vowels, synth lead: vibrato up to ±0.5 semitone, at once. Choir, strings, Texture drift: wider, faster.
+- Synth pad and brass: filter opens. Bells: more shimmer. Wind: more Drift. Texture: more Smear.

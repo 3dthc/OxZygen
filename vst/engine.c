@@ -758,7 +758,7 @@ static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames,
     float tone_a = 1.0f - expf(-2.0f * (float)M_PI * cutoff / SR);
     float tilt = 0.4f + 2.1f * powf(vb, 1.5f);     /* highs: x0.4 at velocity 0, x0.77 at 40, x2.5 at 127 */
     /* sampled extras: Shimmer = amplitude tremolo (a vibraphone's motor), Decay = extra damping on struck sounds */
-    float shimmer = sampled ? sl->k2 : 0.0f;
+    float shimmer = sampled ? fminf(1.0f, sl->k2 + s->modwheel) : 0.0f;   /* mod wheel adds shimmer */
     float trem_inc = 6.2831853f * (2.0f + 4.5f * shimmer) / SR;
     float damp = (sampled && v->inst < 2 && sl->k1 < 0.97f) ? expf(-1.0f / (SR * (0.15f + 7.0f * sl->k1 * sl->k1))) : 1.0f;
     float breath_amt = sl->k2 * (0.4f + 0.8f * P(breath));
@@ -869,7 +869,7 @@ static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, 
 }
 
 static void render_bells(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
-    float f0 = note_hz((float)v->note) * pmul, dt = frames / SR, shimmer = s->slot[v->slot].k3;
+    float f0 = note_hz((float)v->note) * pmul, dt = frames / SR, shimmer = fminf(1.0f, s->slot[v->slot].k3 + s->modwheel);
     float rot_c[NP], rot_s[NP], dec[NP], beat_amt[NP];
     for (int k = 0; k < NP; k++) {
         float w = 2.0f * (float)M_PI * f0 * BELL_RATIO[k] / SR;
@@ -948,7 +948,7 @@ static const zone_t *choir_zone(const bank_t *b, voice_t *v, float note) {
 static void render_scape(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul,
                          const bank_t *b) {
     const slot_t *sl = &s->slot[v->slot];
-    float dt = frames / SR, density = sl->k1, drift = sl->k2, width = sl->k3;
+    float dt = frames / SR, density = sl->k1, drift = fminf(1.0f, sl->k2 + s->modwheel), width = sl->k3;   /* wheel: more wander */
     float note = v->note + 12.0f * log2f(pmul);
     /* pitched wind: three narrow resonances on the note's harmonics, each wandering with Drift */
     svfc_t wc[3];
@@ -994,7 +994,7 @@ static const float TX_STEPS[8] = {-24, -12, -5, 0, 7, 12, 19, 24};
 static void render_texture(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul,
                            const bank_t *b) {
     const slot_t *sl = &s->slot[v->slot];
-    float smear = sl->k3;
+    float smear = fminf(1.0f, sl->k3 + s->modwheel);         /* wheel: more smear */
     float size = 0.02f * powf(20.0f, sl->k1);               /* 20 ms .. 400 ms */
     int step = (int)(sl->k2 * 7.0f + 0.5f);
     float note = v->note + TX_STEPS[step] + 12.0f * log2f(pmul);
@@ -1041,7 +1041,7 @@ static void render_synth(oxz_t *s, voice_t *v, float *bl, float *br, int frames,
     float fsus = inst == 1 ? 0.35f : 0.25f;
     if (v->fstage == 0) { v->fenv += dt / fatk; if (v->fenv >= 1.0f) { v->fenv = 1.0f; v->fstage = 1; } }
     else v->fenv = fsus + (v->fenv - fsus) * expf(-dt / fdec);
-    float base = 55.0f * exp2f(sl->k1 * 8.5f) * exp2f((v->glide - 60.0f) / 24.0f) * exp2f(v->vel * 1.2f - 0.6f);
+    float base = 55.0f * exp2f(fminf(1.0f, sl->k1 + (v->inst != 1 ? s->modwheel * 0.5f : 0.0f)) * 8.5f)   /* wheel opens pad/brass */ * exp2f((v->glide - 60.0f) / 24.0f) * exp2f(v->vel * 1.2f - 0.6f);
     float fc = base * exp2f(env_oct * v->fenv);
     svfc_t c = svf_coef(fc, inst == 1 ? 1.6f : inst == 0 ? 0.62f : 0.8f);
     /* oscillator mix */
@@ -1224,14 +1224,14 @@ static void render(void *inst, int16_t *out, int frames) {
         v->t += dt;
         float pm = s->bend;
         if (L_ == L_CHOIR || L_ == L_TEXTURE || L_ == L_STRINGS) {
-            v->drift += dt * (0.3f + 0.4f * motion);
-            pm += sinf(v->drift) * 0.06f * (0.3f + motion);      /* slow ensemble drift */
+            v->drift += dt * (0.3f + 0.4f * motion + 3.0f * s->modwheel);
+            pm += sinf(v->drift) * (0.06f * (0.3f + motion) + 0.22f * s->modwheel);   /* slow ensemble drift; wheel: wider and faster */
         } else if (L_ == L_WINDS || L_ == L_VOWELS || (L_ == L_SYNTH && v->inst == 1)) {
             v->lfo += dt * 6.2831853f * (4.6f + 1.2f * motion);
             float onset = fminf(1.0f, fmaxf(0.0f, (v->t - 0.25f) / 0.6f));   /* vibrato grows after the attack */
             float depth = (L_ == L_WINDS ? sl->k1 * 0.35f + motion * 0.25f : 0.12f + 0.3f * motion) * 0.6f
-                          + s->modwheel * 0.3f;   /* semitones peak (x0.25 below) */
-            pm += sinf(v->lfo) * depth * onset * 0.25f;
+                          ;   /* semitones peak (x0.25 below) */
+            pm += sinf(v->lfo) * (depth * onset * 0.25f + s->modwheel * 0.5f);   /* wheel: up to half a semitone, at once */
         }
         float pmul = exp2f(pm / 12.0f);
         switch (L_) {
