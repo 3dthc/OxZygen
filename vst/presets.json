@@ -515,7 +515,7 @@
     "dr_amount": 65,
     "dr_tone": 50,
     "dr_mix": 70,
-    "sb_level": 28,
+    "sb_level": 20,
     "sb_tune": 50,
     "sb_drop": 45
    }
@@ -567,7 +567,7 @@
     "dr_amount": 35,
     "dr_tone": 60,
     "dr_mix": 25,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 25
    }
@@ -931,7 +931,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35
    }
@@ -983,7 +983,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 20,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -1035,7 +1035,7 @@
     "dr_amount": 40,
     "dr_tone": 55,
     "dr_mix": 35,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -1139,7 +1139,7 @@
     "dr_amount": 40,
     "dr_tone": 60,
     "dr_mix": 30,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 60
    }
@@ -1191,7 +1191,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -1243,7 +1243,7 @@
     "dr_amount": 35,
     "dr_tone": 60,
     "dr_mix": 30,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -1451,7 +1451,7 @@
     "dr_amount": 45,
     "dr_tone": 45,
     "dr_mix": 50,
-    "sb_level": 45,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 20
    }
@@ -1711,7 +1711,7 @@
     "dr_amount": 25,
     "dr_tone": 60,
     "dr_mix": 20,
-    "sb_level": 15,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -1815,7 +1815,7 @@
     "dr_amount": 35,
     "dr_tone": 60,
     "dr_mix": 30,
-    "sb_level": 25,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -1867,7 +1867,7 @@
     "dr_amount": 35,
     "dr_tone": 60,
     "dr_mix": 30,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -1896,7 +1896,7 @@
     "a_k1": 60,
     "a_k2": 65,
     "a_k3": 35,
-    "a_level": 75,
+    "a_level": 95,
     "b_cat": "Off",
     "b_voices": "Choir",
     "b_winds": "Flute",
@@ -1919,7 +1919,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -1971,7 +1971,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35
    }
@@ -2127,7 +2127,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 20,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2179,7 +2179,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 25,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 20
    }
@@ -2283,7 +2283,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 20,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2335,7 +2335,7 @@
     "dr_amount": 40,
     "dr_tone": 60,
     "dr_mix": 30,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35
    }
@@ -2387,7 +2387,7 @@
     "dr_amount": 50,
     "dr_tone": 45,
     "dr_mix": 40,
-    "sb_level": 50,
+    "sb_level": 25,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2491,7 +2491,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 18,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2543,7 +2543,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 15,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2647,7 +2647,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 25,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -2699,7 +2699,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2751,7 +2751,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 20,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -2803,7 +2803,7 @@
     "dr_amount": 50,
     "dr_tone": 35,
     "dr_mix": 35,
-    "sb_level": 45,
+    "sb_level": 22,
     "sb_tune": 50,
     "sb_drop": 70
    }
@@ -3219,7 +3219,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 20,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -3375,7 +3375,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 25,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 25
    }
@@ -3427,7 +3427,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35
    }
@@ -3531,7 +3531,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 50
    }
@@ -3583,7 +3583,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 25,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35
    }
@@ -3635,7 +3635,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -3791,7 +3791,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 25,
-    "sb_level": 25,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 25
    }
@@ -3843,7 +3843,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 25,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -3947,7 +3947,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 15,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -4155,7 +4155,7 @@
     "dr_amount": 45,
     "dr_tone": 60,
     "dr_mix": 40,
-    "sb_level": 35,
+    "sb_level": 25,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -4207,7 +4207,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 25,
-    "sb_level": 45,
+    "sb_level": 18,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -4259,7 +4259,7 @@
     "dr_amount": 45,
     "dr_tone": 50,
     "dr_mix": 40,
-    "sb_level": 40,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 50
    }
@@ -4311,7 +4311,7 @@
     "dr_amount": 40,
     "dr_tone": 60,
     "dr_mix": 35,
-    "sb_level": 45,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 45
    }
@@ -4415,7 +4415,7 @@
     "dr_amount": 55,
     "dr_tone": 60,
     "dr_mix": 50,
-    "sb_level": 50,
+    "sb_level": 25,
     "sb_tune": 50,
     "sb_drop": 60
    }
@@ -4467,7 +4467,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 45,
+    "sb_level": 18,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -4623,7 +4623,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -4727,7 +4727,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 20,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30
    }
@@ -4831,7 +4831,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 35,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40
    }
@@ -4883,7 +4883,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 20,
-    "sb_level": 30,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35
    }
@@ -4987,7 +4987,7 @@
     "dr_amount": 30,
     "dr_tone": 60,
     "dr_mix": 0,
-    "sb_level": 20,
+    "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 70
    }

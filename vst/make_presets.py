@@ -222,7 +222,7 @@ DESIGNS = [
     ("Purple Sax", dict(**A("Sax", oct="-1", k1=45, k2=60, k3=30), **B("Synth Pad", oct="-1", k1=20, k2=40, k3=70, level=30),
         release=50, dark=70, air=30, space=70, rv_mix=30, dl_mix=30, dl_time=70, dl_feedback=50,
         dr_mix=30, dr_amount=35, sb_level=35, sb_drop=30)),
-    ("Lean Flute", dict(**A("Flute", oct="-1", k1=60, k2=65, k3=35), **OFF,
+    ("Lean Flute", dict(**A("Flute", oct="-1", k1=60, k2=65, k3=35, level=95), **OFF,
         release=50, dark=65, air=35, space=75, rv_decay=70, rv_mix=36, dl_mix=35, dl_time=68, dl_feedback=55,
         motion=55, sb_level=30, sb_drop=40)),
     ("Desert Horn", dict(**A("Horn", oct="-1", k1=35, k2=55, k3=30, level=85), **B("Wind", k1=40, k2=60, k3=70, level=25),
@@ -313,6 +313,13 @@ def tagged():
     return [(d[0], d[1], d[0]) if len(d) == 2 else d for d in out]
 
 
+# The sub follows the lowest held note, so it only belongs where a bass line is the point: stabs, pulses, doom
+# brass, the drone, two dark pads. Everywhere else it is off (it would put a bass under every flute or bell melody),
+# and where it stays it sits under the sound, not on top of it. Players still have it on the FX page.
+SUB_KEEP = {"Dark Synth Stabs": 25, "Stalker Pulse": 25, "Black Choir Stabs": 20, "Brass of Doom": 25,
+            "Dread Drone": 22, "Codeine Pad": 18, "Grey Sky Pad": 18}
+
+
 def main():
     by_key = {p["key"]: p for p in PARAMS}
     out = []
@@ -323,6 +330,7 @@ def main():
             if p["key"] not in SKIP:
                 values[p["key"]] = p["default"]
         values["master"] = LEVEL.get(base, values["master"])
+        vals = dict(vals, sb_level=SUB_KEEP.get(base, 0))
         for k, v in convert(vals).items():
             if k not in by_key:
                 raise SystemExit("%s: unknown parameter %s" % (name, k))

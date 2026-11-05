@@ -103,3 +103,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.7.1: Player knobs fixed on the device (2026-11-05)
 - r 59 made a 16384 px strip, which MPC resamples: the knobs slid as they turned (seen on a Live II). Now r 58 (16128 px).
+
+## 0.7.2: sub only where it belongs (2026-11-05)
+- Sub off in 89 presets; kept at 18-25 in 7 (stabs, pulse, doom brass, drone, two dark pads). Levels within 1.6 dB; Lean Flute slot raised.
