@@ -39,6 +39,6 @@ The skin artwork is pre-rendered and committed. To change the design, edit `vst/
 
 | Zip | For |
 |---|---|
-| `...-Gen1-MPC-OS3.zip` | MPC Live, Live II, One, X, Force on MPC OS 3.x |
-| `...-Gen1-MPC-OS2.zip` | the same devices still on MPC OS 2.x (skin written in the 2.x file format) |
-| `...-Gen2-MPC-OS3.zip` | MPC Live III and the other 64-bit models (they run MPC OS 3.x only) |
+| `OxZygen-<ver>-mpc-armv7.zip` | Gen1: MPC Live, Live II, One, X, Force on MPC OS 3.x |
+| `OxZygen-<ver>-mpc-armv7-os2.zip` | the same devices still on MPC OS 2.x (skin written in the 2.x file format) |
+| `OxZygen-<ver>-mpc-aarch64.zip` | Gen2: MPC Live III and the other 64-bit models (they run MPC OS 3.x only) |
