@@ -1,9 +1,21 @@
-# OxZygen
+# OXZYGEN
 
-A dark, cinematic VST2 instrument for Akai MPC standalone units: choirs, vowels, flutes, reeds, brass, atmospheric
-strings, bells, Juno-style synths, soundscapes and textures, with a crystal-ball orb that reacts as you play.
+A dark, cinematic VST2 instrument for Akai MPC standalone units: choirs, vowels and sung "doo"s, flutes, reeds, brass,
+atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a CRT crystal-ball orb that reacts as you play.
 
-Work in progress. Built with the [MPC VST toolchain](https://github.com/open-mpc/mpc-vst-plugins).
+![OxZygen on the MPC: the Player page](docs/img/player.png)
+
+| Sound page | FX page |
+|---|---|
+| ![Sound page: two slots, category and sound pickers, octave, four knobs](docs/img/sound.png) | ![FX page: reverb, delay, drive, sub and output](docs/img/fx.png) |
+
+- Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air), then one of 22 sounds
+- Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
+- FX: reverb, ping-pong delay, drive, and a gliding sub
+- 96 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR), including late-night R&B and horror/film-score sets
+- Gen1 (MPC OS 3.x and 2.x) and Gen2; all samples CC0 ([CREDITS.md](CREDITS.md)), code MIT ([LICENSE](LICENSE))
+
+Built with the [MPC VST toolchain](https://github.com/open-mpc/mpc-vst-plugins).
 
 ## Build (Ubuntu / WSL)
 
