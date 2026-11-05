@@ -10,8 +10,8 @@
    "display": "int"
   },
   {
-   "key": "blend",
-   "name": "Blend",
+   "key": "velocity",
+   "name": "Velocity",
    "min": 0,
    "max": 100,
    "default": 50,
@@ -58,11 +58,11 @@
    "display": "int"
   },
   {
-   "key": "space",
-   "name": "Space",
+   "key": "lofi",
+   "name": "Lo-Fi",
    "min": 0,
    "max": 100,
-   "default": 60,
+   "default": 0,
    "display": "int"
   },
   {
@@ -422,7 +422,7 @@
    "name": "Reverb Size",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 55,
    "display": "int"
   },
   {
@@ -430,7 +430,7 @@
    "name": "Reverb Decay",
    "min": 0,
    "max": 100,
-   "default": 50,
+   "default": 47,
    "display": "int"
   },
   {
@@ -438,7 +438,7 @@
    "name": "Reverb Mix",
    "min": 0,
    "max": 100,
-   "default": 30,
+   "default": 38,
    "display": "int"
   },
   {

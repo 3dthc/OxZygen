@@ -37,6 +37,24 @@ def slot(x, sound, oct="Mid", k1=50, k2=50, k3=50, level=75):
             x + "_k1": k1, x + "_k2": k2, x + "_k3": k3, x + "_level": level}
 
 
+def convert(vals):
+    """Fold the retired Space and Blend knobs (0.5.6 and earlier) into what they did: Space scaled the reverb, Blend
+    trimmed one slot. The designs keep their old values; the presets come out the same as they sounded."""
+    v = dict(vals)
+    sp = v.pop("space", 60) / 100.0
+    if True:   # reverb: always rewritten, since every preset sat on Space's default if it didn't set it
+        r_size, r_dec, r_mix = v.get("rv_size", 50) / 100.0, v.get("rv_decay", 50) / 100.0, v.get("rv_mix", 30) / 100.0
+        v["rv_size"] = round(100 * (0.5 * r_size + 0.5 * sp))
+        rt = (0.6 + 11.0 * r_dec * r_dec) * (0.7 + 0.6 * sp)
+        v["rv_decay"] = round(100 * max(0.0, (rt - 0.6) / 13.2) ** 0.5)
+        v["rv_mix"] = min(100, round(100 * min(0.9, r_mix * (0.35 + 1.3 * sp)) / 0.9))
+    b = v.pop("blend", 50) / 100.0
+    for x, side in (("a", min(1.0, 2 * (1 - b))), ("b", min(1.0, 2 * b))):
+        if side < 1.0:
+            v[x + "_level"] = round(v.get(x + "_level", 75) * side)
+    return v
+
+
 def A(*a, **k): return slot("a", *a, **k)
 def B(*a, **k): return slot("b", *a, **k)
 OFF = {"b_cat": "Off"}
@@ -305,7 +323,7 @@ def main():
             if p["key"] not in SKIP:
                 values[p["key"]] = p["default"]
         values["master"] = LEVEL.get(base, values["master"])
-        for k, v in vals.items():
+        for k, v in convert(vals).items():
             if k not in by_key:
                 raise SystemExit("%s: unknown parameter %s" % (name, k))
             values[k] = v

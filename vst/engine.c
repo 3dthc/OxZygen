@@ -44,6 +44,7 @@ static const char *GROUP_NAMES[NGROUPS] = {
     "tubular/p", "tubular/f", "vibes/p", "vibes/f", "bowedvibes/std", "glass/std"};
 
 /* pitch = root + cents/100; a one-shot (struck) zone plays to its end and stops instead of looping */
+#define LF_MAX 1024           /* Lo-Fi wobble line: up to ~23 ms */
 typedef struct { float pitch; int ls, le, frames, oneshot; int16_t *pcm; } zone_t;
 typedef struct { zone_t *z; int n; } group_t;
 typedef struct { group_t g[NGROUPS]; float lo[3], hi[3], glo[NGROUPS], ghi[NGROUPS]; long bytes; int ok; char err[96]; } bank_t;
@@ -281,6 +282,8 @@ typedef struct {
     int dly_w;
     /* drive */
     float drv_lp_l, drv_lp_r;
+    float vel_extra;          /* Velocity above 50: extra depth for the note being started */
+    float lf_buf[2][LF_MAX]; int lf_w; float lf_ph, lf_ph2, lf_hold_l, lf_hold_r, lf_cnt, lf_lp_l, lf_lp_r, lf_lp2_l, lf_lp2_r;
     /* sub */
     float sub_ph, sub_env, sub_note, sub_glide, sub_hz;
     int sub_target;
@@ -297,7 +300,7 @@ static int idx_of(const char *key) {
     return -1;
 }
 #define P(name) (s->val[I_##name] * 0.01f)
-static int I_master, I_blend, I_breath, I_attack, I_release, I_air, I_dark, I_space, I_motion,
+static int I_master, I_velocity, I_breath, I_attack, I_release, I_air, I_dark, I_lofi, I_motion,
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
     I_sb_level, I_sb_tune, I_sb_drop, I_orb;
 static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
@@ -305,7 +308,7 @@ static int g_idx_done;
 static void init_idx(void) {
     if (g_idx_done) return;
 #define X(n) I_##n = idx_of(#n)
-    X(master); X(blend); X(breath); X(attack); X(release); X(air); X(dark); X(space); X(motion);
+    X(master); X(velocity); X(breath); X(attack); X(release); X(air); X(dark); X(lofi); X(motion);
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
     X(sb_level); X(sb_tune); X(sb_drop); X(orb);
 #undef X
@@ -339,7 +342,6 @@ static const float SOUND_GAIN[NSOUNDS] = {0, 0.98f, 1.79f, 1.40f, 1.25f, 0.92f, 
     1.53f, 1.46f, 2.57f, 1.15f, 0.73f, 2.48f, 1.09f, 1.19f, 1.17f, 0.94f, 2.09f, 2.54f};   /* measured: 4-note chords level */
 
 static void read_slots(oxz_t *s) {
-    float blend = P(blend);
     for (int i = 0; i < 2; i++) {
         slot_t *x = &s->slot[i];
         int cat = (int)(s->val[I_cat[i]] + 0.5f);
@@ -360,8 +362,7 @@ static void read_slots(oxz_t *s) {
         x->inst = SOUND_INST[snd];
         x->oct = (int)(s->val[I_oct[i]] + 0.5f) - 2;
         x->k1 = s->val[I_k1[i]] * 0.01f; x->k2 = s->val[I_k2[i]] * 0.01f; x->k3 = s->val[I_k3[i]] * 0.01f;
-        float side = i ? fminf(1.0f, 2.0f * blend) : fminf(1.0f, 2.0f * (1.0f - blend));   /* Blend: both full at 50 */
-        x->gain = SOUND_GAIN[snd] * s->val[I_level[i]] * 0.01f * side;
+        x->gain = SOUND_GAIN[snd] * s->val[I_level[i]] * 0.01f;
     }
 }
 
@@ -440,12 +441,12 @@ static voice_t *alloc_voice(oxz_t *s, int slot, int layer) {
 }
 
 /* velocity -> gain: 18 dB from softest to hardest, about -2 dB at velocity 100 (the old curve spanned ~7 dB) */
-static float vel_gain(float vel) { return 1.3f * powf(10.0f, -0.9f * (1.0f - vel)); }
+static float vel_gain(float vel) { return 1.3f * powf(10.0f, -0.9f * (1.0f - vel)); }   /* times oxz_t.vel_extra */
 
 static float attack_mult(oxz_t *s) { return powf(4.0f, 2.0f * P(attack) - 1.0f); }   /* 0.25x .. 4x, 1x at 50 */
 
 static float attack_secs(float knob, float breath) {   /* knob 0..1 -> 5 ms .. 2.5 s, scaled by Breath */
-    return (0.005f + 2.5f * knob * knob) * (0.45f + 1.1f * breath);
+    return (0.005f + 2.5f * knob * knob) * (0.45f + 1.1f * breath);   /* breath is fixed at 0.5 now */
 }
 
 static void add_src(voice_t *v, const zone_t *z, int note, float g, float pan, float detune_cents) {
@@ -569,8 +570,12 @@ static void bells_start(oxz_t *s, voice_t *v) {
 static void note_on(oxz_t *s, int key, float vel) {
     const bank_t *b = __atomic_load_n(&g_bank, __ATOMIC_ACQUIRE);
     s->energy = fminf(1.0f, s->energy + 0.35f + 0.4f * vel);
+    /* Velocity: 0 = every hit full, 50 = as designed, 100 = soft hits a further 12 dB down */
+    float vsens = P(velocity);
+    s->vel_extra = vsens > 0.5f ? powf(10.0f, -0.6f * (2.0f * vsens - 1.0f) * (1.0f - vel)) : 1.0f;
+    vel = 1.0f - (1.0f - vel) * fminf(1.0f, 2.0f * vsens);
     read_slots(s);
-    float am = attack_mult(s), br = P(breath);
+    float am = attack_mult(s), br = 0.5f;   /* timing no longer follows Breath (0.5 = its old default) */
     for (int si = 0; si < 2; si++) {
         const slot_t *sl = &s->slot[si];
         if (sl->type == S_OFF || sl->gain < 0.001f) continue;
@@ -584,14 +589,14 @@ static void note_on(oxz_t *s, int key, float vel) {
             for (int k = 0; k < MAXV; k++)
                 if (s->v[k].active && s->v[k].slot == si && s->v[k].layer == L_SYNTH && s->v[k].inst == 1) mono = &s->v[k];
             if (mono && (mono->held || mono->pedal)) {
-                mono->key = key; mono->note = note; mono->held = 1; mono->vel = vel; mono->vg = vel_gain(vel);
+                mono->key = key; mono->note = note; mono->held = 1; mono->vel = vel; mono->vg = vel_gain(vel) * s->vel_extra;
                 continue;
             }
         }
         voice_t *v = alloc_voice(s, si, layer);
         memset(v, 0, sizeof *v);
         v->active = 1; v->held = 1; v->key = key; v->note = note; v->slot = si; v->inst = sl->inst; v->layer = layer;
-        v->vel = vel; v->vg = vel_gain(vel); v->age = ++s->clock;
+        v->vel = vel; v->vg = vel_gain(vel) * s->vel_extra; v->age = ++s->clock;
         v->seed = 0x2545F491u ^ (s->clock * 2654435761u) ^ (unsigned)(note * 7919);
         rnd(&v->seed);
         v->drift = frand(&v->seed) * 6.2831853f;
@@ -761,7 +766,7 @@ static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames,
     float shimmer = sampled ? fminf(1.0f, sl->k2 + s->modwheel) : 0.0f;   /* mod wheel adds shimmer */
     float trem_inc = 6.2831853f * (2.0f + 4.5f * shimmer) / SR;
     float damp = (sampled && v->inst < 2 && sl->k1 < 0.97f) ? expf(-1.0f / (SR * (0.15f + 7.0f * sl->k1 * sl->k1))) : 1.0f;
-    float breath_amt = sl->k2 * (0.4f + 0.8f * P(breath));
+    float breath_amt = winds ? sl->k2 * (0.4f + 0.8f * P(breath)) : P(breath) * P(breath) * 0.5f;   /* choir: Breath alone */
     svfc_t bc = svf_coef(3.0f * note_hz((float)v->note), 1.4f);
     for (int q = 0; q < v->nsrc; q++) v->s[q].inc = v->s[q].inc_base * pmul;
     for (int f = 0; f < frames; f++) {
@@ -791,7 +796,7 @@ static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames,
         }
         float a = v->env * v->vg * lg * (1.0f / 32768.0f);
         l *= a; r *= a;
-        if (winds) {    /* breath: band-passed noise around the note, strongest at the onset */
+        if (winds || choir) {    /* breath: band-passed noise around the note, strongest at the onset */
             float nz = nrand(&s->noise);
             float tr = 1.0f + 2.5f * expf(-v->t * 9.0f);
             float br = svf_bp(&v->breath, &bc, nz) * breath_amt * 0.06f * tr * v->env * lg;
@@ -1088,10 +1093,9 @@ static void chorus_block(chorus_t *c, float amount, const float *inl, const floa
 static void reverb_block(oxz_t *s, float *L, float *R, int frames) {
     reverb_t *r = s->rv;
     if (!r) return;
-    float space = P(space);
-    float size = 0.55f + 1.1f * (0.5f * P(rv_size) + 0.5f * space);            /* 0.55 .. 1.65 */
-    float rt60 = (0.6f + 11.0f * P(rv_decay) * P(rv_decay)) * (0.7f + 0.6f * space);
-    float mix = fminf(0.9f, P(rv_mix) * (0.35f + 1.3f * space));
+    float size = 0.55f + 1.1f * P(rv_size);                                    /* 0.55 .. 1.65 */
+    float rt60 = 0.6f + 13.2f * P(rv_decay) * P(rv_decay);                     /* 0.6 .. 13.8 s */
+    float mix = 0.9f * P(rv_mix);
     float damp = 1.0f - expf(-2.0f * (float)M_PI * (2500.0f + 6000.0f * (1.0f - P(dark))) / SR);
     float dl[FDN], g[FDN];
     for (int k = 0; k < FDN; k++) {
@@ -1140,6 +1144,42 @@ static void reverb_block(oxz_t *s, float *L, float *R, int frames) {
 
 
 /* ---------- effects ---------- */
+/* Lo-Fi: worn tape and an old sampler in one knob. Wow and flutter (a wobbling short delay), a gentle low-pass that
+   closes as it goes up, sample-rate and bit reduction past the middle, and a little hiss. 0 = off, untouched. */
+static void lofi_block(oxz_t *s, float *L, float *R, int frames) {
+    float amt = P(lofi);
+    if (amt < 0.005f) return;
+    float wow = (0.6f + 5.0f * amt) * 44.1f * 0.5f;                    /* wobble depth in samples */
+    float cut = 16000.0f * powf(0.22f, amt);                            /* 16 kHz .. 3.5 kHz */
+    float la = 1.0f - expf(-2.0f * (float)M_PI * cut / SR);
+    float crush = amt > 0.45f ? (amt - 0.45f) / 0.55f : 0.0f;          /* second half: the sampler */
+    float hold = 1.0f + crush * 3.0f;                                   /* 44.1 kHz down to ~11 kHz */
+    float steps = crush > 0.0f ? powf(2.0f, 12.0f - 5.0f * crush) : 0.0f;   /* 12 bits down to 7 */
+    float hiss = amt * amt * 0.004f;
+    for (int f = 0; f < frames; f++) {
+        s->lf_ph += 0.55f / SR * 6.2831853f; if (s->lf_ph > 6.2831853f) s->lf_ph -= 6.2831853f;
+        s->lf_ph2 += 6.3f / SR * 6.2831853f; if (s->lf_ph2 > 6.2831853f) s->lf_ph2 -= 6.2831853f;
+        s->lf_buf[0][s->lf_w] = L[f]; s->lf_buf[1][s->lf_w] = R[f];
+        float d = wow * (1.6f + sinf(s->lf_ph) + 0.25f * sinf(s->lf_ph2));
+        float rp = (float)s->lf_w - d; if (rp < 0) rp += LF_MAX;
+        int i = (int)rp, j = i + 1 < LF_MAX ? i + 1 : 0; float fr = rp - i;
+        float l = s->lf_buf[0][i] + (s->lf_buf[0][j] - s->lf_buf[0][i]) * fr;
+        float r = s->lf_buf[1][i] + (s->lf_buf[1][j] - s->lf_buf[1][i]) * fr;
+        if (++s->lf_w == LF_MAX) s->lf_w = 0;
+        if (crush > 0.0f) {
+            s->lf_cnt += 1.0f;
+            if (s->lf_cnt >= hold) { s->lf_cnt -= hold; s->lf_hold_l = roundf(l * steps) / steps; s->lf_hold_r = roundf(r * steps) / steps; }
+            l += (s->lf_hold_l - l) * crush; r += (s->lf_hold_r - r) * crush;
+        }
+        float n = nrand(&s->noise) * hiss;
+        s->lf_lp_l += la * (l + n - s->lf_lp_l); s->lf_lp2_l += la * (s->lf_lp_l - s->lf_lp2_l);
+        s->lf_lp_r += la * (r + n - s->lf_lp_r); s->lf_lp2_r += la * (s->lf_lp_r - s->lf_lp2_r);
+        float wet = fminf(1.0f, amt * 30.0f);                           /* in fully by 3%: a dry/wobble mix would comb-filter */
+        L[f] += (softclip(s->lf_lp2_l * 1.15f) - L[f]) * wet;
+        R[f] += (softclip(s->lf_lp2_r * 1.15f) - R[f]) * wet;
+    }
+}
+
 static void drive_block(oxz_t *s, float *L, float *R, int frames) {
     float mix = P(dr_mix);
     if (mix < 0.001f) return;
@@ -1255,6 +1295,7 @@ static void render(void *inst, int16_t *out, int frames) {
     for (int i = 0; i < 2; i++)                 /* each slot's synth voices through its own chorus */
         if (s->slot[i].layer == L_SYNTH) chorus_block(s->ch[i], s->slot[i].k3, s->bus_l[i], s->bus_r[i], L, R, frames);
     drive_block(s, L, R, frames);
+    lofi_block(s, L, R, frames);
     /* tone: Dark (12 dB low-pass) and Air (lift above ~5 kHz) */
     float dark = P(dark), air = P(air);
     float cut = 20000.0f * powf(0.045f, powf(dark, 1.5f));

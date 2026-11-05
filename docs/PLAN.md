@@ -80,3 +80,12 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.5.6: horror / film score and cold R&B presets (2026-11-05)
 - 9 horror and film-score presets, 6 sparse ghost-vocal R&B presets (96 total).
+
+## 0.6.0: Player knobs cleaned up (2026-11-05)
+- Blend -> Velocity: 0 every hit full, 50 as designed, 100 soft hits a further 12 dB down. Each slot's Level now
+  sets the A/B balance on its own (Blend overlapped it).
+- Space -> Lo-Fi: tape wow/flutter, closing low-pass, then sample-rate and bit reduction past 50, a little hiss.
+  Reverb is set on the FX page only (Space used to scale it out of sight).
+- Breath: air only (winds, Vowels, and now Choir); no longer changes attack times, which belong to Attack.
+- Presets converted (Space folded into the reverb settings, Blend into the slot levels): all within ~1 dB.
+- Parameters reset: 0.5 projects don't carry over their OxZygen settings.
