@@ -49,7 +49,7 @@ PLAYER = {
         ("lofi", "Lo-Fi", 955, 518), ("motion", "Motion", 1155, 518),
     ],
 }
-PLAYER_R, PLAYER_VS, PLAYER_BW = 59, 30, 150   # 59: the largest a 128-frame strip may be on MPC
+PLAYER_R, PLAYER_VS, PLAYER_BW = 58, 30, 150   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
 # categories and their sounds (must match params.json); SOUNDS is the derived a_sound/b_sound list, in order

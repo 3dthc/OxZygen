@@ -100,3 +100,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 ## Builds for every device (2026-11-05)
 - vst.json targets armv7 + aarch64; build.sh packages Gen1 OS3, Gen1 OS2 (SHADOW_SKIN_MPC_OS=2 skin, passes skin_compat for 2.x and 3.x) and Gen2 OS3.
 - Not yet tested on a Gen2 unit or an OS 2 unit.
+
+## 0.7.1: Player knobs fixed on the device (2026-11-05)
+- r 59 made a 16384 px strip, which MPC resamples: the knobs slid as they turned (seen on a Live II). Now r 58 (16128 px).
