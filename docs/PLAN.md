@@ -71,3 +71,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 ## 0.5.3: mod wheel on every sound (2026-11-05)
 - Winds, brass, Vowels, synth lead: vibrato up to ±0.5 semitone, at once. Choir, strings, Texture drift: wider, faster.
 - Synth pad and brass: filter opens. Bells: more shimmer. Wind: more Drift. Texture: more Smear.
+
+## 0.5.4: 65 presets, tagged by category (2026-11-05)
+- 30 new presets. Names start with a category tag (VOX, WND, BRS, STR, BEL, SYN, AIR) and the list is grouped in that order.
