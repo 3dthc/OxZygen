@@ -3,7 +3,7 @@
   {
    "name": "Init",
    "values": {
-    "master": 87,
+    "master": 91,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -155,7 +155,7 @@
   {
    "name": "Angel Lead",
    "values": {
-    "master": 91,
+    "master": 94,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -193,7 +193,7 @@
   {
    "name": "Torch Song",
    "values": {
-    "master": 91,
+    "master": 94,
     "blend": 50,
     "breath": 50,
     "attack": 20,
@@ -231,7 +231,7 @@
   {
    "name": "Saint Air",
    "values": {
-    "master": 70,
+    "master": 74,
     "blend": 60,
     "breath": 50,
     "attack": 50,
@@ -269,7 +269,7 @@
   {
    "name": "Choir Drift",
    "values": {
-    "master": 80,
+    "master": 83,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -307,7 +307,7 @@
   {
    "name": "High Heavens",
    "values": {
-    "master": 89,
+    "master": 92,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -345,7 +345,7 @@
   {
    "name": "Monastery",
    "values": {
-    "master": 62,
+    "master": 63,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -383,7 +383,7 @@
   {
    "name": "Doo Choir",
    "values": {
-    "master": 88,
+    "master": 96,
     "blend": 50,
     "breath": 50,
     "attack": 30,
@@ -497,7 +497,7 @@
   {
    "name": "Wind Over Water",
    "values": {
-    "master": 92,
+    "master": 100,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -535,7 +535,7 @@
   {
    "name": "Frozen Breath",
    "values": {
-    "master": 84,
+    "master": 93,
     "blend": 50,
     "breath": 50,
     "attack": 50,
@@ -611,7 +611,7 @@
   {
    "name": "After Hours Fog",
    "values": {
-    "master": 73,
+    "master": 76,
     "blend": 40,
     "breath": 50,
     "attack": 50,
@@ -687,7 +687,7 @@
   {
    "name": "Dark Vowel Bed",
    "values": {
-    "master": 71,
+    "master": 74,
     "blend": 50,
     "breath": 50,
     "attack": 50,

@@ -79,7 +79,7 @@ DESIGNS = [
         release=60, dark=75, air=30, space=70, motion=55, dr_mix=25, dr_amount=35, sb_level=35, sb_drop=25)),
 ]
 
-LEVEL = {'Init': 87, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100, 'Angel Lead': 91, 'Torch Song': 91, 'Saint Air': 70, 'Choir Drift': 80, 'High Heavens': 89, 'Monastery': 62, 'Doo Choir': 88, 'Glass Cathedral': 100, 'Music Box Ghost': 100, 'Wind Over Water': 92, 'Frozen Breath': 84, 'Astro Haze': 100, 'After Hours Fog': 73, 'Black Choir Stabs': 100, 'Dark Vowel Bed': 71}   # output level per preset, filled from measured loudness so the set plays back evenly
+LEVEL = {'Init': 91, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100, 'Angel Lead': 94, 'Torch Song': 94, 'Saint Air': 74, 'Choir Drift': 83, 'High Heavens': 92, 'Monastery': 63, 'Doo Choir': 96, 'Glass Cathedral': 100, 'Music Box Ghost': 100, 'Wind Over Water': 100, 'Frozen Breath': 93, 'Astro Haze': 100, 'After Hours Fog': 76, 'Black Choir Stabs': 100, 'Dark Vowel Bed': 74}   # output level per preset, filled from measured loudness so the set plays back evenly
 
 
 def main():

@@ -44,3 +44,11 @@ Presets rebuilt for range: solo leads, high choirs, bells, air and texture, and 
 using the Sub. Measured offline: brightness spans 317-1827 Hz; energy below 150 Hz is ~0% outside the dark presets
 and Monastery. Wrapper gotcha: an option label that starts with a digit is read as an index, so the middle octave
 option is "Mid", not "0".
+
+## 0.4.1: velocity (2026-11-05)
+One velocity curve for every sound: 18 dB from softest to hardest (was ~7 dB). Measured, velocity 40 -> 127:
+Choir 15 dB, Vowels 12, Flute 18, Ocarina 13, Sax 16, Bells 12, Wind 17, Texture 12. Timbre follows too: the choir
+tilts its highs (x0.77 soft to x2.5 hard around 1.2 kHz; a low-pass did nothing, its energy sits below 1 kHz),
+vowels get a brighter glottal source, ocarina and winds open their Tone filter, Wind gets breathier, flute and sax
+crossfade soft/loud recordings, bells strike brighter. Choir, Vowels, Wind and Texture speak faster when hit harder.
+No Velocity control: MPC's own pad sensitivity and Full Level cover that. Presets re-levelled for the new curve.

@@ -210,7 +210,7 @@ typedef struct { const zone_t *z; float pos, inc, ph, dph, gl, gr; int on; } gra
 
 typedef struct {
     int active, note, key, slot, inst, layer, held, pedal;   /* note: key + the slot's octave */
-    float vel, env, att, t, lfo, drift, pan;
+    float vel, vg, env, att, t, lfo, drift, pan;   /* vg: velocity gain */
     unsigned age, seed;
     /* sample layers (choir, winds) */
     int nsrc;
@@ -375,6 +375,9 @@ static voice_t *alloc_voice(oxz_t *s, int slot, int layer) {
     return best;
 }
 
+/* velocity -> gain: 18 dB from softest to hardest, about -2 dB at velocity 100 (the old curve spanned ~7 dB) */
+static float vel_gain(float vel) { return 1.3f * powf(10.0f, -0.9f * (1.0f - vel)); }
+
 static float attack_mult(oxz_t *s) { return powf(4.0f, 2.0f * P(attack) - 1.0f); }   /* 0.25x .. 4x, 1x at 50 */
 
 static float attack_secs(float knob, float breath) {   /* knob 0..1 -> 5 ms .. 2.5 s, scaled by Breath */
@@ -475,7 +478,7 @@ static void note_on(oxz_t *s, int key, float vel) {
         voice_t *v = alloc_voice(s, si, layer);
         memset(v, 0, sizeof *v);
         v->active = 1; v->held = 1; v->key = key; v->note = note; v->slot = si; v->inst = sl->inst; v->layer = layer;
-        v->vel = vel; v->age = ++s->clock;
+        v->vel = vel; v->vg = vel_gain(vel); v->age = ++s->clock;
         v->seed = 0x2545F491u ^ (s->clock * 2654435761u) ^ (unsigned)(note * 7919);
         rnd(&v->seed);
         v->drift = frand(&v->seed) * 6.2831853f;
@@ -493,6 +496,7 @@ static void note_on(oxz_t *s, int key, float vel) {
         default:       secs = 0.05f + 1.2f * br * br; break;
         }
         v->att = secs <= 0.0f ? 1.0f : 1.0f / (SR * secs * am);
+        if (layer != L_BELLS && layer != L_WINDS) v->att *= 0.6f + 0.8f * vel;   /* harder: the swell speaks sooner */
     }
 }
 
@@ -608,7 +612,15 @@ static inline float hermite(const int16_t *d, int i, float t) {
 static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
     int choir = v->layer == L_CHOIR;
     const slot_t *sl = &s->slot[v->slot];
-    float tone_a = 1.0f - expf(-2.0f * (float)M_PI * (1500.0f + 16000.0f * sl->k3 * sl->k3) / SR);
+    /* brightness follows velocity: the choir has one recorded dynamic, so harder playing opens a filter on it; the
+     * winds keep their Tone knob, scaled by velocity (most for the ocarina, which has no soft/loud recordings) */
+    float vb = v->vel;
+    /* the choir: a tilt around 1.2 kHz, ~-5 dB up top when soft, ~+6 dB when hard (its energy sits low, so a plain
+     * low-pass would change little); the winds: the Tone low-pass, opened by velocity, most for the ocarina */
+    float cutoff = choir ? 1200.0f
+                         : (1500.0f + 16000.0f * sl->k3 * sl->k3) * (v->inst == 1 ? 0.25f + 0.75f * powf(vb, 1.5f) : 0.7f + 0.3f * vb);
+    float tone_a = 1.0f - expf(-2.0f * (float)M_PI * cutoff / SR);
+    float tilt = 0.4f + 2.1f * powf(vb, 1.5f);     /* highs: x0.4 at velocity 0, x0.77 at 40, x2.5 at 127 */
     float breath_amt = sl->k2 * (0.4f + 0.8f * P(breath));
     svfc_t bc = svf_coef(3.0f * note_hz((float)v->note), 1.4f);
     for (int q = 0; q < v->nsrc; q++) v->s[q].inc = v->s[q].inc_base * pmul;
@@ -627,16 +639,17 @@ static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames,
             if (x->fr >= 1.0f) { int k = (int)x->fr; x->i += k; x->fr -= (float)k; }
             if (x->i >= z->le) x->i -= (z->le - z->ls);
         }
-        float a = v->env * (0.45f + 0.55f * v->vel) * lg * (1.0f / 32768.0f);
+        float a = v->env * v->vg * lg * (1.0f / 32768.0f);
         l *= a; r *= a;
         if (!choir) {   /* breath: band-passed noise around the note, strongest at the onset */
             float nz = nrand(&s->noise);
             float tr = 1.0f + 2.5f * expf(-v->t * 9.0f);
             float br = svf_bp(&v->breath, &bc, nz) * breath_amt * 0.06f * tr * v->env * lg;
             l += br; r += br;
-            v->tone_l += tone_a * (l - v->tone_l); v->tone_r += tone_a * (r - v->tone_r);
-            l = v->tone_l; r = v->tone_r;
         }
+        v->tone_l += tone_a * (l - v->tone_l); v->tone_r += tone_a * (r - v->tone_r);
+        if (choir) { l = v->tone_l + (l - v->tone_l) * tilt; r = v->tone_r + (r - v->tone_r) * tilt; }
+        else { l = v->tone_l; r = v->tone_r; }
         L[f] += l; R[f] += r;
     }
 }
@@ -668,7 +681,7 @@ static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, 
     }
     float f0 = note_hz((float)v->note) * pmul;
     float dt0 = f0 / SR, dt1 = f0 * 1.0046f / SR;                    /* two glottal sources, 8 cents apart */
-    float glot_a = 1.0f - expf(-2.0f * (float)M_PI * 2200.0f / SR);
+    float glot_a = 1.0f - expf(-2.0f * (float)M_PI * (1100.0f + 3200.0f * v->vel) / SR);   /* harder: brighter voice */
     float asp = 0.05f + 0.12f * P(breath);                           /* breathiness */
     float gl = cosf((v->pan * 0.35f + 1.0f) * 0.25f * (float)M_PI), gr = sinf((v->pan * 0.35f + 1.0f) * 0.25f * (float)M_PI);
     for (int f = 0; f < frames; f++) {
@@ -682,7 +695,7 @@ static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, 
         float src = v->glot + nrand(&s->noise) * asp;
         float y = 0;
         for (int k = 0; k < 4; k++) y += svf_bp(&v->fm[k], &c[k], src) * amp[k];
-        y *= v->env * (0.5f + 0.5f * v->vel) * lg * 1.75f;
+        y *= v->env * v->vg * lg * 1.75f;
         L[f] += y * gl; R[f] += y * gr;
     }
 }
@@ -708,7 +721,7 @@ static void render_bells(oxz_t *s, voice_t *v, float *L, float *R, int frames, f
             y += v->ps[k] * v->pa[k] * beat_amt[k];
         }
         if (v->click > 0.0005f) { y += nrand(&s->noise) * v->click; v->click *= 0.985f; }   /* mallet */
-        y *= (0.4f + 0.6f * v->vel) * lg * 0.24f;
+        y *= v->vg * lg * 0.24f;
         L[f] += y * gl; R[f] += y * gr;
     }
     for (int k = 0; k < NP; k++) total += fabsf(v->pc[k]) * v->pa[k] + fabsf(v->ps[k]) * v->pa[k];
@@ -799,8 +812,8 @@ static void render_scape(oxz_t *s, voice_t *v, float *L, float *R, int frames, f
         float w0 = svf_bp(&v->wind[0], &wc[0], nl) * wg[0];
         float w1 = svf_bp(&v->wind[1], &wc[1], nr) * wg[1];
         float w2 = svf_bp(&v->wind[2], &wc[2], (nl - nr) * 0.7f) * wg[2];
-        float air = svf_bp(&v->airband, &ac, (nl + nr) * 0.5f) * 0.025f;
-        float e = v->env * v->gust * lg;
+        float air = svf_bp(&v->airband, &ac, (nl + nr) * 0.5f) * 0.025f * (0.4f + 1.4f * v->vel);   /* harder: breathier */
+        float e = v->env * v->gust * lg * v->vg;
         /* Width: the harmonics move apart, the fundamental stays centred */
         float l = (w0 + w1 * (1.0f - width) + w2 * width + air) * e + gl * e * (0.55f / 32768.0f);
         float r = (w0 + w1 * width + w2 * (1.0f - width) + air) * e + gr * e * (0.55f / 32768.0f);
@@ -832,7 +845,7 @@ static void render_texture(oxz_t *s, voice_t *v, float *L, float *R, int frames,
         }
         float gl = 0, gr = 0;
         grains_run(v, &gl, &gr);
-        float e = v->env * (0.5f + 0.5f * v->vel) * lg * (0.6f / 32768.0f) / sqrtf(overlap * 0.5f);
+        float e = v->env * v->vg * lg * (0.6f / 32768.0f) / sqrtf(overlap * 0.5f);
         L[f] += gl * e; R[f] += gr * e;
     }
 }

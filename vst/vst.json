@@ -2,7 +2,7 @@
   "name": "OxZygen",
   "vendor": "oxzygen",
   "uid": "OxZy",
-  "version": 400,
+  "version": 410,
   "so": "oxzygen.so",
   "params": "params.json",
   "layout": "skin/layout.conf",
