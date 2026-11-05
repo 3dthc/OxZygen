@@ -43,7 +43,7 @@ PLAYER = {
     "knobs": [
         ("velocity", "Velocity", 200, 295), ("breath", "Breath", 360, 295),
         ("attack", "Attack", 200, 520), ("release", "Release", 360, 520),
-        ("air", "Air", 920, 295), ("dark", "Dark", 1080, 295),
+        ("air", "Air", 920, 295), ("dark", "Filter", 1080, 295),
         ("lofi", "Lo-Fi", 920, 520), ("motion", "Motion", 1080, 520),
     ],
 }

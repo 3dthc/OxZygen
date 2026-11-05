@@ -89,3 +89,7 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 - Breath: air only (winds, Vowels, and now Choir); no longer changes attack times, which belong to Attack.
 - Presets converted (Space folded into the reverb settings, Blend into the slot levels): all within ~1 dB.
 - Parameters reset: 0.5 projects don't carry over their OxZygen settings.
+
+## 0.6.1: Dark becomes Filter (2026-11-05)
+- Resonant 12 dB low-pass (TPT SVF), Q rising 0.7 to 2.7 as it closes, cutoff glides and drifts with Motion. Air follows it.
+- Same key (dark), so projects and presets carry over; presets within ~1 dB.

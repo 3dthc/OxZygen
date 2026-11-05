@@ -51,7 +51,7 @@
   },
   {
    "key": "dark",
-   "name": "Dark",
+   "name": "Filter",
    "min": 0,
    "max": 100,
    "default": 45,

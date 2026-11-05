@@ -272,7 +272,7 @@ typedef struct {
     int pedal_down;
     float bend, modwheel;
     unsigned char keys[128];          /* held keys, for the sub */
-    float lp1_l, lp1_r, lp2_l, lp2_r, air_l, air_r;
+    svf_t flt[2]; float flt_fc, flt_ph, air_l, air_r;   /* Filter and Air */
     reverb_t *rv;
     chorus_t *ch[2];
     float bus_l[2][128], bus_r[2][128];      /* synth voices per slot, before their chorus */
@@ -1296,15 +1296,22 @@ static void render(void *inst, int16_t *out, int frames) {
         if (s->slot[i].layer == L_SYNTH) chorus_block(s->ch[i], s->slot[i].k3, s->bus_l[i], s->bus_r[i], L, R, frames);
     drive_block(s, L, R, frames);
     lofi_block(s, L, R, frames);
-    /* tone: Dark (12 dB low-pass) and Air (lift above ~5 kHz) */
+    /* Filter (the "dark" key): a resonant 12 dB low-pass over the whole sound. Open at 0; sweeping down, the
+       resonance rises so it sings like a synth filter; Motion makes the cutoff breathe slowly. Air (a lift above
+       ~5 kHz) comes after it, so it brightens what the filter lets through instead of fighting it. */
     float dark = P(dark), air = P(air);
-    float cut = 20000.0f * powf(0.045f, powf(dark, 1.5f));
-    float a1 = 1.0f - expf(-2.0f * (float)M_PI * cut / SR);
+    float fc = 20000.0f * powf(0.045f, powf(dark, 1.5f)) * (0.64f + 0.36f * (1.0f - dark));   /* 20 kHz .. ~580 Hz */
+    s->flt_ph += frames / SR * 6.2831853f * (0.07f + 0.25f * motion);
+    if (s->flt_ph > 6.2831853f) s->flt_ph -= 6.2831853f;
+    fc *= exp2f(sinf(s->flt_ph) * 0.35f * motion * fminf(1.0f, dark * 4.0f));             /* drift: up to +-1/3 octave */
+    if (s->flt_fc <= 0.0f) s->flt_fc = fc;
+    s->flt_fc += (fc - s->flt_fc) * 0.35f;                                                   /* glide, no zipper */
+    svfc_t fcf = svf_coef(fminf(s->flt_fc, 0.45f * SR), 0.707f + 2.0f * dark * dark);       /* Q 0.7 .. 2.7 */
+    float comp = 1.0f / (1.0f + 0.35f * dark * dark);                                        /* the peak adds level: trim */
     float aa = 1.0f - expf(-2.0f * (float)M_PI * 5000.0f / SR);
     for (int f = 0; f < frames; f++) {
-        s->lp1_l += a1 * (L[f] - s->lp1_l); s->lp2_l += a1 * (s->lp1_l - s->lp2_l);
-        s->lp1_r += a1 * (R[f] - s->lp1_r); s->lp2_r += a1 * (s->lp1_r - s->lp2_r);
-        float l = s->lp2_l, r = s->lp2_r;
+        float l = dark > 0.002f ? svf_lp(&s->flt[0], &fcf, L[f]) * comp : L[f];
+        float r = dark > 0.002f ? svf_lp(&s->flt[1], &fcf, R[f]) * comp : R[f];
         s->air_l += aa * (l - s->air_l); s->air_r += aa * (r - s->air_r);
         L[f] = l + (l - s->air_l) * air * 0.9f;
         R[f] = r + (r - s->air_r) * air * 0.9f;
