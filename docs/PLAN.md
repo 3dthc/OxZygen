@@ -34,3 +34,13 @@ importable library.
 ## Open
 - Verify the dizi source.
 - Plugin license for the release (the test plugin is MIT; decide for OxZygen itself before release).
+
+## 0.4.0: two sound slots (2026-11-05)
+The six always-on layers (36 controls, Mute/Solo, two Q-Link sub-pages that drew the same screen) were replaced by
+two slots, A and B. Each picks one sound (Off, Choir, Vowels, Flute, Ocarina, Sax, Bells, Wind, Texture) and has an
+Octave, three knobs that relabel for that sound, and a Level. Player macros: Blend, Breath, Attack, Release, Air,
+Dark, Space, Motion. 34 parameters (was 59); the order was reset once, before any release.
+Presets rebuilt for range: solo leads, high choirs, bells, air and texture, and a dark group that is the only one
+using the Sub. Measured offline: brightness spans 317-1827 Hz; energy below 150 Hz is ~0% outside the dark presets
+and Monastery. Wrapper gotcha: an option label that starts with a digit is read as an index, so the middle octave
+option is "Mid", not "0".

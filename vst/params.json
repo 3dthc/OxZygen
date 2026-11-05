@@ -10,11 +10,11 @@
    "display": "int"
   },
   {
-   "key": "voice",
-   "name": "Voice",
+   "key": "blend",
+   "name": "Blend",
    "min": 0,
    "max": 100,
-   "default": 42,
+   "default": 50,
    "display": "int"
   },
   {
@@ -22,23 +22,23 @@
    "name": "Breath",
    "min": 0,
    "max": 100,
-   "default": 58,
+   "default": 50,
    "display": "int"
   },
   {
-   "key": "choir",
-   "name": "Choir",
+   "key": "attack",
+   "name": "Attack",
    "min": 0,
    "max": 100,
-   "default": 70,
+   "default": 50,
    "display": "int"
   },
   {
-   "key": "bells",
-   "name": "Bells",
+   "key": "release",
+   "name": "Release",
    "min": 0,
    "max": 100,
-   "default": 35,
+   "default": 50,
    "display": "int"
   },
   {
@@ -46,7 +46,7 @@
    "name": "Air",
    "min": 0,
    "max": 100,
-   "default": 62,
+   "default": 55,
    "display": "int"
   },
   {
@@ -54,7 +54,7 @@
    "name": "Dark",
    "min": 0,
    "max": 100,
-   "default": 55,
+   "default": 45,
    "display": "int"
   },
   {
@@ -62,7 +62,7 @@
    "name": "Space",
    "min": 0,
    "max": 100,
-   "default": 66,
+   "default": 60,
    "display": "int"
   },
   {
@@ -70,308 +70,136 @@
    "name": "Motion",
    "min": 0,
    "max": 100,
-   "default": 48,
+   "default": 45,
    "display": "int"
   },
   {
-   "key": "ch_vowel",
-   "name": "Choir Vowel",
+   "key": "a_type",
+   "name": "A Sound",
+   "options": [
+    "Off",
+    "Choir",
+    "Vowels",
+    "Flute",
+    "Ocarina",
+    "Sax",
+    "Bells",
+    "Wind",
+    "Texture"
+   ],
+   "default": "Choir",
+   "refresh_display": true
+  },
+  {
+   "key": "a_oct",
+   "name": "A Octave",
+   "options": [
+    "-2",
+    "-1",
+    "Mid",
+    "+1",
+    "+2"
+   ],
+   "default": "Mid"
+  },
+  {
+   "key": "a_k1",
+   "name": "A Knob 1",
    "min": 0,
    "max": 100,
    "default": 50,
-   "display": "int"
+   "display": "int",
+   "dynamic_name": true
   },
   {
-   "key": "ch_attack",
-   "name": "Choir Attack",
+   "key": "a_k2",
+   "name": "A Knob 2",
    "min": 0,
    "max": 100,
    "default": 50,
-   "display": "int"
+   "display": "int",
+   "dynamic_name": true
   },
   {
-   "key": "ch_spread",
-   "name": "Choir Spread",
+   "key": "a_k3",
+   "name": "A Knob 3",
    "min": 0,
    "max": 100,
    "default": 50,
-   "display": "int"
+   "display": "int",
+   "dynamic_name": true
   },
   {
-   "key": "ch_level",
-   "name": "Choir Level",
+   "key": "a_level",
+   "name": "A Level",
    "min": 0,
    "max": 100,
    "default": 75,
    "display": "int"
   },
   {
-   "key": "ch_mute",
-   "name": "Choir Mute",
+   "key": "b_type",
+   "name": "B Sound",
    "options": [
     "Off",
-    "On"
+    "Choir",
+    "Vowels",
+    "Flute",
+    "Ocarina",
+    "Sax",
+    "Bells",
+    "Wind",
+    "Texture"
    ],
-   "default": "Off"
+   "default": "Off",
+   "refresh_display": true
   },
   {
-   "key": "ch_solo",
-   "name": "Choir Solo",
+   "key": "b_oct",
+   "name": "B Octave",
    "options": [
-    "Off",
-    "On"
+    "-2",
+    "-1",
+    "Mid",
+    "+1",
+    "+2"
    ],
-   "default": "Off"
+   "default": "Mid"
   },
   {
-   "key": "vo_morph",
-   "name": "Vowels Morph",
+   "key": "b_k1",
+   "name": "B Knob 1",
    "min": 0,
    "max": 100,
    "default": 50,
-   "display": "int"
+   "display": "int",
+   "dynamic_name": true
   },
   {
-   "key": "vo_attack",
-   "name": "Vowels Attack",
+   "key": "b_k2",
+   "name": "B Knob 2",
    "min": 0,
    "max": 100,
    "default": 50,
-   "display": "int"
+   "display": "int",
+   "dynamic_name": true
   },
   {
-   "key": "vo_formant",
-   "name": "Vowels Formant",
+   "key": "b_k3",
+   "name": "B Knob 3",
    "min": 0,
    "max": 100,
    "default": 50,
-   "display": "int"
+   "display": "int",
+   "dynamic_name": true
   },
   {
-   "key": "vo_level",
-   "name": "Vowels Level",
-   "min": 0,
-   "max": 100,
-   "default": 0,
-   "display": "int"
-  },
-  {
-   "key": "vo_mute",
-   "name": "Vowels Mute",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "vo_solo",
-   "name": "Vowels Solo",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "wi_breath",
-   "name": "Winds Breath",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "wi_vibrato",
-   "name": "Winds Vibrato",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "wi_tone",
-   "name": "Winds Tone",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "wi_level",
-   "name": "Winds Level",
+   "key": "b_level",
+   "name": "B Level",
    "min": 0,
    "max": 100,
    "default": 75,
    "display": "int"
-  },
-  {
-   "key": "wi_mute",
-   "name": "Winds Mute",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "wi_solo",
-   "name": "Winds Solo",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "be_strike",
-   "name": "Bells Strike",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "be_decay",
-   "name": "Bells Decay",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "be_shimmer",
-   "name": "Bells Shimmer",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "be_level",
-   "name": "Bells Level",
-   "min": 0,
-   "max": 100,
-   "default": 0,
-   "display": "int"
-  },
-  {
-   "key": "be_mute",
-   "name": "Bells Mute",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "be_solo",
-   "name": "Bells Solo",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "sc_density",
-   "name": "Soundscape Density",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "sc_drift",
-   "name": "Soundscape Drift",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "sc_width",
-   "name": "Soundscape Width",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "sc_level",
-   "name": "Soundscape Level",
-   "min": 0,
-   "max": 100,
-   "default": 0,
-   "display": "int"
-  },
-  {
-   "key": "sc_mute",
-   "name": "Soundscape Mute",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "sc_solo",
-   "name": "Soundscape Solo",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "tx_grain",
-   "name": "Texture Grain",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "tx_pitch",
-   "name": "Texture Pitch",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "tx_smear",
-   "name": "Texture Smear",
-   "min": 0,
-   "max": 100,
-   "default": 50,
-   "display": "int"
-  },
-  {
-   "key": "tx_level",
-   "name": "Texture Level",
-   "min": 0,
-   "max": 100,
-   "default": 0,
-   "display": "int"
-  },
-  {
-   "key": "tx_mute",
-   "name": "Texture Mute",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
-  },
-  {
-   "key": "tx_solo",
-   "name": "Texture Solo",
-   "options": [
-    "Off",
-    "On"
-   ],
-   "default": "Off"
   },
   {
    "key": "rv_size",
@@ -475,17 +303,8 @@
    "min": 0,
    "max": 33,
    "default": 0,
-   "display": "int"
-  },
-  {
-   "key": "wi_inst",
-   "name": "Winds Instrument",
-   "options": [
-    "Flute",
-    "Ocarina",
-    "Sax"
-   ],
-   "default": "Flute"
+   "display": "int",
+   "live": true
   }
  ],
  "sections": [
@@ -496,12 +315,17 @@
    ]
   },
   {
-   "label": "Player",
+   "label": "Voice",
    "keys": [
-    "voice",
+    "blend",
     "breath",
-    "choir",
-    "bells",
+    "attack",
+    "release"
+   ]
+  },
+  {
+   "label": "Atmosphere",
+   "keys": [
     "air",
     "dark",
     "space",
@@ -509,70 +333,25 @@
    ]
   },
   {
-   "label": "Choir",
+   "label": "Slot A",
    "keys": [
-    "ch_vowel",
-    "ch_attack",
-    "ch_spread",
-    "ch_level",
-    "ch_mute",
-    "ch_solo"
+    "a_type",
+    "a_oct",
+    "a_k1",
+    "a_k2",
+    "a_k3",
+    "a_level"
    ]
   },
   {
-   "label": "Vowels",
+   "label": "Slot B",
    "keys": [
-    "vo_morph",
-    "vo_attack",
-    "vo_formant",
-    "vo_level",
-    "vo_mute",
-    "vo_solo"
-   ]
-  },
-  {
-   "label": "Winds",
-   "keys": [
-    "wi_breath",
-    "wi_vibrato",
-    "wi_tone",
-    "wi_level",
-    "wi_mute",
-    "wi_solo",
-    "wi_inst"
-   ]
-  },
-  {
-   "label": "Bells",
-   "keys": [
-    "be_strike",
-    "be_decay",
-    "be_shimmer",
-    "be_level",
-    "be_mute",
-    "be_solo"
-   ]
-  },
-  {
-   "label": "Soundscape",
-   "keys": [
-    "sc_density",
-    "sc_drift",
-    "sc_width",
-    "sc_level",
-    "sc_mute",
-    "sc_solo"
-   ]
-  },
-  {
-   "label": "Texture",
-   "keys": [
-    "tx_grain",
-    "tx_pitch",
-    "tx_smear",
-    "tx_level",
-    "tx_mute",
-    "tx_solo"
+    "b_type",
+    "b_oct",
+    "b_k1",
+    "b_k2",
+    "b_k3",
+    "b_level"
    ]
   },
   {

@@ -4,8 +4,12 @@
     python3 vst/make_presets.py
 
 Every preset starts from the parameter defaults and then sets its own values, so each one fully defines the
-sound: switching presets never leaves a layer or effect from the previous one behind. Names stay under 24
+sound: switching presets never leaves a slot or effect from the previous one behind. Names stay under 24
 characters (the wrapper's limit) and are original: no other library's preset names.
+
+Each preset has one clear identity. Leads play alone (slot B off), the bright ones sit up an octave, and only
+the dark group uses the Sub, so the set covers a real range instead of variations on one pad.
+Texture Pitch steps (k2): 0 = -24, 14 = -12, 29 = -5, 43 = unison, 57 = +7, 71 = +12, 86 = +19, 100 = +24.
 """
 import json
 import os
@@ -14,64 +18,68 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS = json.load(open(os.path.join(HERE, "params.json")))["params"]
 SKIP = {"orb"}                     # engine-driven
 
-# Texture Pitch steps: 0 = -24, 14 = -12, 29 = -5, 43 = unison, 57 = +7, 71 = +12, 86 = +19, 100 = +24
+
+def slot(x, sound, oct="Mid", k1=50, k2=50, k3=50, level=75):
+    return {x + "_type": sound, x + "_oct": oct, x + "_k1": k1, x + "_k2": k2, x + "_k3": k3, x + "_level": level}
+
+
+def A(*a, **k): return slot("a", *a, **k)
+def B(*a, **k): return slot("b", *a, **k)
+OFF = {"b_type": "Off"}
+
 DESIGNS = [
     ("Init", {}),
-    ("Saint Air", dict(  # choir pad on "oh" under a breathy sax lead, long hall
-        ch_level=70, ch_vowel=50, ch_attack=55, ch_spread=60, choir=60,
-        wi_inst="Sax", wi_level=70, wi_vibrato=55, wi_tone=55, wi_breath=45, voice=58,
-        breath=55, air=55, dark=45, space=78, motion=45, rv_size=70, rv_decay=70, rv_mix=40,
-        dl_mix=16, dl_time=62, dl_feedback=40)),
-    ("Celtic Hall", dict(  # flute over an open "ah" choir with a few soft bells
-        wi_inst="Flute", wi_level=75, wi_vibrato=50, wi_tone=60, wi_breath=55, voice=62,
-        ch_level=55, ch_vowel=0, ch_spread=55, choir=45, be_level=30, be_decay=55, be_strike=35, bells=30,
-        air=65, dark=35, space=72, rv_decay=60, rv_mix=35)),
-    ("Choir Drift", dict(
-        ch_level=75, ch_vowel=30, ch_spread=75, ch_attack=65, choir=70,
-        vo_level=45, vo_morph=40, vo_formant=45, vo_attack=60,
-        motion=70, space=80, dark=50, rv_decay=70)),
-    ("Dark Vowel Bed", dict(
-        vo_level=75, vo_morph=10, vo_formant=25, vo_attack=55, ch_level=40, ch_vowel=50, choir=65,
-        dark=75, air=30, space=70, motion=55, sb_level=35, sb_tune=50, sb_drop=25, dr_mix=25, dr_amount=35)),
-    ("Ocarina Night", dict(
-        wi_inst="Ocarina", wi_level=75, wi_vibrato=60, wi_tone=55, voice=60,
-        sc_level=40, sc_density=40, sc_drift=50, sc_width=70, air=60, space=75, dl_mix=22, dl_time=58)),
-    ("Glass Cathedral", dict(
-        be_level=70, be_strike=55, be_decay=70, be_shimmer=50, bells=70, ch_level=45, ch_vowel=100, choir=50,
-        tx_level=25, tx_grain=70, tx_pitch=71, tx_smear=50, space=85, rv_size=80, rv_decay=80, rv_mix=40, air=60)),
-    ("After Hours Fog", dict(  # dark late-night sax, driven, with a sub underneath
-        wi_inst="Sax", wi_level=75, wi_vibrato=40, wi_tone=35, wi_breath=55, voice=65,
-        ch_level=35, ch_vowel=50, choir=40, dark=70, air=35, dr_mix=50, dr_amount=45, dr_tone=45,
-        sb_level=45, sb_drop=20, space=65, dl_mix=25, dl_time=70, dl_feedback=45)),
-    ("Black Choir Stabs", dict(  # short, distorted "ah" choir with a dropping sub
-        ch_level=85, ch_vowel=0, ch_attack=10, ch_spread=40, choir=80, breath=20,
-        dr_mix=70, dr_amount=65, dr_tone=50, dark=55, sb_level=55, sb_drop=45, sb_tune=50,
-        space=55, rv_mix=25, rv_decay=40)),
-    ("Astro Haze", dict(  # granular voices a fifth up, vowels, long dark delay
-        tx_level=60, tx_grain=55, tx_pitch=57, tx_smear=70, vo_level=50, vo_morph=60, vo_formant=50, choir=60,
-        dl_mix=35, dl_time=68, dl_feedback=55, dark=60, space=80, motion=70, sb_level=30, sb_drop=30)),
-    ("Wind Over Water", dict(
-        sc_level=80, sc_density=35, sc_drift=65, sc_width=80, air=75, ch_level=0,
-        be_level=20, be_decay=80, be_shimmer=70, bells=25, space=85, rv_decay=75, motion=60)),
-    ("Frozen Breath", dict(
-        tx_level=75, tx_grain=85, tx_pitch=86, tx_smear=85, sc_level=30, sc_density=50, ch_level=0,
-        space=90, rv_decay=90, rv_mix=45, dark=40, air=70, motion=50)),
-    ("Angel Lead", dict(
-        vo_level=70, vo_morph=65, vo_formant=75, vo_attack=20, choir=65, ch_level=0,
-        wi_inst="Flute", wi_level=50, wi_vibrato=45, voice=45, motion=40, space=70, dl_mix=20, dl_time=55, air=60)),
-    ("Monastery", dict(  # low male choir in a very large room
-        ch_level=85, ch_vowel=50, ch_attack=70, ch_spread=35, choir=75, dark=60, air=35,
-        space=88, rv_size=85, rv_decay=85, rv_mix=45, sb_level=20, sb_drop=10)),
-    ("Torch Song", dict(  # bright driven vowel lead
-        vo_level=80, vo_morph=75, vo_formant=60, vo_attack=5, choir=75, ch_level=0,
-        dr_mix=60, dr_amount=55, dr_tone=70, dl_mix=30, dl_time=45, dl_feedback=40, dark=25, air=60, space=55, motion=50)),
-    ("Doo Choir", dict(  # short rounded "doo" voices for chords
-        vo_level=70, vo_morph=15, vo_formant=50, vo_attack=8, ch_level=40, ch_vowel=50, ch_attack=15, choir=60,
-        space=50, rv_decay=40, motion=30, dark=40)),
+    # --- leads: one instrument, close and clear ---
+    ("Lone Flute", dict(**A("Flute", k1=45, k2=60, k3=60), **OFF,
+        attack=40, release=35, air=60, dark=25, space=45, rv_decay=40, rv_mix=22, motion=35)),
+    ("Midnight Sax", dict(**A("Sax", k1=50, k2=55, k3=45), **OFF,
+        release=40, dark=45, air=45, space=50, rv_mix=26, dl_mix=18, dl_time=62, dl_feedback=35,
+        dr_mix=20, dr_amount=30, motion=40)),
+    ("Clay Ocarina", dict(**A("Ocarina", k1=60, k2=40, k3=55), **OFF,
+        release=40, air=55, dark=30, space=55, rv_mix=28, dl_mix=15, dl_time=58, motion=40)),
+    ("Angel Lead", dict(**A("Vowels", k1=70, k2=75, k3=15, level=75), **B("Flute", oct="+1", k1=40, k2=50, k3=60, level=30),
+        release=40, air=65, dark=20, space=65, dl_mix=20, dl_time=55, motion=40)),
+    ("Torch Song", dict(**A("Vowels", k1=55, k2=55, k3=3, level=80), **OFF,
+        attack=20, release=30, dark=20, air=65, space=45, rv_mix=22, dl_mix=28, dl_time=45, dl_feedback=40,
+        dr_mix=60, dr_amount=55, dr_tone=70, motion=50)),
+    # --- voices and pads ---
+    ("Saint Air", dict(**A("Choir", k1=50, k2=60, k3=55, level=70), **B("Sax", k1=55, k2=45, k3=55, level=60),
+        blend=60, release=60, air=55, dark=40, space=78, rv_size=70, rv_decay=70, rv_mix=40,
+        dl_mix=16, dl_time=62, dl_feedback=40, motion=45)),
+    ("Choir Drift", dict(**A("Choir", k1=30, k2=75, k3=65), **B("Vowels", k1=40, k2=45, k3=60, level=45),
+        release=70, dark=45, air=55, space=80, rv_decay=70, motion=70)),
+    ("High Heavens", dict(**A("Choir", oct="+1", k1=100, k2=80, k3=60, level=75),
+        **B("Bells", oct="+1", k1=40, k2=70, k3=60, level=35),
+        release=65, air=75, dark=15, space=85, rv_size=75, rv_decay=75, rv_mix=40, motion=50)),
+    ("Monastery", dict(**A("Choir", oct="-1", k1=50, k2=35, k3=70, level=85), **OFF,
+        release=75, dark=60, air=30, space=88, rv_size=85, rv_decay=85, rv_mix=45, motion=35)),
+    ("Doo Choir", dict(**A("Vowels", k1=15, k2=50, k3=8, level=70), **B("Choir", k1=50, k2=40, k3=15, level=40),
+        attack=30, release=25, dark=35, air=50, space=40, rv_decay=35, rv_mix=25, motion=30)),
+    # --- bells ---
+    ("Glass Cathedral", dict(**A("Bells", k1=55, k2=70, k3=50), **B("Choir", oct="+1", k1=100, k2=60, k3=60, level=35),
+        release=70, air=60, dark=20, space=85, rv_size=80, rv_decay=80, rv_mix=40)),
+    ("Music Box Ghost", dict(**A("Bells", oct="+1", k1=75, k2=40, k3=30), **OFF,
+        release=45, air=65, dark=20, space=60, rv_mix=32, dl_mix=30, dl_time=40, dl_feedback=45)),
+    # --- air and texture ---
+    ("Wind Over Water", dict(**A("Wind", k1=35, k2=65, k3=80, level=80), **B("Bells", oct="+1", k1=30, k2=85, k3=75, level=25),
+        release=70, air=70, dark=30, space=85, rv_decay=75, motion=60)),
+    ("Frozen Breath", dict(**A("Texture", k1=85, k2=86, k3=85), **B("Wind", k1=50, k2=50, k3=70, level=30),
+        release=75, air=70, dark=35, space=90, rv_decay=90, rv_mix=45, motion=50)),
+    # --- dark: driven, low, with the sub ---
+    ("Astro Haze", dict(**A("Texture", k1=55, k2=57, k3=70, level=60), **B("Vowels", k1=60, k2=50, k3=50, level=50),
+        release=65, dark=60, air=40, space=80, dl_mix=35, dl_time=68, dl_feedback=55, motion=70,
+        sb_level=30, sb_drop=30)),
+    ("After Hours Fog", dict(**A("Sax", k1=40, k2=55, k3=35), **B("Choir", k1=50, k2=50, k3=55, level=35),
+        blend=40, release=50, dark=70, air=35, space=65, dl_mix=25, dl_time=70, dl_feedback=45,
+        dr_mix=50, dr_amount=45, dr_tone=45, sb_level=45, sb_drop=20)),
+    ("Black Choir Stabs", dict(**A("Choir", k1=0, k2=40, k3=10, level=85), **OFF,
+        attack=20, release=15, dark=55, air=40, space=35, rv_decay=40, rv_mix=25,
+        dr_mix=70, dr_amount=65, dr_tone=50, sb_level=28, sb_drop=45)),
+    ("Dark Vowel Bed", dict(**A("Vowels", k1=10, k2=25, k3=55), **B("Choir", k1=50, k2=50, k3=60, level=40),
+        release=60, dark=75, air=30, space=70, motion=55, dr_mix=25, dr_amount=35, sb_level=35, sb_drop=25)),
 ]
 
-
-LEVEL = {'Init': 86, 'Saint Air': 61, 'Celtic Hall': 93, 'Choir Drift': 77, 'Dark Vowel Bed': 74, 'Ocarina Night': 73, 'Glass Cathedral': 74, 'After Hours Fog': 71, 'Black Choir Stabs': 73, 'Astro Haze': 77, 'Wind Over Water': 90, 'Frozen Breath': 73, 'Angel Lead': 99, 'Monastery': 62, 'Torch Song': 76, 'Doo Choir': 88}   # output level per preset, from measured loudness (target RMS 0.22)
+LEVEL = {'Init': 87, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100, 'Angel Lead': 91, 'Torch Song': 91, 'Saint Air': 70, 'Choir Drift': 80, 'High Heavens': 89, 'Monastery': 62, 'Doo Choir': 88, 'Glass Cathedral': 100, 'Music Box Ghost': 100, 'Wind Over Water': 92, 'Frozen Breath': 84, 'Astro Haze': 100, 'After Hours Fog': 73, 'Black Choir Stabs': 100, 'Dark Vowel Bed': 71}   # output level per preset, filled from measured loudness so the set plays back evenly
 
 
 def main():
@@ -81,10 +89,9 @@ def main():
         assert len(name) <= 24, name
         values = {}
         for p in PARAMS:
-            if p["key"] in SKIP:
-                continue
-            values[p["key"]] = p.get("default", p["options"][0] if p.get("options") else 0)
-        values["master"] = LEVEL.get(name, values["master"])   # each preset levelled to the same loudness
+            if p["key"] not in SKIP:
+                values[p["key"]] = p["default"]
+        values["master"] = LEVEL.get(name, values["master"])
         for k, v in vals.items():
             if k not in by_key:
                 raise SystemExit("%s: unknown parameter %s" % (name, k))

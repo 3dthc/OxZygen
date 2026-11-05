@@ -4,10 +4,11 @@
     python3 vst/skin/make_skin.py
 
 Every coordinate lives here, so the baked artwork and MPC's live controls always line up. Writes:
-  art/bg_player.png, art/bg_edit.png, art/bg_fx.png   tab backgrounds, 1280x628 (the plugin area)
-  art/knob48.png, art/knob36.png                     knob filmstrips, 128 frames (light fixed, pointer and arc turn)
+  art/bg_player.png, art/bg_sound.png, art/bg_fx.png  tab backgrounds, 1280x628 (the plugin area)
+  art/knob48.png                                     knob filmstrip, 128 frames (light fixed, pointer and arc turn)
   art/orb.png                                        orb meter filmstrip: 2 energy levels x 17 frames, 360x360
-  art/mute_*.png, art/solo_*.png                     layer toggles, off and on
+  art/seg_type_*.png, art/seg_oct_*.png              sound and octave selector segments, off and on
+  art/lbl_<sound>.png                                the three knob labels for each sound (shown by a picture widget)
   layout.conf
 
 Coordinates are MPC screen pixels (1280x800). The plugin area is y=86..714, so backgrounds subtract 86.
@@ -40,47 +41,53 @@ PLAYER = {
     "orb": (640, 400),
     "headings": [("VOICE", 120, 440, 170), ("ATMOSPHERE", 840, 1160, 170)],
     "knobs": [
-        ("voice", "Voice", 200, 295), ("breath", "Breath", 360, 295),
-        ("choir", "Choir", 200, 520), ("bells", "Bells", 360, 520),
+        ("blend", "Blend", 200, 295), ("breath", "Breath", 360, 295),
+        ("attack", "Attack", 200, 520), ("release", "Release", 360, 520),
         ("air", "Air", 920, 295), ("dark", "Dark", 1080, 295),
         ("space", "Space", 920, 520), ("motion", "Motion", 1080, 520),
     ],
 }
 PLAYER_R, PLAYER_VS, PLAYER_BW = 48, 24, 130
 
-LAYERS = [("ch", "Choir", ["Vowel", "Attack", "Spread", "Level"]),
-          ("vo", "Vowels", ["Morph", "Attack", "Formant", "Level"]),
-          ("wi", "Winds", ["Breath", "Vibrato", "Tone", "Level"]),
-          ("be", "Bells", ["Strike", "Decay", "Shimmer", "Level"]),
-          ("sc", "Soundscape", ["Density", "Drift", "Width", "Level"]),
-          ("tx", "Texture", ["Grain", "Pitch", "Smear", "Level"])]
-EDIT_CARDS = [(x, y) for y in (100, 406) for x in (20, 440, 860)]   # card top-left, 400 x 296
-EDIT_R, EDIT_VS, EDIT_BW = 36, 20, 90
-TOGGLE_W, TOGGLE_H = 74, 34
-SEG_W, SEG_H = 104, 32                  # Winds instrument selector segments (Flute | Ocarina | Sax)
-WINDS_SEL = (860 + 200, 100 + 94)       # centre, on the Winds card under its title
+# SOUND page: slots A and B side by side, each a 610 x 600 panel
+SOUNDS = ["Off", "Choir", "Vowels", "Flute", "Ocarina", "Sax", "Bells", "Wind", "Texture"]
+KNOB_LABELS = {"Off": ["", "", ""], "Choir": ["Vowel", "Spread", "Attack"], "Vowels": ["Morph", "Formant", "Attack"],
+               "Flute": ["Vibrato", "Breath", "Tone"], "Ocarina": ["Vibrato", "Breath", "Tone"],
+               "Sax": ["Vibrato", "Breath", "Tone"], "Bells": ["Strike", "Decay", "Shimmer"],
+               "Wind": ["Density", "Drift", "Width"], "Texture": ["Grain", "Pitch", "Smear"]}   # must match engine.c
+SLOTS = [("a", "Sound A", 20, 100), ("b", "Sound B", 650, 100)]
+TYPE_SW, TYPE_SH = 186, 42             # 3 x 3 grid of sounds
+OCT_SW, OCT_SH = 80, 38                # five octave segments
+SLOT_KNOB_DX, SLOT_KNOB_DY = 132, 448  # four knobs 132 px apart, centred in the panel, at y0 + 425
+SLOT_R, SLOT_VS, SLOT_BW = 48, 24, 120
+LBL_W, LBL_H = 3 * SLOT_KNOB_DX, 28    # the label strip under knobs 1-3
+
+
+def slot_geom(x0, y0):
+    cx = x0 + 305
+    knobs = [(cx + int((i - 1.5) * SLOT_KNOB_DX), y0 + SLOT_KNOB_DY) for i in range(4)]
+    return {"type": (cx, y0 + 112), "oct": (x0 + 360, y0 + 262), "oct_label": (x0 + 24, y0 + 262), "knobs": knobs}
+
+
+def slot_knobs():
+    out = []
+    for p, name, x0, y0 in SLOTS:
+        g = slot_geom(x0, y0)
+        for (cx, cy), k in zip(g["knobs"], ("k1", "k2", "k3", "level")):
+            out.append(("%s_%s" % (p, k), "Level" if k == "level" else "", cx, cy))
+    return out
+
+
+def label_top(cy, r=SLOT_R, vs=SLOT_VS):
+    """Where a knob's baked name sits: under MPC's live value (cy + r + 2, value_h tall), 5 px gap."""
+    return cy + r + 2 + max(26, round(vs * 1.2)) + 5
+
 
 FX = [("rv", "Reverb", ["Size", "Decay", "Mix"], 20, 100),
       ("dl", "Delay", ["Time", "Feedback", "Mix"], 650, 100),
       ("dr", "Drive", ["Amount", "Tone", "Mix"], 20, 406),
       ("sb", "Sub / Output", ["Level", "Tune", "Drop"], 650, 406)]
 FX_R, FX_VS, FX_BW = 48, 24, 116   # Sub / Output has 4 knobs 122 px apart
-
-
-def edit_knobs():
-    out = []
-    for (p, name, ks), (x0, y0) in zip(LAYERS, EDIT_CARDS):
-        for i, k in enumerate(ks):
-            out.append(("%s_%s" % (p, k.lower()), k, x0 + 62 + i * 92, y0 + 160))
-    return out
-
-
-def edit_toggles():
-    out = []
-    for (p, name, ks), (x0, y0) in zip(LAYERS, EDIT_CARDS):
-        out.append(("%s_mute" % p, "mute", x0 + 400 - 142, y0 + 34))
-        out.append(("%s_solo" % p, "solo", x0 + 400 - 60, y0 + 34))
-    return out
 
 
 def fx_knobs():
@@ -201,28 +208,26 @@ def strip(frames, size):
     return out
 
 
-def seg_html(on):
+def seg_html(on, w, h):
     """A blank segment plate; the renderer writes the option name on it (skin.css sets the font)."""
     bg = "linear-gradient(180deg,#3a2f1c,#1d1810)" if on else "linear-gradient(180deg,#1a2029,#0e1218)"
     hi = "#6b5630" if on else "#2f3746"
     return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border:1px solid #000;border-radius:3px;"
-            "background:%s;box-shadow:inset 0 1px 0 %s'></div>" % (SEG_W, SEG_H, bg, hi))
+            "background:%s;box-shadow:inset 0 1px 0 %s'></div>" % (w, h, bg, hi))
+
+
+def labels_html(names):
+    """Three knob names, centred under knobs 1-3 (a transparent strip a picture widget swaps per sound)."""
+    cells = "".join("<div style='width:%dpx;text-align:center'>%s</div>" % (SLOT_KNOB_DX, n.upper()) for n in names)
+    return ("<div style='display:flex;width:%dpx;height:%dpx;align-items:center;font:600 19px BC,sans-serif;"
+            "letter-spacing:.12em;color:%s'>%s</div>" % (LBL_W, LBL_H, FG, cells))
 
 
 SKIN_CSS = """/* generated by make_skin.py: the selector's option names in the skin's condensed face */
 @font-face { font-family: "BC"; font-weight: 600; src: url("fonts/BarlowCondensed-SemiBold.ttf"); }
-.seg-tx { font-family: "BC", sans-serif; font-size: 16px; letter-spacing: 0.14em; text-transform: uppercase; }
+.seg-tx { font-family: "BC", sans-serif; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; }
 .seg-sheen { display: none; }
 """
-
-
-def toggle_html(label, on):
-    bg = "linear-gradient(180deg,#3a2f1c,#1d1810)" if on else "linear-gradient(180deg,#2a313d,#161b24)"
-    hi = "#6b5630" if on else "#465064"
-    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border:1px solid #000;border-radius:3px;"
-            "background:%s;box-shadow:inset 0 1px 0 %s;display:flex;align-items:center;justify-content:center;"
-            "font:600 16px BC,sans-serif;letter-spacing:.14em;color:%s;padding-left:.14em'>%s</div>"
-            % (TOGGLE_W, TOGGLE_H, bg, hi, BRASS if on else FG, label))
 
 
 def value_box(cx, cy, r, vs, width):
@@ -266,10 +271,10 @@ def bg_player():
     # the orb's shadow on the panel (the orb itself is the live meter on top)
     h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:300px;height:300px;border-radius:50%%;"
              "background:#000;box-shadow:0 24px 56px 6px rgba(0,0,0,.8)'></div>" % (ox - 150, oy - Y0 - 150))
-    # wordmark: mixed case, the Z carries the emphasis (larger, accent colour)
+    # wordmark: all caps, the Z carries the emphasis (larger, accent colour)
     h.append("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:32px;"
-             "letter-spacing:.16em;text-transform:none;line-height:40px'>Ox<b style='font-size:44px;"
-             "vertical-align:-3px;letter-spacing:.1em'>Z</b>ygen</div>" % (144 - Y0))
+             "letter-spacing:.22em;line-height:40px'>OX<b style='font-size:46px;vertical-align:-4px;"
+             "letter-spacing:.18em'>Z</b>YGEN</div>" % (144 - Y0))
     for text, x0, x1, y in PLAYER["headings"]:
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
     for key, label, cx, cy in PLAYER["knobs"]:
@@ -277,15 +282,24 @@ def bg_player():
     return "".join(h)
 
 
-def bg_edit():
+def bg_sound():
     h = ["<div class='grain'></div>"]
-    for (p, name, ks), (x0, y0) in zip(LAYERS, EDIT_CARDS):
-        h.append("<div class='well' style='left:%dpx;top:%dpx;width:400px;height:296px'></div>" % (x0, y0 - Y0))
-        h.append("<div class='title' style='left:%dpx;top:%dpx'>%s</div>" % (x0 + 20, y0 - Y0 + 18, name))
-        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:360px;height:1px;"
-                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 20, y0 - Y0 + 66))
-    for key, label, cx, cy in edit_knobs():
-        h.append(knob_block(key, label, cx, cy, EDIT_R, EDIT_VS, 60, 16))
+    for p, name, x0, y0 in SLOTS:
+        g = slot_geom(x0, y0)
+        h.append("<div class='well' style='left:%dpx;top:%dpx;width:610px;height:600px'></div>" % (x0, y0 - Y0))
+        h.append("<div class='title' style='left:%dpx;top:%dpx'>SOUND <b>%s</b></div>" % (x0 + 22, y0 - Y0 + 18, p.upper()))
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
+                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
+        lx, ly = g["oct_label"]
+        h.append("<div class='heading' style='left:%dpx;top:%dpx;width:110px;font-size:18px'>OCTAVE</div>" % (lx, ly - Y0 - 12))
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
+                 "background:linear-gradient(90deg,#2c3442,transparent)'></div>" % (x0 + 22, y0 - Y0 + 330))
+        for i, (cx, cy) in enumerate(g["knobs"]):
+            top, vh, box = value_box(cx, cy, SLOT_R, SLOT_VS, 74)
+            h.append(box)
+            if i == 3:   # Level is the same for every sound: baked; knobs 1-3 get a picture per sound
+                h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:200px;font-size:19px'>LEVEL</div>"
+                         % (cx - 100, label_top(cy) - Y0))
     return "".join(h)
 
 
@@ -315,14 +329,14 @@ def render_art():
             pg.wait_for_timeout(150)
 
         # backgrounds
-        for name, fn in (("player", bg_player), ("edit", bg_edit), ("fx", bg_fx)):
+        for name, fn in (("player", bg_player), ("sound", bg_sound), ("fx", bg_fx)):
             page(fn())
             Image.open(io.BytesIO(pg.screenshot())).convert("RGB").save(os.path.join(ART, "bg_%s.png" % name), optimize=True)
 
         # filmstrips
         page("")
         pg.add_script_tag(content=DRAW_JS)
-        for r in (PLAYER_R, EDIT_R):
+        for r in (PLAYER_R,):
             s = 2 * r + 10
             frames = [png(pg.evaluate("([s, v]) => knob(s, v)", [s, i / 127])) for i in range(128)]
             strip(frames, s).save(os.path.join(ART, "knob%d.png" % r), optimize=True)
@@ -330,20 +344,20 @@ def render_art():
                   for lv in range(ORB_LEVELS) for ph in range(ORB_PHASES)]
         strip(frames, ORB_SIZE).save(os.path.join(ART, "orb.png"), optimize=True)
 
-        # selector segments
-        for on in (0, 1):
-            pg.set_content("<style>body{margin:0;background:transparent}</style>" + seg_html(on))
-            shot = pg.screenshot(clip={"x": 0, "y": 0, "width": SEG_W, "height": SEG_H}, omit_background=True)
-            Image.open(io.BytesIO(shot)).save(os.path.join(ART, "seg_%s.png" % ("on" if on else "off")))
-
-        # toggles
-        for label in ("MUTE", "SOLO"):
+        # selector segments, two sizes
+        for kind, w, h in (("type", TYPE_SW, TYPE_SH), ("oct", OCT_SW, OCT_SH)):
             for on in (0, 1):
-                pg.set_content("<style>%s body{background:transparent}</style>%s" % (FONT_CSS, toggle_html(label, on)))
-                pg.evaluate("document.fonts.ready")
-                pg.wait_for_timeout(100)
-                shot = pg.screenshot(clip={"x": 0, "y": 0, "width": TOGGLE_W, "height": TOGGLE_H}, omit_background=True)
-                Image.open(io.BytesIO(shot)).save(os.path.join(ART, "%s_%s.png" % (label.lower(), "on" if on else "off")))
+                pg.set_content("<style>body{margin:0;background:transparent}</style>" + seg_html(on, w, h))
+                shot = pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": h}, omit_background=True)
+                Image.open(io.BytesIO(shot)).save(os.path.join(ART, "seg_%s_%s.png" % (kind, "on" if on else "off")))
+
+        # knob-name strips, one per sound
+        for snd in SOUNDS:
+            pg.set_content("<style>%s body{margin:0;background:transparent}</style>%s" % (FONT_CSS, labels_html(KNOB_LABELS[snd])))
+            pg.evaluate("document.fonts.ready")
+            pg.wait_for_timeout(80)
+            shot = pg.screenshot(clip={"x": 0, "y": 0, "width": LBL_W, "height": LBL_H}, omit_background=True)
+            Image.open(io.BytesIO(shot)).save(os.path.join(ART, "lbl_%s.png" % snd.lower()))
         b.close()
     os.remove(tmp)
 
@@ -354,7 +368,7 @@ def write_layout():
     L = ["# generated by make_skin.py: edit that script, not this file",
          "theme_bg=12161d", "theme_ink=e4e9f1", "theme_ink_dim=6fe0d6", "theme_accent=d1a85c",
          "theme_seg_active_tx=d1a85c", "art_css=skin.css",
-         "qlinks_track = voice,breath,choir,bells,air,dark,space,motion,master", ""]
+         "qlinks_track = blend,breath,attack,release,air,dark,space,motion,master", ""]
     # PLAYER
     L.append("[tab PLAYER]")
     L.append("art file=art/bg_player.png fit=stretch")
@@ -366,20 +380,24 @@ def write_layout():
                  % (cx, cy, PLAYER_R, label.upper(), key, PLAYER_R, PLAYER_VS, PLAYER_BW))
     L.append('qlinks "PLAYER" = ' + ",".join(k for k, *_ in PLAYER["knobs"]))
     L.append("")
-    # EDIT
-    L.append("[tab EDIT]")
-    L.append("art file=art/bg_edit.png fit=stretch")
-    for key, label, cx, cy in edit_knobs():
+    # SOUND
+    L.append("[tab SOUND]")
+    L.append("art file=art/bg_sound.png fit=stretch")
+    for p, name, x0, y0 in SLOTS:
+        g = slot_geom(x0, y0)
+        L.append('enum_h cx=%d cy=%d label="" key=%s_type options="%s" rows=3 sw=%d sh=%d '
+                 'img=art/seg_type_off.png img_on=art/seg_type_on.png'
+                 % (g["type"][0], g["type"][1], p, ",".join(x.upper() for x in SOUNDS), TYPE_SW, TYPE_SH))
+        L.append('enum_h cx=%d cy=%d label="" key=%s_oct options="-2,-1,0,+1,+2" sw=%d sh=%d '
+                 'img=art/seg_oct_off.png img_on=art/seg_oct_on.png' % (g["oct"][0], g["oct"][1], p, OCT_SW, OCT_SH))
+        (cx1, cy1) = g["knobs"][0]
+        L.append('picture x=%d y=%d w=%d h=%d key=%s_type files="%s"'
+                 % (cx1 - SLOT_KNOB_DX // 2, label_top(cy1) - 3, LBL_W, LBL_H, p,
+                    ",".join("art/lbl_%s.png" % x.lower() for x in SOUNDS)))
+    for key, label, cx, cy in slot_knobs():
         L.append('knob cx=%d cy=%d r=%d label="%s" key=%s strip=art/knob%d.png ns=0 vs=%d bw=%d'
-                 % (cx, cy, EDIT_R, label.upper(), key, EDIT_R, EDIT_VS, EDIT_BW))
-    for key, kind, cx, cy in edit_toggles():
-        L.append('toggle cx=%d cy=%d label="%s" key=%s img=art/%s_off.png img_on=art/%s_on.png w=%d h=%d ns=0 bw=%d'
-                 % (cx, cy, kind.upper(), key, kind, kind, TOGGLE_W, TOGGLE_H, TOGGLE_W + 4))
-    L.append('enum_h cx=%d cy=%d label="" key=wi_inst options="FLUTE,OCARINA,SAX" sw=%d sh=%d '
-             'img=art/seg_off.png img_on=art/seg_on.png' % (WINDS_SEL[0], WINDS_SEL[1], SEG_W, SEG_H))
-    ek = [k for k, *_ in edit_knobs()]
-    L.append('qlinks "LAYERS 1-3" = ' + ",".join(ek[:12]))
-    L.append('qlinks "LAYERS 4-6" = ' + ",".join(ek[12:]))
+                 % (cx, cy, SLOT_R, label.upper() or key.upper(), key, SLOT_R, SLOT_VS, SLOT_BW))
+    L.append('qlinks "SOUND" = ' + ",".join(k for k, *_ in slot_knobs()))
     L.append("")
     # FX
     L.append("[tab FX]")
@@ -394,8 +412,8 @@ def write_layout():
 def check_keys():
     """Every key the layout uses must exist in params.json (the build would fail later, less clearly)."""
     keys = {p["key"] for p in json.load(open(os.path.join(HERE, "..", "params.json")))["params"]}
-    used = [k for k, *_ in PLAYER["knobs"]] + [k for k, *_ in edit_knobs()] + [k for k, *_ in edit_toggles()] + \
-           [k for k, *_ in fx_knobs()] + ["orb", "wi_inst"]
+    used = [k for k, *_ in PLAYER["knobs"]] + [k for k, *_ in slot_knobs()] + [k for k, *_ in fx_knobs()] + \
+           ["orb", "a_type", "b_type", "a_oct", "b_oct"]
     missing = [k for k in used if k not in keys]
     if missing:
         raise SystemExit("make_skin: keys not in params.json: %s" % ", ".join(missing))

@@ -13,8 +13,8 @@ TARGET="${1:-oxzygen}"
 LICENSE_ARGS=()
 EXTRA_ARGS=()
 case "$TARGET" in
-  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.3.1"
-           ABOUT="OxZygen 0.3: choir, vowels, winds, bells, soundscape and texture layers; drive, delay, reverb, sub; 16 presets"
+  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.4.0"
+           ABOUT="OxZygen 0.4: two sound slots (choir, vowels, flute, ocarina, sax, bells, wind, texture), drive, delay, reverb, sub; 19 presets"
            EXTRA_ARGS=(--extra "$HERE/vst/data:samples")
            [ -f "$HERE/vst/data/manifest.txt" ] || { echo "vst/data is missing: run samples/fetch_sources.sh, samples/trim.sh, then python3 samples/prepare.py"; exit 1; } ;;
   sdtest)  CFG="$HERE/tests/sdtest/vst.json"; VER="1.0.0"; ABOUT="OxZygen SD card access test"; LICENSE_ARGS=(--license MIT) ;;

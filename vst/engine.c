@@ -1,21 +1,17 @@
-/* OxZygen engine: six layers, effects, the orb.
+/* OxZygen engine: two sound slots, effects, the orb.
  *
- * Layers (Edit page), each with Level, Mute and Solo:
- *   Choir       three singers (Claudia, Mirko, Sven) on the notes each covers; Vowel blends ah -> oh -> ih;
- *               Spread detunes and pans them; Attack sets the swell.
- *   Vowels      formant synthesis: two glottal oscillators through four vowel formants. Morph sweeps u-o-a-e-i,
- *               Formant sets the voice size, Motion sways the vowel.
- *   Winds       flute, ocarina or alto sax from samples: soft/loud by velocity, recorded vibrato by Vibrato, breath
- *               noise by Breath, brightness by Tone.
- *   Bells       modal synthesis, eight church-bell partials: Strike (brightness, mallet), Decay, Shimmer (beating).
- *   Soundscape  pitched wind (resonances on the note's harmonics, gusting) plus a granular cloud of choir whispers:
- *               Density, Drift, Width.
- *   Texture     granular voices: Grain size, Pitch (-24..+24 in musical steps), Smear (scatter, reverse grains).
- * Effects (FX page): Drive -> Dark/Air tone -> ping-pong Delay -> 8-line reverb; the Sub (follows the lowest held
- * note, Drop glides it into pitch) is added after the reverb so it stays dry. Output level last.
- * Player macros: Voice = Winds level, Choir = Choir and Vowels levels, Bells = Bells level, Breath = attack softness
- * and breath, Air = brightness and Soundscape level, Dark = low-pass, Space = reverb and release, Motion = vibrato,
- * drift, vowel sway, Texture level and the orb's speed.
+ * Slots A and B each pick one sound and have an Octave, three knobs that mean what that sound needs, and a Level:
+ *   Choir    Vowel (ah -> oh -> ih), Spread (singers apart in pitch and stereo), Attack (the swell)
+ *            three recorded singers (Claudia, Mirko, Sven) on the notes each covers
+ *   Vowels   Morph (u-o-a-e-i), Formant (voice size), Attack: formant synthesis, two glottal oscillators
+ *   Flute, Ocarina, Sax   Vibrato (recorded vibrato fades in), Breath (noise), Tone: recorded winds, soft/loud by velocity
+ *   Bells    Strike (brightness, mallet), Decay, Shimmer (beating): eight church-bell partials (modal synthesis)
+ *   Wind     Density, Drift, Width: pitched wind on the note's harmonics plus a granular cloud of choir whispers
+ *   Texture  Grain (20-400 ms), Pitch (-24..+24 in musical steps), Smear: granular voices
+ * Player macros: Blend (A <-> B), Breath (breathiness), Attack and Release (scale every sound's envelope),
+ * Air (top lift), Dark (low-pass), Space (reverb), Motion (vibrato, drift, vowel sway, orb speed).
+ * Effects (FX page): Drive -> Dark/Air -> ping-pong Delay -> 8-line reverb; the Sub follows the lowest held key
+ * (Drop glides it into pitch) and is added after the reverb so it stays dry. Output level last.
  *
  * Samples: <plugin folder>/samples (MODULE_SUBDIR), prepared by samples/prepare.py: mono 16-bit with baked loops,
  * listed in manifest.txt. They load once per process on a background thread and are shared by every instance.
@@ -29,7 +25,7 @@
 #include "params.h"
 
 #define SR 44100.0f
-#define MAXV 32              /* voices: one per layer per note */
+#define MAXV 32              /* voices: one per slot per note */
 #define MAXSRC 6             /* sample players per voice: 3 singers x 2 vowels */
 #define ORB_PHASES 17
 
@@ -213,7 +209,7 @@ typedef struct { const zone_t *z; int i; float fr, inc_base, inc, g, gl, gr; } s
 typedef struct { const zone_t *z; float pos, inc, ph, dph, gl, gr; int on; } grain_t;
 
 typedef struct {
-    int active, note, layer, held, pedal;
+    int active, note, key, slot, inst, layer, held, pedal;   /* note: key + the slot's octave */
     float vel, env, att, t, lfo, drift, pan;
     unsigned age, seed;
     /* sample layers (choir, winds) */
@@ -233,8 +229,13 @@ typedef struct {
     float gust, gust_ph, wdrift[3];
 } voice_t;
 
+/* one slot's settings, read once per block */
+enum { T_OFF, T_CHOIR, T_VOWELS, T_FLUTE, T_OCARINA, T_SAX, T_BELLS, T_WIND, T_TEXTURE };
+typedef struct { int type, layer, inst, oct; float k1, k2, k3, gain; } slot_t;
+
 typedef struct {
     float val[NPARAMS];
+    slot_t slot[2];
     voice_t v[MAXV];
     unsigned clock, noise;
     int pedal_down;
@@ -263,37 +264,56 @@ static int idx_of(const char *key) {
     return -1;
 }
 #define P(name) (s->val[I_##name] * 0.01f)
-static int I_master, I_voice, I_breath, I_choir, I_bells, I_air, I_dark, I_space, I_motion,
-    I_ch_vowel, I_ch_attack, I_ch_spread, I_ch_level,
-    I_vo_morph, I_vo_attack, I_vo_formant, I_vo_level,
-    I_wi_breath, I_wi_vibrato, I_wi_tone, I_wi_level, I_wi_inst,
-    I_be_strike, I_be_decay, I_be_shimmer, I_be_level,
-    I_sc_density, I_sc_drift, I_sc_width, I_sc_level,
-    I_tx_grain, I_tx_pitch, I_tx_smear, I_tx_level,
+static int I_master, I_blend, I_breath, I_attack, I_release, I_air, I_dark, I_space, I_motion,
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
     I_sb_level, I_sb_tune, I_sb_drop, I_orb;
-static int I_mute[NLAYERS], I_solo[NLAYERS];
+static int I_type[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
 static int g_idx_done;
 static void init_idx(void) {
     if (g_idx_done) return;
 #define X(n) I_##n = idx_of(#n)
-    X(master); X(voice); X(breath); X(choir); X(bells); X(air); X(dark); X(space); X(motion);
-    X(ch_vowel); X(ch_attack); X(ch_spread); X(ch_level); X(vo_morph); X(vo_attack); X(vo_formant); X(vo_level);
-    X(wi_breath); X(wi_vibrato); X(wi_tone); X(wi_level); X(wi_inst);
-    X(be_strike); X(be_decay); X(be_shimmer); X(be_level); X(sc_density); X(sc_drift); X(sc_width); X(sc_level);
-    X(tx_grain); X(tx_pitch); X(tx_smear); X(tx_level);
+    X(master); X(blend); X(breath); X(attack); X(release); X(air); X(dark); X(space); X(motion);
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
     X(sb_level); X(sb_tune); X(sb_drop); X(orb);
 #undef X
-    static const char *PRE[NLAYERS] = {"ch", "vo", "wi", "be", "sc", "tx"};
-    for (int l = 0; l < NLAYERS; l++) {
+    for (int sl = 0; sl < 2; sl++) {
         char k[16];
-        snprintf(k, sizeof k, "%s_mute", PRE[l]); I_mute[l] = idx_of(k);
-        snprintf(k, sizeof k, "%s_solo", PRE[l]); I_solo[l] = idx_of(k);
+        const char *pre = sl ? "b" : "a";
+        snprintf(k, sizeof k, "%s_type", pre); I_type[sl] = idx_of(k);
+        snprintf(k, sizeof k, "%s_oct", pre); I_oct[sl] = idx_of(k);
+        snprintf(k, sizeof k, "%s_k1", pre); I_k1[sl] = idx_of(k);
+        snprintf(k, sizeof k, "%s_k2", pre); I_k2[sl] = idx_of(k);
+        snprintf(k, sizeof k, "%s_k3", pre); I_k3[sl] = idx_of(k);
+        snprintf(k, sizeof k, "%s_level", pre); I_level[sl] = idx_of(k);
     }
     for (int i = 0; i <= 256; i++) HANN[i] = 0.5f - 0.5f * cosf(2.0f * (float)M_PI * i / 256.0f);
     g_idx_done = 1;
 }
+
+/* each sound's level relative to the others, so a slot at the same Level sounds about as loud whatever it plays */
+static const float TYPE_GAIN[9] = {0, 0.98f, 0.91f, 1.15f, 1.35f, 0.95f, 1.6f, 1.03f, 0.88f};
+static const int TYPE_LAYER[9] = {-1, L_CHOIR, L_VOWELS, L_WINDS, L_WINDS, L_WINDS, L_BELLS, L_SCAPE, L_TEXTURE};
+
+static void read_slots(oxz_t *s) {
+    float blend = P(blend);
+    for (int i = 0; i < 2; i++) {
+        slot_t *x = &s->slot[i];
+        x->type = (int)(s->val[I_type[i]] + 0.5f);
+        if (x->type < 0 || x->type > T_TEXTURE) x->type = T_OFF;
+        x->layer = TYPE_LAYER[x->type];
+        x->inst = x->type - T_FLUTE;                 /* 0 flute, 1 ocarina, 2 sax (winds only) */
+        x->oct = (int)(s->val[I_oct[i]] + 0.5f) - 2;
+        x->k1 = s->val[I_k1[i]] * 0.01f; x->k2 = s->val[I_k2[i]] * 0.01f; x->k3 = s->val[I_k3[i]] * 0.01f;
+        float side = i ? fminf(1.0f, 2.0f * blend) : fminf(1.0f, 2.0f * (1.0f - blend));   /* Blend: both full at 50 */
+        x->gain = TYPE_GAIN[x->type] * s->val[I_level[i]] * 0.01f * side;
+    }
+}
+
+/* what the three knobs mean for each sound, for MPC's parameter names */
+static const char *KNOB_NAMES[9][3] = {
+    {"Knob 1", "Knob 2", "Knob 3"}, {"Vowel", "Spread", "Attack"}, {"Morph", "Formant", "Attack"},
+    {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"}, {"Vibrato", "Breath", "Tone"},
+    {"Strike", "Decay", "Shimmer"}, {"Density", "Drift", "Width"}, {"Grain", "Pitch", "Smear"}};
 
 static void *create(const char *data_dir) {
     init_idx();
@@ -307,6 +327,7 @@ static void *create(const char *data_dir) {
                                     : PARAMS[i].min + PARAMS[i].def * (PARAMS[i].max - PARAMS[i].min);
     s->noise = 0x9e3779b9u;
     s->sub_target = -1;
+    read_slots(s);
     pthread_mutex_lock(&g_lock);
     if (g_refs++ == 0) {
         snprintf(g_dir, sizeof g_dir, "%s", data_dir ? data_dir : "samples");
@@ -331,37 +352,16 @@ static void destroy(void *inst) {
     free(s);
 }
 
-static int layer_on(oxz_t *s, int layer) {
-    int any_solo = 0;
-    for (int l = 0; l < NLAYERS; l++) if (s->val[I_solo[l]] > 0.5f) any_solo = 1;
-    if (s->val[I_mute[layer]] > 0.5f) return 0;
-    return !any_solo || s->val[I_solo[layer]] > 0.5f;
-}
-
-/* each layer's level: its own Level knob times the Player macro that owns it */
-static float layer_gain(oxz_t *s, int l) {
-    switch (l) {
-    case L_CHOIR:   return P(ch_level) * P(choir) * 1.4f;
-    case L_VOWELS:  return P(vo_level) * P(choir) * 1.3f;
-    case L_WINDS:   return P(wi_level) * P(voice) * 2.0f;
-    case L_BELLS:   return P(be_level) * P(bells) * 2.4f;
-    case L_SCAPE:   return P(sc_level) * (0.35f + 1.1f * P(air));
-    default:        return P(tx_level) * (0.5f + 0.8f * P(motion));
-    }
-}
-
-/* per-layer polyphony: a full layer reuses its own quietest released voice (else its oldest) instead of
+/* per-slot polyphony: a full slot reuses its own quietest released voice (else its oldest) instead of
  * growing, which keeps long release tails from piling up on the MPC's CPU */
-static const int LAYER_CAP[NLAYERS] = {10, 8, 6, 12, 6, 6};
-
-static voice_t *alloc_voice(oxz_t *s, int layer) {
+static voice_t *alloc_voice(oxz_t *s, int slot, int layer) {
     voice_t *best = NULL;
-    int count = 0;
-    for (int k = 0; k < MAXV; k++) count += s->v[k].active && s->v[k].layer == layer;
-    if (count >= LAYER_CAP[layer]) {
+    int cap = layer == L_BELLS ? 14 : layer == L_SCAPE || layer == L_TEXTURE ? 8 : 12, count = 0;
+    for (int k = 0; k < MAXV; k++) count += s->v[k].active && s->v[k].slot == slot;
+    if (count >= cap) {
         for (int k = 0; k < MAXV; k++) {
             voice_t *v = &s->v[k];
-            if (!v->active || v->layer != layer) continue;
+            if (!v->active || v->slot != slot) continue;
             int rel = !v->held && !v->pedal, brel = best && !best->held && !best->pedal;
             if (!best || (rel && !brel) || (rel == brel && (rel ? v->env < best->env : v->age < best->age))) best = v;
         }
@@ -374,6 +374,8 @@ static voice_t *alloc_voice(oxz_t *s, int layer) {
     for (int k = 0; k < MAXV; k++) if (!best || s->v[k].age < best->age) best = &s->v[k];
     return best;
 }
+
+static float attack_mult(oxz_t *s) { return powf(4.0f, 2.0f * P(attack) - 1.0f); }   /* 0.25x .. 4x, 1x at 50 */
 
 static float attack_secs(float knob, float breath) {   /* knob 0..1 -> 5 ms .. 2.5 s, scaled by Breath */
     return (0.005f + 2.5f * knob * knob) * (0.45f + 1.1f * breath);
@@ -399,10 +401,11 @@ static int singers_for(const bank_t *b, float note, float gs[3]) {
 }
 
 static void choir_sources(oxz_t *s, const bank_t *b, voice_t *v) {
-    float vow = P(ch_vowel) * 2.0f;              /* 0 ah, 1 oh, 2 ih */
+    const slot_t *sl = &s->slot[v->slot];
+    float vow = sl->k1 * 2.0f;                   /* 0 ah, 1 oh, 2 ih */
     int va = vow < 1.0f ? 0 : 1;
     float w = vow - va, wa = cosf(w * (float)M_PI / 2), wb = sinf(w * (float)M_PI / 2);
-    float spread = P(ch_spread);
+    float spread = sl->k2;
     static const float PAN[3] = {-0.45f, 0.45f, 0.0f}, DET[3] = {-7.0f, 6.0f, -2.0f};
     float gs[3];
     float norm = 1.0f / sqrtf((float)singers_for(b, v->note, gs));
@@ -417,8 +420,8 @@ static void choir_sources(oxz_t *s, const bank_t *b, voice_t *v) {
 }
 
 static void winds_sources(oxz_t *s, const bank_t *b, voice_t *v) {
-    int inst = (int)(s->val[I_wi_inst] + 0.5f);    /* 0 flute, 1 ocarina, 2 sax */
-    float vib = P(wi_vibrato), loud = fminf(1.0f, fmaxf(0.0f, (v->vel - 0.3f) / 0.55f));
+    int inst = v->inst;                            /* 0 flute, 1 ocarina, 2 sax */
+    float vib = s->slot[v->slot].k1, loud = fminf(1.0f, fmaxf(0.0f, (v->vel - 0.3f) / 0.55f));
     float rec_vib = fminf(1.0f, fmaxf(0.0f, (vib - 0.35f) * 2.5f));   /* recorded vibrato fades in above ~35% */
     if (inst == 0) {
         float plain = cosf(rec_vib * (float)M_PI / 2);
@@ -439,8 +442,9 @@ static const float BELL_RATIO[NP] = {0.5f, 1.0f, 1.183f, 1.506f, 2.0f, 2.514f, 2
 static const float BELL_AMP[NP] = {0.45f, 1.0f, 0.62f, 0.38f, 0.75f, 0.28f, 0.22f, 0.16f};
 
 static void bells_start(oxz_t *s, voice_t *v) {
-    float strike = P(be_strike) * (0.6f + 0.6f * v->vel);
-    float t60 = 0.6f + 11.0f * P(be_decay) * P(be_decay);
+    const slot_t *sl = &s->slot[v->slot];
+    float strike = sl->k1 * (0.6f + 0.6f * v->vel);
+    float t60 = 0.6f + 11.0f * sl->k2 * sl->k2;
     float f0 = note_hz((float)v->note);
     for (int k = 0; k < NP; k++) {
         float f = f0 * BELL_RATIO[k];
@@ -455,52 +459,46 @@ static void bells_start(oxz_t *s, voice_t *v) {
     v->click = 0.35f * strike;
 }
 
-static void note_on(oxz_t *s, int note, float vel) {
+static void note_on(oxz_t *s, int key, float vel) {
     const bank_t *b = __atomic_load_n(&g_bank, __ATOMIC_ACQUIRE);
     s->energy = fminf(1.0f, s->energy + 0.35f + 0.4f * vel);
-    for (int layer = 0; layer < NLAYERS; layer++) {
-        if (!layer_on(s, layer) || layer_gain(s, layer) < 0.001f) continue;
-        int needs_bank = layer == L_CHOIR || layer == L_WINDS || layer == L_SCAPE || layer == L_TEXTURE;
+    read_slots(s);
+    float am = attack_mult(s), br = P(breath);
+    for (int si = 0; si < 2; si++) {
+        const slot_t *sl = &s->slot[si];
+        if (sl->type == T_OFF || sl->gain < 0.001f) continue;
+        int layer = sl->layer;
+        int needs_bank = layer != L_BELLS && layer != L_VOWELS;
         if (needs_bank && (!b || !b->ok)) continue;
-        voice_t *v = alloc_voice(s, layer);
+        int note = key + 12 * sl->oct;
+        if (note < 12 || note > 120) continue;
+        voice_t *v = alloc_voice(s, si, layer);
         memset(v, 0, sizeof *v);
-        v->active = 1; v->held = 1; v->note = note; v->layer = layer; v->vel = vel; v->age = ++s->clock;
+        v->active = 1; v->held = 1; v->key = key; v->note = note; v->slot = si; v->inst = sl->inst; v->layer = layer;
+        v->vel = vel; v->age = ++s->clock;
         v->seed = 0x2545F491u ^ (s->clock * 2654435761u) ^ (unsigned)(note * 7919);
         rnd(&v->seed);
         v->drift = frand(&v->seed) * 6.2831853f;
         v->pan = nrand(&v->seed);
+        float secs;
         switch (layer) {
-        case L_CHOIR:
-            v->att = 1.0f / (SR * attack_secs(P(ch_attack), P(breath)));
-            choir_sources(s, b, v);
-            break;
-        case L_WINDS:
-            v->att = 1.0f / (SR * (0.012f + 0.25f * P(breath) * P(breath) + 0.05f * P(wi_breath)));
-            winds_sources(s, b, v);
-            break;
-        case L_VOWELS:
-            v->att = 1.0f / (SR * attack_secs(P(vo_attack), P(breath)));
-            v->ph[0] = frand(&v->seed); v->ph[1] = frand(&v->seed);
-            break;
-        case L_BELLS:
-            v->att = 1.0f;          /* struck: full at once, the partials decay on their own */
-            bells_start(s, v);
-            break;
-        case L_SCAPE:
-            v->att = 1.0f / (SR * (0.4f + 2.0f * P(breath)));
-            v->gust_ph = frand(&v->seed) * 6.2831853f;
-            for (int k = 0; k < 3; k++) v->wdrift[k] = frand(&v->seed) * 6.2831853f;
-            break;
-        default:
-            v->att = 1.0f / (SR * (0.05f + 1.5f * P(breath) * P(breath)));
-            break;
+        case L_CHOIR:  secs = attack_secs(sl->k3, br); choir_sources(s, b, v); break;
+        case L_WINDS:  secs = 0.012f + 0.2f * br * br + 0.04f * sl->k2; winds_sources(s, b, v); break;
+        case L_VOWELS: secs = attack_secs(sl->k3, br); v->ph[0] = frand(&v->seed); v->ph[1] = frand(&v->seed); break;
+        case L_BELLS:  secs = 0.0f; bells_start(s, v); break;     /* struck: full at once */
+        case L_SCAPE:  secs = 0.5f + 1.5f * br;
+                       v->gust_ph = frand(&v->seed) * 6.2831853f;
+                       for (int k = 0; k < 3; k++) v->wdrift[k] = frand(&v->seed) * 6.2831853f;
+                       break;
+        default:       secs = 0.05f + 1.2f * br * br; break;
         }
+        v->att = secs <= 0.0f ? 1.0f : 1.0f / (SR * secs * am);
     }
 }
 
-static void note_off(oxz_t *s, int note) {
+static void note_off(oxz_t *s, int key) {
     for (int k = 0; k < MAXV; k++)
-        if (s->v[k].active && s->v[k].held && s->v[k].note == note) {
+        if (s->v[k].active && s->v[k].held && s->v[k].key == key) {
             s->v[k].held = 0;
             s->v[k].pedal = s->pedal_down;
         }
@@ -581,6 +579,13 @@ static int get_param(void *inst, const char *key, char *b, int n) {
             if (i != I_orb) len += snprintf(b + len, n - len, "%s=%g;", PARAMS[i].key, s->val[i]);
         return len;
     }
+    size_t kl = strlen(key);
+    if (kl > 5 && !strcmp(key + kl - 5, "_name") && (key[0] == 'a' || key[0] == 'b') && key[1] == '_' && key[2] == 'k') {
+        int sl = key[0] == 'b', k = key[3] - '1';            /* "a_k2_name" -> slot A, knob 2 */
+        int t = (int)(s->val[I_type[sl]] + 0.5f);
+        if (k < 0 || k > 2 || t < 0 || t > T_TEXTURE) return 0;
+        return snprintf(b, n, "%s %s", sl ? "B" : "A", KNOB_NAMES[t][k]);
+    }
     int i = idx_of(key);
     if (i < 0) return 0;
     if (i == I_orb) return snprintf(b, n, "%d", s->orb_frame);
@@ -602,8 +607,9 @@ static inline float hermite(const int16_t *d, int i, float t) {
 /* ---------- per-layer renderers: add one voice's block into L/R ---------- */
 static void render_samples(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
     int choir = v->layer == L_CHOIR;
-    float tone_a = 1.0f - expf(-2.0f * (float)M_PI * (1500.0f + 16000.0f * P(wi_tone) * P(wi_tone)) / SR);
-    float breath_amt = P(wi_breath) * (0.4f + 0.8f * P(breath));
+    const slot_t *sl = &s->slot[v->slot];
+    float tone_a = 1.0f - expf(-2.0f * (float)M_PI * (1500.0f + 16000.0f * sl->k3 * sl->k3) / SR);
+    float breath_amt = sl->k2 * (0.4f + 0.8f * P(breath));
     svfc_t bc = svf_coef(3.0f * note_hz((float)v->note), 1.4f);
     for (int q = 0; q < v->nsrc; q++) v->s[q].inc = v->s[q].inc_base * pmul;
     for (int f = 0; f < frames; f++) {
@@ -643,13 +649,14 @@ static const float VB[5][4] = {{50, 60, 170, 180}, {70, 80, 100, 130}, {80, 90, 
 
 static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
     float dt = frames / SR, motion = P(motion);
+    const slot_t *sl = &s->slot[v->slot];
     v->drift += dt * (0.15f + 0.35f * motion);
-    float morph = P(vo_morph) * 4.0f + sinf(v->drift) * (0.15f + 0.6f * motion);   /* Motion sways the vowel */
+    float morph = sl->k1 * 4.0f + sinf(v->drift) * (0.15f + 0.6f * motion);   /* Motion sways the vowel */
     if (morph < 0) morph = 0;
     if (morph > 3.999f) morph = 3.999f;
     int a = (int)morph;
     float w = morph - a;
-    float scale = 0.72f + 0.62f * P(vo_formant);                    /* Formant: larger to smaller voice */
+    float scale = 0.72f + 0.62f * sl->k2;                    /* Formant: larger to smaller voice */
     svfc_t c[4];
     float amp[4];
     for (int k = 0; k < 4; k++) {
@@ -681,7 +688,7 @@ static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, 
 }
 
 static void render_bells(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
-    float f0 = note_hz((float)v->note) * pmul, dt = frames / SR, shimmer = P(be_shimmer);
+    float f0 = note_hz((float)v->note) * pmul, dt = frames / SR, shimmer = s->slot[v->slot].k3;
     float rot_c[NP], rot_s[NP], dec[NP], beat_amt[NP];
     for (int k = 0; k < NP; k++) {
         float w = 2.0f * (float)M_PI * f0 * BELL_RATIO[k] / SR;
@@ -759,7 +766,8 @@ static const zone_t *choir_zone(const bank_t *b, voice_t *v, float note) {
 
 static void render_scape(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul,
                          const bank_t *b) {
-    float dt = frames / SR, drift = P(sc_drift), width = P(sc_width), density = P(sc_density);
+    const slot_t *sl = &s->slot[v->slot];
+    float dt = frames / SR, density = sl->k1, drift = sl->k2, width = sl->k3;
     float note = v->note + 12.0f * log2f(pmul);
     /* pitched wind: three narrow resonances on the note's harmonics, each wandering with Drift */
     svfc_t wc[3];
@@ -804,9 +812,10 @@ static const float TX_STEPS[8] = {-24, -12, -5, 0, 7, 12, 19, 24};
 
 static void render_texture(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul,
                            const bank_t *b) {
-    float smear = P(tx_smear);
-    float size = 0.02f * powf(20.0f, P(tx_grain));          /* 20 ms .. 400 ms */
-    int step = (int)(P(tx_pitch) * 7.0f + 0.5f);
+    const slot_t *sl = &s->slot[v->slot];
+    float smear = sl->k3;
+    float size = 0.02f * powf(20.0f, sl->k1);               /* 20 ms .. 400 ms */
+    int step = (int)(sl->k2 * 7.0f + 0.5f);
     float note = v->note + TX_STEPS[step] + 12.0f * log2f(pmul);
     float overlap = 1.5f + 3.0f * smear;                    /* grains sounding at once */
     int every = (int)(size * SR / overlap);
@@ -936,7 +945,7 @@ static void sub_block(oxz_t *s, float *L, float *R, int frames) {
         if (s->sub_ph >= 1.0f) s->sub_ph -= 1.0f;
         if (held) { s->sub_env += att; if (s->sub_env > 1.0f) s->sub_env = 1.0f; }
         else s->sub_env *= rel;
-        float x = softclip(sinf(s->sub_ph * 6.2831853f) * 1.25f) * s->sub_env * lvl * 0.55f;
+        float x = softclip(sinf(s->sub_ph * 6.2831853f) * 1.25f) * s->sub_env * lvl * 0.3f;
         L[f] += x; R[f] += x;
     }
     s->sub_note = s->sub_glide;
@@ -948,22 +957,21 @@ static void render(void *inst, int16_t *out, int frames) {
     float L[128], R[128];
     memset(L, 0, sizeof L); memset(R, 0, sizeof R);
     if (frames > 128) frames = 128;
-    float dt = frames / SR, motion = P(motion), space = P(space);
-    float rel_secs = 0.25f + 3.8f * powf(space, 1.4f);
+    float dt = frames / SR, motion = P(motion);
+    read_slots(s);
+    float rel_secs = 0.12f + 5.5f * powf(P(release), 1.6f);  /* Release: 0.12 s .. 5.6 s */
     float rel_mul = expf(-1.0f / (SR * rel_secs / 4.6f));     /* -40 dB over rel_secs */
-    float vib_depth = (P(wi_vibrato) * 0.35f + motion * 0.25f + s->modwheel * 0.5f) * 0.6f;   /* semitones peak */
-    float lg[NLAYERS];
-    int on[NLAYERS];
-    for (int l = 0; l < NLAYERS; l++) { lg[l] = layer_gain(s, l); on[l] = layer_on(s, l); }
     int held_any = 0;
 
     for (int k = 0; k < MAXV; k++) {
         voice_t *v = &s->v[k];
         if (!v->active) continue;
         int L_ = v->layer;
+        const slot_t *sl = &s->slot[v->slot];
         if (L_ != L_BELLS && L_ != L_VOWELS && (!b || !b->ok)) { v->active = 0; continue; }
         held_any |= v->held || v->pedal;
-        if (!on[L_]) { v->held = 0; v->pedal = 0; }
+        if (sl->layer != L_ || sl->inst != v->inst) { v->held = 0; v->pedal = 0; }   /* the slot changed sound: let it go */
+        float lgain = sl->layer == L_ ? sl->gain : 0.0f;
         v->t += dt;
         float pm = s->bend;
         if (L_ == L_CHOIR || L_ == L_TEXTURE) {
@@ -972,16 +980,17 @@ static void render(void *inst, int16_t *out, int frames) {
         } else if (L_ == L_WINDS || L_ == L_VOWELS) {
             v->lfo += dt * 6.2831853f * (4.6f + 1.2f * motion);
             float onset = fminf(1.0f, fmaxf(0.0f, (v->t - 0.25f) / 0.6f));   /* vibrato grows after the attack */
-            float depth = L_ == L_WINDS ? vib_depth : (0.12f + 0.3f * motion + s->modwheel * 0.5f) * 0.6f;
+            float depth = (L_ == L_WINDS ? sl->k1 * 0.35f + motion * 0.25f : 0.12f + 0.3f * motion) * 0.6f
+                          + s->modwheel * 0.3f;   /* semitones peak (x0.25 below) */
             pm += sinf(v->lfo) * depth * onset * 0.25f;
         }
         float pmul = exp2f(pm / 12.0f);
         switch (L_) {
-        case L_CHOIR: case L_WINDS: render_samples(s, v, L, R, frames, lg[L_], pmul, rel_mul); break;
-        case L_VOWELS:  render_vowels(s, v, L, R, frames, lg[L_], pmul, rel_mul); break;
-        case L_BELLS:   render_bells(s, v, L, R, frames, lg[L_], pmul, rel_mul); break;
-        case L_SCAPE:   render_scape(s, v, L, R, frames, lg[L_], pmul, rel_mul, b); break;
-        default:        render_texture(s, v, L, R, frames, lg[L_], pmul, rel_mul, b); break;
+        case L_CHOIR: case L_WINDS: render_samples(s, v, L, R, frames, lgain, pmul, rel_mul); break;
+        case L_VOWELS:  render_vowels(s, v, L, R, frames, lgain, pmul, rel_mul); break;
+        case L_BELLS:   render_bells(s, v, L, R, frames, lgain, pmul, rel_mul); break;
+        case L_SCAPE:   render_scape(s, v, L, R, frames, lgain, pmul, rel_mul, b); break;
+        default:        render_texture(s, v, L, R, frames, lgain, pmul, rel_mul, b); break;
         }
         if (L_ == L_BELLS) { if (v->env < 0.0005f) v->active = 0; }
         else if (!v->held && !v->pedal && v->env < 0.001f) v->active = 0;     /* -60 dB: the reverb carries the rest */

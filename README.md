@@ -22,7 +22,7 @@ The skin artwork is pre-rendered and committed. To change the design, edit `vst/
 `python3 vst/skin/make_skin.py` (needs Python with Playwright and Pillow), then build.
 
 ## Layout
-- `vst/`: the plugin: `engine.c` (six layers and the effects), `make_presets.py` (writes `presets.json`), `params.json` (parameter order is fixed; saved
+- `vst/`: the plugin: `engine.c` (two sound slots and the effects), `make_presets.py` (writes `presets.json`), `params.json` (parameter order is fixed; saved
   projects depend on it; new parameters go at the end), `skin/make_skin.py` (all skin artwork and `layout.conf`)
 - `vst/data/`: the prepared samples the plugin ships with (62 MB, CC0; made by `samples/prepare.py`), so a build
   needs no 15 GB source download
