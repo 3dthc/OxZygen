@@ -31,7 +31,9 @@ Y0 = 86                      # top of the plugin area
 W, H = 1280, 628
 
 # palette (the prototype's)
-BEZEL, PANEL, FG, DIM, LIVE, BRASS = "#1b1e23", "#16191e", "#eef1f5", "#8a919c", "#5cc8ff", "#d1a85c"
+# Aluminum Cobalt: brushed aluminum panels, graphite machined knobs, cobalt accent, ice-blue lit readouts
+BEZEL, PANEL, FG, DIM, LIVE, BRASS = "#b9bdc2", "#cfd2d6", "#15171a", "#4a4f56", "#1f6fff", "#d1a85c"
+READ_BG, READ_TX = "#0b1424", "#7ff0ff"
 
 ORB_PHASES, ORB_LEVELS, ORB_SIZE = 17, 2, 360   # 34 frames x 360 px = 12240 px, under MPC's 12288 px strip limit
 
@@ -39,15 +41,15 @@ ORB_PHASES, ORB_LEVELS, ORB_SIZE = 17, 2, 360   # 34 frames x 360 px = 12240 px,
 # knob: (key, label, cx, cy, r, value text size, touch width)
 PLAYER = {
     "orb": (640, 400),
-    "headings": [("VOICE", 120, 440, 170), ("ATMOSPHERE", 840, 1160, 170)],
+    "headings": [("VOICE", 46, 420, 140), ("ATMOSPHERE", 860, 1234, 140)],
     "knobs": [
-        ("velocity", "Velocity", 200, 295), ("breath", "Breath", 360, 295),
-        ("attack", "Attack", 200, 520), ("release", "Release", 360, 520),
-        ("air", "Air", 920, 295), ("dark", "Filter", 1080, 295),
-        ("lofi", "Lo-Fi", 920, 520), ("motion", "Motion", 1080, 520),
+        ("velocity", "Velocity", 125, 286), ("breath", "Breath", 325, 286),
+        ("attack", "Attack", 125, 518), ("release", "Release", 325, 518),
+        ("air", "Air", 955, 286), ("dark", "Filter", 1155, 286),
+        ("lofi", "Lo-Fi", 955, 518), ("motion", "Motion", 1155, 518),
     ],
 }
-PLAYER_R, PLAYER_VS, PLAYER_BW = 48, 24, 130
+PLAYER_R, PLAYER_VS, PLAYER_BW = 59, 30, 150   # 59: the largest a 128-frame strip may be on MPC
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
 # categories and their sounds (must match params.json); SOUNDS is the derived a_sound/b_sound list, in order
@@ -74,8 +76,8 @@ CAT_SW, CAT_SH = 140, 40               # 4 x 2 grid of categories
 SND_ROW, SND_H = 560, 42               # a category's sounds share one row this wide
 OCT_SW, OCT_SH = 80, 38                # five octave segments
 SLOT_KNOB_DX, SLOT_KNOB_DY = 132, 448  # four knobs 132 px apart, centred in the panel, at y0 + 425
-SLOT_R, SLOT_VS, SLOT_BW = 48, 24, 120
-LBL_W, LBL_H = 3 * SLOT_KNOB_DX, 28    # the label strip under knobs 1-3
+SLOT_R, SLOT_VS, SLOT_BW = 56, 28, 124
+LBL_W, LBL_H = 3 * SLOT_KNOB_DX, 32    # the label strip under knobs 1-3
 
 
 def slot_geom(x0, y0):
@@ -101,14 +103,14 @@ def slot_knobs():
 
 def label_top(cy, r=SLOT_R, vs=SLOT_VS):
     """Where a knob's baked name sits: under MPC's live value (cy + r + 2, value_h tall), 5 px gap."""
-    return cy + r + 2 + max(26, round(vs * 1.2)) + 5
+    return cy + r + 2 + max(30, round(vs * 1.25)) + 5
 
 
 FX = [("rv", "Reverb", ["Size", "Decay", "Mix"], 20, 100),
       ("dl", "Delay", ["Time", "Feedback", "Mix"], 650, 100),
       ("dr", "Drive", ["Amount", "Tone", "Mix"], 20, 406),
       ("sb", "Sub / Output", ["Level", "Tune", "Drop"], 650, 406)]
-FX_R, FX_VS, FX_BW = 48, 24, 116   # Sub / Output has 4 knobs 122 px apart
+FX_R, FX_VS, FX_BW = 56, 28, 116   # Sub / Output has 4 knobs 122 px apart
 
 
 def fx_knobs():
@@ -132,37 +134,45 @@ FONT_CSS = """
 DRAW_JS = r"""
 const LIVE = '__LIVE__';
 function knob(size, v) {
+  // Graphite machined knob on the aluminum panel. In 100-unit space: value ring r 44-48, cap r 37, light from the
+  // top left stays put (only the pointer and the arc move), so the 128 frames read as one object turning.
   const c = document.createElement('canvas'); c.width = c.height = size * 2;     // drawn at 2x, downsampled later
   const x = c.getContext('2d'); x.scale(size * 2 / 100, size * 2 / 100);
-  const P = (deg, r) => [50 + r * Math.cos(deg * Math.PI / 180), 50 + r * Math.sin(deg * Math.PI / 180)];
-  // outer hairline and tick scale (fixed)
-  x.beginPath(); x.arc(50, 50, 48, 0, 2 * Math.PI); x.strokeStyle = '#1c2330'; x.lineWidth = 1; x.stroke();
-  for (let i = 0; i <= 10; i++) {
-    const d = 135 + i * 27, [a, b] = P(d, 42), [e, f] = P(d, i % 5 === 0 ? 47.5 : 45.5);
-    x.beginPath(); x.moveTo(a, b); x.lineTo(e, f); x.strokeStyle = i % 5 === 0 ? '#8a94a6' : '#5c6678';
-    x.lineWidth = i % 5 === 0 ? 1.8 : 1.4; x.stroke();
+  const A = deg => deg * Math.PI / 180;
+  // value track, then the cobalt arc with a soft glow
+  x.lineCap = 'round'; x.lineWidth = 4.2;
+  x.beginPath(); x.arc(50, 50, 45.5, A(135), A(405)); x.strokeStyle = 'rgba(20,24,30,.28)'; x.stroke();
+  if (v > 0.002) {
+    x.save(); x.shadowColor = 'rgba(31,111,255,.65)'; x.shadowBlur = 3;
+    x.beginPath(); x.arc(50, 50, 45.5, A(135), A(135 + 270 * v)); x.strokeStyle = LIVE; x.stroke(); x.restore();
   }
-  // value slot and arc
-  x.lineCap = 'butt'; x.lineWidth = 3.4;
-  x.beginPath(); x.arc(50, 50, 36, 135 * Math.PI / 180, 405 * Math.PI / 180); x.strokeStyle = '#03060a'; x.stroke();
-  if (v > 0.002) { x.beginPath(); x.arc(50, 50, 36, 135 * Math.PI / 180, (135 + 270 * v) * Math.PI / 180);
-    x.strokeStyle = LIVE; x.stroke(); }
-  // machined cap: light from the top left stays put, only the pointer turns
-  x.save(); x.shadowColor = 'rgba(0,0,0,.7)'; x.shadowBlur = 5; x.shadowOffsetX = 1.5; x.shadowOffsetY = 2.5;
-  x.beginPath(); x.arc(50, 50, 27, 0, 2 * Math.PI); x.fillStyle = '#0a0d12'; x.fill(); x.restore();
-  const g = x.createLinearGradient(30, 26, 72, 76);
-  g.addColorStop(0, '#a3adbf'); g.addColorStop(.45, '#3e4656'); g.addColorStop(1, '#151a22');
-  x.beginPath(); x.arc(50, 50, 26, 0, 2 * Math.PI); x.fillStyle = g; x.fill();
-  x.lineWidth = 1; x.strokeStyle = '#000'; x.stroke();
-  const t = x.createRadialGradient(44, 42, 2, 50, 50, 22);
-  t.addColorStop(0, '#5a6476'); t.addColorStop(1, '#232a36');
-  x.beginPath(); x.arc(50, 50, 21, 0, 2 * Math.PI); x.fillStyle = t; x.fill();
-  x.strokeStyle = 'rgba(0,0,0,.45)'; x.stroke();
-  x.beginPath(); x.ellipse(43, 40, 9, 4, -0.6, 0, 2 * Math.PI); x.fillStyle = 'rgba(255,255,255,.10)'; x.fill();
-  const d = 135 + 270 * v, [a, b] = P(d, 7), [e, f] = P(d, 20);
-  x.lineCap = 'round'; x.lineWidth = 2.8;
-  x.beginPath(); x.moveTo(a + .6, b + .8); x.lineTo(e + .6, f + .8); x.strokeStyle = 'rgba(0,0,0,.6)'; x.stroke();
-  x.beginPath(); x.moveTo(a, b); x.lineTo(e, f); x.strokeStyle = '#f1f5fb'; x.stroke();
+  // shadow cast on the panel, then the dark skirt
+  x.save(); x.shadowColor = 'rgba(0,0,0,.55)'; x.shadowBlur = 6; x.shadowOffsetY = 3;
+  x.beginPath(); x.arc(50, 50, 39.5, 0, 2 * Math.PI); x.fillStyle = '#0c0d0f'; x.fill(); x.restore();
+  // cap: machined graphite (a conic sheen like spun metal) with fine concentric turning marks
+  const g = x.createConicGradient(A(-60), 50, 50);
+  [[0, '#6a6f78'], [.12, '#2a2d33'], [.25, '#5a5f68'], [.38, '#1f2227'], [.5, '#62676f'], [.63, '#25282d'],
+   [.76, '#575c64'], [.88, '#1d2025'], [1, '#6a6f78']].forEach(([o, col]) => g.addColorStop(o, col));
+  x.beginPath(); x.arc(50, 50, 37, 0, 2 * Math.PI); x.fillStyle = g; x.fill();
+  for (let r = 4; r < 37; r += 1.1) {
+    x.beginPath(); x.arc(50, 50, r, 0, 2 * Math.PI);
+    x.strokeStyle = (r * 7 | 0) % 2 ? 'rgba(255,255,255,.035)' : 'rgba(0,0,0,.05)'; x.lineWidth = .5; x.stroke();
+  }
+  // vertical shading over the sheen: lit from above
+  const sh = x.createLinearGradient(0, 13, 0, 87);
+  sh.addColorStop(0, 'rgba(255,255,255,.16)'); sh.addColorStop(.5, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.35)');
+  x.beginPath(); x.arc(50, 50, 37, 0, 2 * Math.PI); x.fillStyle = sh; x.fill();
+  // chamfer: a bright machined edge on top, dark below
+  const ed = x.createLinearGradient(0, 13, 0, 87);
+  ed.addColorStop(0, 'rgba(255,255,255,.55)'); ed.addColorStop(.45, 'rgba(255,255,255,.08)'); ed.addColorStop(1, 'rgba(0,0,0,.6)');
+  x.beginPath(); x.arc(50, 50, 36.4, 0, 2 * Math.PI); x.strokeStyle = ed; x.lineWidth = 1.3; x.stroke();
+  x.beginPath(); x.arc(50, 50, 37.6, 0, 2 * Math.PI); x.strokeStyle = 'rgba(0,0,0,.85)'; x.lineWidth = .8; x.stroke();
+  // pointer: a lit cobalt line inset in the cap
+  const d = A(135 + 270 * v), P = r => [50 + r * Math.cos(d), 50 + r * Math.sin(d)];
+  const [a, b] = P(12), [e, f] = P(33);
+  x.lineWidth = 3.6; x.beginPath(); x.moveTo(a, b + .7); x.lineTo(e, f + .7); x.strokeStyle = 'rgba(0,0,0,.7)'; x.stroke();
+  x.save(); x.shadowColor = 'rgba(80,150,255,.9)'; x.shadowBlur = 3; x.lineWidth = 2.6;
+  x.beginPath(); x.moveTo(a, b); x.lineTo(e, f); x.strokeStyle = '#4d8dff'; x.stroke(); x.restore();
   return c.toDataURL('image/png');
 }
 
@@ -259,38 +269,39 @@ def strip(frames, size):
 
 
 def seg_html(on, w, h):
-    """A blank segment plate; the renderer writes the option name on it (skin.css sets the font)."""
+    """A blank button plate; the renderer writes the option name on it (skin.css sets the font)."""
     if on:
-        bg = ("linear-gradient(180deg,rgba(92,200,255,.30),rgba(92,200,255,.10) 55%,rgba(20,60,90,.35)),"
-              "linear-gradient(180deg,#2c3a48,#141c25)")
-        sh = "inset 0 1px 0 rgba(170,225,255,.55),inset 0 0 12px rgba(92,200,255,.35),0 0 8px rgba(92,200,255,.25)"
-        border = "#2f86b8"
+        bg = ("linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 50%),"
+              "linear-gradient(180deg,#3b82ff,#1f6fff 55%,#1450c8)")
+        sh = "inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.35),0 0 10px rgba(31,111,255,.45)"
+        border = "#0e3c9e"
     else:
-        bg = ("repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 2px),"
-              "linear-gradient(180deg,#4a5059 0%,#30353d 48%,#262a31 52%,#1d2026 100%)")
-        sh = "inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.5)"
-        border = "#07080a"
-    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border:1px solid %s;border-radius:3px;"
+        bg = ("repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 2px),"
+              "linear-gradient(180deg,#4a4e55 0%,#33363c 50%,#26292e 100%)")
+        sh = "inset 0 1px 0 rgba(255,255,255,.25),inset 0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.6)"
+        border = "#121418"
+    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border:1px solid %s;border-radius:4px;"
             "background:%s;box-shadow:%s'></div>" % (w, h, border, bg, sh))
 
 
 def labels_html(names):
     """Three knob names, centred under knobs 1-3 (a transparent strip a picture widget swaps per sound)."""
     cells = "".join("<div style='width:%dpx;text-align:center'>%s</div>" % (SLOT_KNOB_DX, n.upper()) for n in names)
-    return ("<div style='display:flex;width:%dpx;height:%dpx;align-items:center;font:600 19px BC,sans-serif;"
-            "letter-spacing:.12em;color:%s'>%s</div>" % (LBL_W, LBL_H, FG, cells))
+    return ("<div style='display:flex;width:%dpx;height:%dpx;align-items:center;font:700 23px BC,sans-serif;"
+            "letter-spacing:.14em;color:%s;text-shadow:0 1px 0 rgba(255,255,255,.55)'>%s</div>" % (LBL_W, LBL_H, FG, cells))
 
 
 SKIN_CSS = """/* generated by make_skin.py: the selector's option names in the skin's condensed face */
 @font-face { font-family: "BC"; font-weight: 600; src: url("fonts/BarlowCondensed-SemiBold.ttf"); }
-.seg-tx { font-family: "BC", sans-serif; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; }
+@font-face { font-family: "BC"; font-weight: 700; src: url("fonts/BarlowCondensed-Bold.ttf"); }
+.seg-tx { font-family: "BC", sans-serif; font-weight: 700; font-size: 21px; letter-spacing: 0.12em; text-transform: uppercase; }
 .seg-sheen { display: none; }
 """
 
 
 def value_box(cx, cy, r, vs, width):
     """The dark readout behind MPC's live value, and where the baked name goes under it."""
-    vh = max(26, round(vs * 1.2))
+    vh = max(30, round(vs * 1.25))
     top = cy + r + 2 - Y0
     return top, vh, ("<div class='vbox' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx'></div>"
                      % (cx - width // 2, top, width, vh))
@@ -305,48 +316,58 @@ def knob_block(key, label, cx, cy, r, vs, width, label_px):
 PAGE_CSS = """
 %(fonts)s
 * { margin: 0; padding: 0; box-sizing: border-box; }
+/* brushed aluminum: a fine horizontal grain, a soft light from above, slightly darker toward the bottom */
 body { width: 1280px; height: 628px; overflow: hidden; position: relative;
-  background: radial-gradient(1000px 420px at 50%% 0%%, rgba(255,255,255,.07), transparent 70%%),
-    linear-gradient(180deg, #2a2e35, #1a1d22 60%%, #121418); }
-.grain { position: absolute; inset: 0; opacity: .10;
-  background-image: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 2px, #000 2px 3px, transparent 3px 4px);
-  mix-blend-mode: overlay; }
-.vbox { position: absolute; background: #03060a; border: 1px solid #000; border-radius: 2px;
-  box-shadow: inset 0 2px 5px #000, 0 1px 0 rgba(255,255,255,.05); }
-.klabel { position: absolute; text-align: center; font-family: BC, sans-serif; font-weight: 600; color: %(FG)s;
-  letter-spacing: .12em; text-transform: uppercase; }
-.heading { position: absolute; display: flex; align-items: center; gap: 12px; font: 600 20px BC, sans-serif;
-  letter-spacing: .24em; color: %(DIM)s; }
-.heading::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #4a515c, transparent); }
-.well { position: absolute; border: 1px solid #050608; border-radius: 4px;
-  background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px),
-    linear-gradient(180deg, #23272d, %(PANEL)s 40%%, #111317);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 -1px 0 rgba(0,0,0,.6), inset 0 0 30px rgba(0,0,0,.3),
-    0 2px 6px rgba(0,0,0,.6); }
-.well::before { content: ""; position: absolute; inset: 7px; pointer-events: none;   /* corner screws */
-  background: radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 0 0 / 10px 10px no-repeat,
-    radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 100%% 0 / 10px 10px no-repeat,
-    radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 0 100%% / 10px 10px no-repeat,
-    radial-gradient(circle at 5px 5px, #9aa1ab 0 1.5px, #3a3f47 2.5px, #0b0c0f 4px, transparent 5px) 100%% 100%% / 10px 10px no-repeat; }
-.title { position: absolute; font: 700 22px BC, sans-serif; letter-spacing: .22em; color: %(FG)s; text-transform: uppercase; }
-.title b { color: %(LIVE)s; font-weight: 700; }
-""" % {"fonts": FONT_CSS, "FG": FG, "DIM": DIM, "PANEL": PANEL, "LIVE": LIVE}
+  background: radial-gradient(1300px 420px at 50%% -80px, rgba(255,255,255,.55), transparent 70%%),
+    linear-gradient(180deg, #dfe2e5, #c4c8cc 55%%, #a9adb2); }
+.grain { position: absolute; inset: 0; opacity: .55;
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.10) 0 1px, rgba(0,0,0,.035) 1px 2px, transparent 2px 3px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7), inset 0 -2px 6px rgba(0,0,0,.25); }
+.vbox { position: absolute; background: %(READ_BG)s; border-radius: 5px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.7), 0 -1px 0 rgba(0,0,0,.25); }
+.klabel { position: absolute; text-align: center; font-family: BC, sans-serif; font-weight: 700; color: %(FG)s;
+  letter-spacing: .14em; text-transform: uppercase; text-shadow: 0 1px 0 rgba(255,255,255,.55); }
+.heading { position: absolute; display: flex; align-items: center; gap: 14px; font: 700 22px BC, sans-serif;
+  letter-spacing: .3em; color: %(DIM)s; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.heading::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,.25), transparent);
+  box-shadow: 0 1px 0 rgba(255,255,255,.5); }
+/* a recessed aluminum plate for each section, with four screws */
+.well { position: absolute; border-radius: 8px;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.09) 0 1px, rgba(0,0,0,.03) 1px 2px, transparent 2px 3px),
+    linear-gradient(180deg, #d7dade, #c3c7cb 60%%, #b6babf);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.22),
+    0 6px 14px rgba(0,0,0,.18); }
+.well::before { content: ""; position: absolute; inset: 9px; pointer-events: none;   /* corner screws */
+  background: radial-gradient(circle at 6px 6px, #f2f3f5 0 1.5px, #9a9fa6 3px, #5b6067 4.5px, transparent 5.5px) 0 0 / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 6px, #f2f3f5 0 1.5px, #9a9fa6 3px, #5b6067 4.5px, transparent 5.5px) 100%% 0 / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 6px, #f2f3f5 0 1.5px, #9a9fa6 3px, #5b6067 4.5px, transparent 5.5px) 0 100%% / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 6px, #f2f3f5 0 1.5px, #9a9fa6 3px, #5b6067 4.5px, transparent 5.5px) 100%% 100%% / 12px 12px no-repeat; }
+.title { position: absolute; font: 700 26px BC, sans-serif; letter-spacing: .24em; color: %(FG)s; text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.title b { color: %(LIVE)s; font-weight: 700; text-shadow: 0 0 10px rgba(31,111,255,.35); }
+.rule { position: absolute; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,.22), transparent);
+  box-shadow: 0 1px 0 rgba(255,255,255,.55); }
+""" % {"fonts": FONT_CSS, "FG": FG, "DIM": DIM, "PANEL": PANEL, "LIVE": LIVE, "READ_BG": READ_BG}
 
 
 def bg_player():
     ox, oy = PLAYER["orb"]
     h = ["<div class='grain'></div>"]
     # the orb's shadow on the panel (the orb itself is the live meter on top)
-    h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:300px;height:300px;border-radius:50%%;"
-             "background:#000;box-shadow:0 24px 56px 6px rgba(0,0,0,.8)'></div>" % (ox - 150, oy - Y0 - 150))
+    h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:340px;height:340px;border-radius:50%%;"
+             "background:radial-gradient(circle at 35%% 28%%,#f4f5f7,#b4b8be 55%%,#80858c);"
+             "box-shadow:0 18px 36px rgba(0,0,0,.35),inset 0 2px 1px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.35)'></div>"
+             % (ox - 170, oy - Y0 - 170))
+    h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:304px;height:304px;border-radius:50%%;background:#05070a;"
+             "box-shadow:inset 0 3px 8px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.6)'></div>" % (ox - 152, oy - Y0 - 152))
     # wordmark: all caps, the Z carries the emphasis (larger, accent colour)
-    h.append("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:32px;"
-             "letter-spacing:.22em;line-height:40px'>OX<b style='font-size:46px;vertical-align:-4px;"
-             "letter-spacing:.18em'>Z</b>YGEN</div>" % (144 - Y0))
+    h.append("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:40px;"
+             "letter-spacing:.24em;line-height:48px'>OX<b style='font-size:58px;vertical-align:-5px;"
+             "letter-spacing:.18em'>Z</b>YGEN</div>" % (114 - Y0))
     for text, x0, x1, y in PLAYER["headings"]:
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
     for key, label, cx, cy in PLAYER["knobs"]:
-        h.append(knob_block(key, label, cx, cy, PLAYER_R, PLAYER_VS, 74, 19))
+        h.append(knob_block(key, label, cx, cy, PLAYER_R, PLAYER_VS, 104, 26))
     return "".join(h)
 
 
@@ -356,19 +377,16 @@ def bg_sound():
         g = slot_geom(x0, y0)
         h.append("<div class='well' style='left:%dpx;top:%dpx;width:610px;height:600px'></div>" % (x0, y0 - Y0))
         h.append("<div class='title' style='left:%dpx;top:%dpx'>SOUND <b>%s</b></div>" % (x0 + 22, y0 - Y0 + 18, p.upper()))
-        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
-        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 178))
+        h.append("<div class='rule' style='left:%dpx;top:%dpx;width:566px'></div>" % (x0 + 22, y0 - Y0 + 66))
+        h.append("<div class='rule' style='left:%dpx;top:%dpx;width:566px'></div>" % (x0 + 22, y0 - Y0 + 178))
         lx, ly = g["oct_label"]
-        h.append("<div class='heading' style='left:%dpx;top:%dpx;width:110px;font-size:18px'>OCTAVE</div>" % (lx, ly - Y0 - 12))
-        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 330))
+        h.append("<div class='heading' style='left:%dpx;top:%dpx;width:120px;font-size:20px'>OCTAVE</div>" % (lx, ly - Y0 - 12))
+        h.append("<div class='rule' style='left:%dpx;top:%dpx;width:566px'></div>" % (x0 + 22, y0 - Y0 + 330))
         for i, (cx, cy) in enumerate(g["knobs"]):
-            top, vh, box = value_box(cx, cy, SLOT_R, SLOT_VS, 74)
+            top, vh, box = value_box(cx, cy, SLOT_R, SLOT_VS, 96)
             h.append(box)
             if i == 3:   # Level is the same for every sound: baked; knobs 1-3 get a picture per sound
-                h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:200px;font-size:19px'>LEVEL</div>"
+                h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:200px;font-size:23px'>LEVEL</div>"
                          % (cx - 100, label_top(cy) - Y0))
     return "".join(h)
 
@@ -378,10 +396,9 @@ def bg_fx():
     for p, name, ks, x0, y0 in FX:
         h.append("<div class='well' style='left:%dpx;top:%dpx;width:610px;height:296px'></div>" % (x0, y0 - Y0))
         h.append("<div class='title' style='left:%dpx;top:%dpx'>%s</div>" % (x0 + 22, y0 - Y0 + 18, name))
-        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:566px;height:1px;"
-                 "background:linear-gradient(90deg,#4a515c,transparent)'></div>" % (x0 + 22, y0 - Y0 + 66))
+        h.append("<div class='rule' style='left:%dpx;top:%dpx;width:566px'></div>" % (x0 + 22, y0 - Y0 + 66))
     for key, label, cx, cy in fx_knobs():
-        h.append(knob_block(key, label, cx, cy, FX_R, FX_VS, 74, 19))
+        h.append(knob_block(key, label, cx, cy, FX_R, FX_VS, 96, 23))
     return "".join(h)
 
 
@@ -406,7 +423,7 @@ def render_art():
         # filmstrips
         page("")
         pg.add_script_tag(content=DRAW_JS)
-        for r in (PLAYER_R,):
+        for r in sorted({PLAYER_R, SLOT_R, FX_R}):
             s = 2 * r + 10
             frames = [png(pg.evaluate("([s, v]) => knob(s, v)", [s, i / 127])) for i in range(128)]
             strip(frames, s).save(os.path.join(ART, "knob%d.png" % r), optimize=True)
@@ -438,8 +455,8 @@ def render_art():
 def write_layout():
     open(os.path.join(HERE, "skin.css"), "w").write(SKIN_CSS)
     L = ["# generated by make_skin.py: edit that script, not this file",
-         "theme_bg=12161d", "theme_ink=e4e9f1", "theme_ink_dim=6fe0d6", "theme_accent=d1a85c",
-         "theme_seg_active_tx=d1a85c", "art_css=skin.css",
+         "theme_bg=c4c8cc", "theme_ink=eef3fa", "theme_ink_dim=7ff0ff", "theme_accent=1f6fff",
+         "theme_seg_active_tx=ffffff", "art_css=skin.css",
          "qlinks_track = velocity,breath,attack,release,air,dark,lofi,motion,master", ""]
     # PLAYER
     L.append("[tab PLAYER]")
