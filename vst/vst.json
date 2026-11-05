@@ -2,7 +2,7 @@
   "name": "OxZygen",
   "vendor": "oxzygen",
   "uid": "OxZy",
-  "version": 300,
+  "version": 310,
   "so": "oxzygen.so",
   "params": "params.json",
   "layout": "skin/layout.conf",
@@ -19,7 +19,8 @@
     ],
     "cflags": [
       "-O3",
-      "-ffast-math"
+      "-ffast-math",
+      "-fno-finite-math-only"
     ],
     "libs": [
       "-lm"
