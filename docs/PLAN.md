@@ -77,3 +77,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.5.5: late-night R&B presets (2026-11-05)
 - 16 dark R&B presets (81 total): low octaves, murky filters, long delays and reverb, sub and drive.
+
+## 0.5.6: horror / film score and cold R&B presets (2026-11-05)
+- 9 horror and film-score presets, 6 sparse ghost-vocal R&B presets (96 total).
