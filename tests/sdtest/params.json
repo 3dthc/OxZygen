@@ -1,0 +1,4 @@
+[
+ { "key": "tone", "name": "Tone", "min": 0, "max": 1, "default": 0, "display": "int" },
+ { "key": "status", "name": "Status", "min": 0, "max": 1, "default": 0, "display": "string" }
+]

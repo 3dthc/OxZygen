@@ -1,0 +1,9 @@
+{
+  "name": "OxZygen SD Test",
+  "vendor": "oxzygen",
+  "uid": "OxSd",
+  "version": 1000,
+  "so": "oxsdtest.so",
+  "params": "params.json",
+  "build": {"root": ".", "sources": ["engine.c"], "cflags": [], "libs": ["-lm"]}
+}
