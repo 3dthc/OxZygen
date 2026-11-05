@@ -476,6 +476,16 @@
    "max": 33,
    "default": 0,
    "display": "int"
+  },
+  {
+   "key": "wi_inst",
+   "name": "Winds Instrument",
+   "options": [
+    "Flute",
+    "Ocarina",
+    "Sax"
+   ],
+   "default": "Flute"
   }
  ],
  "sections": [
@@ -528,7 +538,8 @@
     "wi_tone",
     "wi_level",
     "wi_mute",
-    "wi_solo"
+    "wi_solo",
+    "wi_inst"
    ]
   },
   {

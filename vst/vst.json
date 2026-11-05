@@ -2,11 +2,30 @@
   "name": "OxZygen",
   "vendor": "oxzygen",
   "uid": "OxZy",
-  "version": 110,
+  "version": 200,
   "so": "oxzygen.so",
   "params": "params.json",
   "layout": "skin/layout.conf",
   "art": "html",
-  "defines": {"HAS_DISPLAY_REV": 1, "DISPLAY_REV_NO_UPDATE": 1},
-  "build": {"root": ".", "sources": ["engine.c"], "cflags": [], "libs": ["-lm"]}
+  "defines": {
+    "HAS_DISPLAY_REV": 1,
+    "DISPLAY_REV_NO_UPDATE": 1,
+    "MODULE_SUBDIR": "\"samples\""
+  },
+  "build": {
+    "root": ".",
+    "sources": [
+      "engine.c"
+    ],
+    "cflags": [
+      "-O3",
+      "-ffast-math"
+    ],
+    "libs": [
+      "-lm"
+    ],
+    "cflags_arm": [
+      "-mfpu=neon-vfpv4"
+    ]
+  }
 }

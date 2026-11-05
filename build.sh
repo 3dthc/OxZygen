@@ -11,8 +11,12 @@ MPC_VST="${MPC_VST:-$HOME/mpc-vst-plugins}"
 TARGET="${1:-oxzygen}"
 
 LICENSE_ARGS=()
+EXTRA_ARGS=()
 case "$TARGET" in
-  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.1.1"; ABOUT="OxZygen interface build: the full skin with a placeholder pad sound" ;;
+  oxzygen) CFG="$HERE/vst/vst.json"; VER="0.2.0"
+           ABOUT="OxZygen 0.2: choir (three singers, ah/oh/ih) and winds (flute, ocarina, alto sax) with reverb"
+           EXTRA_ARGS=(--extra "$HERE/vst/data:samples")
+           [ -f "$HERE/vst/data/manifest.txt" ] || { echo "vst/data is missing: run samples/fetch_sources.sh, samples/trim.sh, then python3 samples/prepare.py"; exit 1; } ;;
   sdtest)  CFG="$HERE/tests/sdtest/vst.json"; VER="1.0.0"; ABOUT="OxZygen SD card access test"; LICENSE_ARGS=(--license MIT) ;;
   *) echo "Unknown target '$TARGET'. Targets: oxzygen, sdtest"; exit 1 ;;
 esac
@@ -34,7 +38,7 @@ echo "== package"
 mkdir -p "$HERE/dist"
 python3 "$MPC_VST/tools/release.py" --so "$DIR/build/$SO" --skin "$DIR/build/skin/$NAME" \
   --entry "$DIR/build/pluginlist-entry.xml" --version "$VER" --about "$ABOUT" \
-  ${LICENSE_ARGS[@]+"${LICENSE_ARGS[@]}"} --repo 3dthc/OxZygen -o "$HERE/dist"
+  ${LICENSE_ARGS[@]+"${LICENSE_ARGS[@]}"} ${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"} --repo 3dthc/OxZygen -o "$HERE/dist"
 
 ZIP="$(ls -t "$HERE"/dist/*.zip | head -n 1)"
 echo "== zip: $ZIP"

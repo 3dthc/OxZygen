@@ -15,13 +15,18 @@ importable library.
 3. [done] UI prototype (ui/prototype.html): Player page with the orb, Edit page per layer, FX page.
 4. [done] SD access test plugin (tests/sdtest): a plugin running inside MPC read /sdcard/OxZygen/library_test.txt
    on an MPC Live II (2026-11-05). An importable library on the SD card is practical.
-5. Sound engine: sample playback for the recorded layers, formant synthesis for vowels, granular textures, FX chain.
+5. Sound engine, in steps:
+   a. [done, 0.2.0, offline] Choir (Claudia, Mirko, Sven; Vowel blends ah/oh/ih) and Winds (flute, ocarina, alto
+      sax) from 306 looped zones (62 MB RAM, shared between instances, loaded on a background thread), Dark/Air
+      tone, 8-line FDN reverb, project save/restore. Host CPU 71 us per block at 16 voices; device bench pending.
+   b. Vowels layer: formant synthesis over the recorded vowels.
+   c. Bells (synthesized), Soundscape and Texture (granular from the samples).
+   d. Delay, Drive, Sub; presets.
 6. [in progress] MPC skin (vst/skin): Player (orb + 8 macros), Edit (6 layer cards), FX (4 modules). Built and
    checked offline, not yet seen on the device. The orb is a 34-frame meter filmstrip (2 energy levels x 17
    frames) the engine steps about every 0.1 to 0.3 s. Plugin area is 1280x628; MPC draws the tabs and preset menu.
 7. Presets, device test, release.
 
 ## Open
-- Project state saving: the engine has no "state" chunk yet; add one before presets.
 - Verify the dizi source.
 - Plugin license for the release (the test plugin is MIT; decide for OxZygen itself before release).

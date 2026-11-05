@@ -22,10 +22,13 @@ The skin artwork is pre-rendered and committed. To change the design, edit `vst/
 `python3 vst/skin/make_skin.py` (needs Python with Playwright and Pillow), then build.
 
 ## Layout
-- `vst/`: the plugin: `engine.c` (placeholder pad sound for now), `params.json` (parameter order is fixed; saved
-  projects depend on it), `skin/make_skin.py` (all skin artwork and `layout.conf`)
+- `vst/`: the plugin: `engine.c` (sample engine and reverb), `params.json` (parameter order is fixed; saved
+  projects depend on it; new parameters go at the end), `skin/make_skin.py` (all skin artwork and `layout.conf`)
+- `vst/data/`: the prepared samples the plugin ships with (62 MB, CC0; made by `samples/prepare.py`), so a build
+  needs no 15 GB source download
 - `tests/sdtest/`: SD card access test plugin (passed on an MPC Live II, 2026-11-05)
-- `samples/`: scripts to fetch the CC0 sources and trim them to the built-in set (`MANIFEST.md`)
+- `samples/`: fetch the CC0 sources, trim them (`trim.sh`) and prepare them for the engine (`prepare.py`: pitch,
+  seamless loops, levels)
 - `ui/prototype.html`: clickable UI prototype (open in a browser)
 - `docs/PLAN.md`: plan and device budget
 - `CREDITS.md`: every sample source and its license
