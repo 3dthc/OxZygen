@@ -64,3 +64,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 - Vowels: with Attack under 25% each note starts with a sung "d" (closure, tongue burst, formant glide), so
   Morph picks doo / doh / dah / deh / dee. Stronger on harder hits. New preset Scat Doos.
 - Skin: brushed graphite panels with screws, machined steel buttons, accent brightened to ice blue (#5cc8ff).
+
+## 0.5.2: CRT orb (2026-11-05)
+- The orb picture runs through a CRT pass: tube bulge, RGB fringe, scanlines, phosphor triads, rolling refresh band, flicker.

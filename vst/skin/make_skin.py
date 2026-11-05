@@ -167,6 +167,34 @@ function knob(size, v) {
 }
 
 function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+// CRT pass over the orb's picture (device pixels): tube bulge, RGB convergence fringe, scanlines, phosphor
+// triads, a slow rolling refresh band, faint flicker, and the darker tube edge. All loop with t (0..1).
+function crt(x, W, C, R, t, level) {
+  const src = x.getImageData(0, 0, W, W), s = src.data, out = x.createImageData(W, W), d = out.data;
+  const roll = (t * W * 1.0) % W, flick = 1 + 0.035 * Math.sin(t * 2 * Math.PI * 3) + (level ? 0.04 : 0);
+  const sample = (px, py, ch) => {
+    px = Math.max(0, Math.min(W - 1, px | 0)); py = Math.max(0, Math.min(W - 1, py | 0));
+    return s[(py * W + px) * 4 + ch];
+  };
+  for (let y = 0; y < W; y++) for (let xx = 0; xx < W; xx++) {
+    const i = (y * W + xx) * 4, dx = (xx - C) / R, dy = (y - C) / R, r2 = dx * dx + dy * dy;
+    if (r2 > 1.0) { d[i] = s[i]; d[i + 1] = s[i + 1]; d[i + 2] = s[i + 2]; d[i + 3] = s[i + 3]; continue; }
+    const k = 1 - 0.10 * r2;                                    // bulge: the middle pushes toward you
+    const sx = C + dx * k * R, sy = C + dy * k * R, fr = 2.5 + 4 * r2;   // fringe grows toward the edge
+    let rr = sample(sx + fr, sy, 0), gg = sample(sx, sy, 1), bb = sample(sx - fr, sy, 2);
+    const line = (y % 6) < 2 ? 0.38 : 1.12;                    // scanlines: 3 px pitch on screen, one px dark
+    const tri = ((xx / 2) | 0) % 3, mask = 0.82;                 // phosphor triads, one screen px each
+    const band = 1 + 0.22 * Math.exp(-Math.pow(((y - roll + W) % W) / 40 - 1, 2) * 3);   // rolling refresh
+    const vig = 1 - 0.45 * Math.pow(r2, 1.6);
+    const g = line * band * vig * flick * 1.3;                  // phosphor glow makes up for the dark lines
+    rr *= g * (tri === 0 ? 1.12 : mask); gg *= g * (tri === 1 ? 1.12 : mask); bb *= g * (tri === 2 ? 1.12 : mask);
+    const lift = 3 * vig;                                        // the tube is never quite black
+    d[i] = Math.min(255, rr + lift); d[i + 1] = Math.min(255, gg + lift * 1.3); d[i + 2] = Math.min(255, bb + lift * 1.6);
+    d[i + 3] = 255;
+  }
+  x.putImageData(out, 0, 0);
+}
+
 function orb(S, phase, phases, level) {
   const c = document.createElement('canvas'); c.width = c.height = S * 2;
   const x = c.getContext('2d'); x.scale(2, 2);
@@ -201,6 +229,7 @@ function orb(S, phase, phases, level) {
   const core = x.createRadialGradient(C, C + 12, 0, C, C + 12, 90);
   core.addColorStop(0, 'rgba(92,200,255,' + (level ? .17 : .06) + ')'); core.addColorStop(1, 'rgba(92,200,255,0)');
   x.fillStyle = core; x.fillRect(0, 0, S, S);
+  crt(x, S * 2, C * 2, R * 2, t, level);
   x.save(); x.translate(C - 54, C - 62); x.rotate(-.6);               // hard window reflection
   x.beginPath(); x.ellipse(0, 0, 32, 9, 0, 0, 2 * Math.PI); x.fillStyle = 'rgba(235,245,255,.18)'; x.fill(); x.restore();
   x.restore();
