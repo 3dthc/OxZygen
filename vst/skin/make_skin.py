@@ -502,7 +502,12 @@ def write_layout():
     for key, label, cx, cy in fx_knobs():
         L.append('knob cx=%d cy=%d r=%d label="%s" key=%s strip=art/knob%d.png ns=0 vs=%d bw=%d'
                  % (cx, cy, FX_R, label.upper(), key, FX_R, FX_VS, FX_BW))
-    L.append('qlinks "FX" = ' + ",".join(k for k, *_ in fx_knobs()))
+    # one Q-Link column (4 knobs, one press of the Q-Link button) per panel, top to bottom; "-" pads a 3-knob panel
+    cols = []
+    for p, *_ in FX:
+        keys = [k for k, *_ in fx_knobs() if k.startswith(p + "_") or (p == "sb" and k == "master") or (p == "dr" and k == "a4")]
+        cols += (keys + ["-"] * 4)[:4]
+    L.append('qlinks "FX" = ' + ",".join(cols))
     open(os.path.join(HERE, "layout.conf"), "w").write("\n".join(L) + "\n")
 
 

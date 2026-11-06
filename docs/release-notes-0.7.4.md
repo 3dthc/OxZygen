@@ -1,8 +1,6 @@
-**What's new in 0.7.3:** an **A4 Tune** knob on the FX page (in the Drive / Tuning panel) sets the reference pitch from 415 to 466 Hz (440 is standard; 432, 442 and 443 are common). Every sound follows it. Saved projects and presets carry over and stay at 440 Hz.
+**What's new in 0.7.4:** the FX page's Q-Links follow its panels again. Each press of the Q-Link button moves to the next panel: Reverb (Size, Decay, Mix), Delay (Time, Feedback, Mix), Drive / Tuning (Amount, Tone, Mix, A4 Tune), Sub / Output (Level, Tune, Drop, Output).
 
-**Also since 0.7.1:** the sub is now off in every preset except the seven built around it, and sits lower (18–25) in those.
-
-**OXZYGEN 0.7.3**: a dark, cinematic instrument for MPC standalone: choirs, vowels and sung "doo"s, flutes, reeds, brass, atmospheric strings, bells, Juno-style synths, wind and textures, with a CRT crystal-ball orb that reacts as you play.
+**OXZYGEN 0.7.4**: a dark, cinematic instrument for MPC standalone: choirs, vowels and sung "doo"s, flutes, reeds, brass, atmospheric strings, bells, Juno-style synths, wind and textures, with a CRT crystal-ball orb that reacts as you play.
 
 - Two sound slots, each picking a category (Voices, Winds, Brass, Strings, Bells, Synth, Air) and one of 22 sounds
 - FX page: A4 Tune, 415–466 Hz
@@ -15,9 +13,9 @@
 
 | Zip | Device |
 |---|---|
-| `OxZygen-0.7.3-mpc-armv7.zip` | **Gen1**: MPC Live, Live II, One, X, Force on **MPC OS 3.x** |
-| `OxZygen-0.7.3-mpc-armv7-os2.zip` | the same Gen1 devices still on **MPC OS 2.x** |
-| `OxZygen-0.7.3-mpc-aarch64.zip` | **Gen2**: MPC Live III and the other 64-bit models (MPC OS 3.x) |
+| `OxZygen-0.7.4-mpc-armv7.zip` | **Gen1**: MPC Live, Live II, One, X, Force on **MPC OS 3.x** |
+| `OxZygen-0.7.4-mpc-armv7-os2.zip` | the same Gen1 devices still on **MPC OS 2.x** |
+| `OxZygen-0.7.4-mpc-aarch64.zip` | **Gen2**: MPC Live III and the other 64-bit models (MPC OS 3.x) |
 
 ## Requirements
 - An MPC OS standalone device (see above); about 130 MB free on the internal drive. The plugin uses about 131 MB of RAM once loaded.

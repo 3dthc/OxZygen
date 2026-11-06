@@ -109,3 +109,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.7.3: A4 Tune (2026-11-05)
 - New last parameter a4 (415-466 Hz, default 440) on the FX page; scales every pitch (sample increments, grains, synth, formants, sub). Measured: synth, flute, choir follow 432/440/466. Projects carry over.
+
+## 0.7.4: FX Q-Links by panel (2026-11-05)
+- With A4 added the 14 FX knobs ran across columns; now one Q-Link column per panel, "-" padding the 3-knob ones.
