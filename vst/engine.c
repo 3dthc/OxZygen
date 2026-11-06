@@ -211,7 +211,11 @@ static inline unsigned rnd(unsigned *st) { *st ^= *st << 13; *st ^= *st >> 17; *
 static inline float frand(unsigned *st) { return (rnd(st) >> 8) * (1.0f / 16777216.0f); }        /* 0..1 */
 static inline float nrand(unsigned *st) { return frand(st) * 2.0f - 1.0f; }                      /* -1..1 */
 static float HANN[257];
-static float note_hz(float n) { return 440.0f * exp2f((n - 69.0f) / 12.0f); }
+/* A4 Tune: the reference pitch, 415..466 Hz (440 standard). Set from the instance at the top of midi() and
+   render(), which run on one thread, so every pitch below (samples and synthesis) follows it. */
+static float g_tune = 1.0f;
+static inline void set_tune(float hz) { g_tune = hz > 400.0f ? hz / 440.0f : 1.0f; }
+static float note_hz(float n) { return 440.0f * g_tune * exp2f((n - 69.0f) / 12.0f); }
 
 /* ---------- voices ---------- */
 #define NP 8                 /* bell partials */
@@ -302,7 +306,7 @@ static int idx_of(const char *key) {
 #define P(name) (s->val[I_##name] * 0.01f)
 static int I_master, I_velocity, I_breath, I_attack, I_release, I_air, I_dark, I_lofi, I_motion,
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
-    I_sb_level, I_sb_tune, I_sb_drop, I_orb;
+    I_sb_level, I_sb_tune, I_sb_drop, I_orb, I_a4;
 static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
 static int g_idx_done;
 static void init_idx(void) {
@@ -310,7 +314,7 @@ static void init_idx(void) {
 #define X(n) I_##n = idx_of(#n)
     X(master); X(velocity); X(breath); X(attack); X(release); X(air); X(dark); X(lofi); X(motion);
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
-    X(sb_level); X(sb_tune); X(sb_drop); X(orb);
+    X(sb_level); X(sb_tune); X(sb_drop); X(orb); X(a4);
 #undef X
     static const char *CATKEY[NCATS] = {"", "voices", "winds", "brass", "strings", "bells", "synth", "air"};
     for (int sl = 0; sl < 2; sl++) {
@@ -454,7 +458,7 @@ static void add_src(voice_t *v, const zone_t *z, int note, float g, float pan, f
     src_t *x = &v->s[v->nsrc++];
     x->z = z;
     x->i = 0; x->fr = 0.0f;
-    x->inc_base = exp2f((note - z->pitch + detune_cents / 100.0f) / 12.0f);
+    x->inc_base = g_tune * exp2f((note - z->pitch + detune_cents / 100.0f) / 12.0f);
     x->g = g;
     float a = (pan + 1.0f) * 0.25f * (float)M_PI;   /* equal-power pan, -1..1 */
     x->gl = cosf(a); x->gr = sinf(a);
@@ -652,6 +656,7 @@ static int lowest_key(oxz_t *s) {
 
 static void midi(void *inst, const uint8_t *m, int n) {
     oxz_t *s = inst;
+    set_tune(s->val[I_a4]);
     if (n < 2) return;
     int st = m[0] & 0xF0;
     if (st == 0xE0 && n >= 3) { s->bend = (((m[2] << 7) | m[1]) - 8192) / 8192.0f * 2.0f; return; }
@@ -909,7 +914,7 @@ static void grain_spawn(voice_t *v, const zone_t *z, float target_note, float si
     for (int g = 0; g < NGRAIN; g++) if (!v->gr[g].on) { slot = g; break; }
     if (slot < 0) return;
     grain_t *g = &v->gr[slot];
-    float inc = exp2f((target_note - z->pitch + detune_cents / 100.0f) / 12.0f);
+    float inc = g_tune * exp2f((target_note - z->pitch + detune_cents / 100.0f) / 12.0f);
     float len = size_s * SR;
     float span = len * inc;
     float avail = (float)z->le - 8.0f;
@@ -1241,6 +1246,7 @@ static void sub_block(oxz_t *s, float *L, float *R, int frames) {
 
 static void render(void *inst, int16_t *out, int frames) {
     oxz_t *s = inst;
+    set_tune(s->val[I_a4]);
     const bank_t *b = __atomic_load_n(&g_bank, __ATOMIC_ACQUIRE);
     float L[128], R[128];
     memset(L, 0, sizeof L); memset(R, 0, sizeof R);

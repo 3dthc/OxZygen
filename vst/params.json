@@ -521,6 +521,15 @@
    "default": 0,
    "display": "int",
    "live": true
+  },
+  {
+   "key": "a4",
+   "name": "A4 Tune",
+   "unit": "Hz",
+   "min": 415,
+   "max": 466,
+   "default": 440,
+   "display": "int"
   }
  ],
  "sections": [

@@ -106,3 +106,6 @@ No Velocity control: MPC's own pad sensitivity and Full Level cover that. Preset
 
 ## 0.7.2: sub only where it belongs (2026-11-05)
 - Sub off in 89 presets; kept at 18-25 in 7 (stabs, pulse, doom brass, drone, two dark pads). Levels within 1.6 dB; Lean Flute slot raised.
+
+## 0.7.3: A4 Tune (2026-11-05)
+- New last parameter a4 (415-466 Hz, default 440) on the FX page; scales every pitch (sample increments, grains, synth, formants, sub). Measured: synth, flute, choir follow 432/440/466. Projects carry over.

@@ -108,7 +108,7 @@ def label_top(cy, r=SLOT_R, vs=SLOT_VS):
 
 FX = [("rv", "Reverb", ["Size", "Decay", "Mix"], 20, 100),
       ("dl", "Delay", ["Time", "Feedback", "Mix"], 650, 100),
-      ("dr", "Drive", ["Amount", "Tone", "Mix"], 20, 406),
+      ("dr", "Drive / Tuning", ["Amount", "Tone", "Mix"], 20, 406),
       ("sb", "Sub / Output", ["Level", "Tune", "Drop"], 650, 406)]
 FX_R, FX_VS, FX_BW = 56, 28, 116   # Sub / Output has 4 knobs 122 px apart
 
@@ -116,12 +116,14 @@ FX_R, FX_VS, FX_BW = 56, 28, 116   # Sub / Output has 4 knobs 122 px apart
 def fx_knobs():
     out = []
     for p, name, ks, x0, y0 in FX:
-        n = len(ks) + (1 if p == "sb" else 0)
+        n = len(ks) + (1 if p in ("sb", "dr") else 0)
         step = 610 // (n + 1)
         for i, k in enumerate(ks):
             out.append(("%s_%s" % (p, k.lower()), k, x0 + step * (i + 1), y0 + 160))
         if p == "sb":
             out.append(("master", "Output", x0 + step * n, y0 + 160))
+        if p == "dr":   # A4 reference pitch, in Hz
+            out.append(("a4", "A4 Tune", x0 + step * n, y0 + 160))
     return out
 
 

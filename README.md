@@ -36,7 +36,8 @@ Needs about 130 MB free on the internal drive; OxZygen uses about 131 MB of RAM 
 - **Player**: Velocity, Breath, Attack, Release on the left; Air, Filter, Lo-Fi, Motion on the right; the orb in the middle.
   The mod wheel adds movement on every sound (vibrato, drift, filter, shimmer).
 - **Sound**: two slots. Pick a category, then a sound, an octave, and its three knobs (their names follow the sound) and Level.
-- **FX**: reverb, ping-pong delay, drive, and a sub that follows the lowest note (Drop sets how it slides in), plus Output.
+- **FX**: reverb, ping-pong delay, drive, A4 Tune (415–466 Hz reference pitch), and a sub that follows the lowest note
+  (Drop sets how it slides in), plus Output.
 
 ## Credits and license
 

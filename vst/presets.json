@@ -49,7 +49,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -101,7 +102,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -153,7 +155,8 @@
     "dr_mix": 60,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -205,7 +208,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -257,7 +261,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -309,7 +314,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -361,7 +367,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -413,7 +420,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -465,7 +473,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -517,7 +526,8 @@
     "dr_mix": 70,
     "sb_level": 20,
     "sb_tune": 50,
-    "sb_drop": 45
+    "sb_drop": 45,
+    "a4": 440
    }
   },
   {
@@ -569,7 +579,8 @@
     "dr_mix": 25,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 25
+    "sb_drop": 25,
+    "a4": 440
    }
   },
   {
@@ -621,7 +632,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -673,7 +685,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -725,7 +738,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -777,7 +791,8 @@
     "dr_mix": 20,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -829,7 +844,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -881,7 +897,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -933,7 +950,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 35
+    "sb_drop": 35,
+    "a4": 440
    }
   },
   {
@@ -985,7 +1003,8 @@
     "dr_mix": 20,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -1037,7 +1056,8 @@
     "dr_mix": 35,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1089,7 +1109,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1141,7 +1162,8 @@
     "dr_mix": 30,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 60
+    "sb_drop": 60,
+    "a4": 440
    }
   },
   {
@@ -1193,7 +1215,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -1245,7 +1268,8 @@
     "dr_mix": 30,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1297,7 +1321,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1349,7 +1374,8 @@
     "dr_mix": 20,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1401,7 +1427,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1453,7 +1480,8 @@
     "dr_mix": 50,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 20
+    "sb_drop": 20,
+    "a4": 440
    }
   },
   {
@@ -1505,7 +1533,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1557,7 +1586,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1609,7 +1639,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1661,7 +1692,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1713,7 +1745,8 @@
     "dr_mix": 20,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1765,7 +1798,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1817,7 +1851,8 @@
     "dr_mix": 30,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1869,7 +1904,8 @@
     "dr_mix": 30,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -1921,7 +1957,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -1973,7 +2010,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 35
+    "sb_drop": 35,
+    "a4": 440
    }
   },
   {
@@ -2025,7 +2063,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2077,7 +2116,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2129,7 +2169,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2181,7 +2222,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 20
+    "sb_drop": 20,
+    "a4": 440
    }
   },
   {
@@ -2233,7 +2275,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2285,7 +2328,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2337,7 +2381,8 @@
     "dr_mix": 30,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 35
+    "sb_drop": 35,
+    "a4": 440
    }
   },
   {
@@ -2389,7 +2434,8 @@
     "dr_mix": 40,
     "sb_level": 25,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2441,7 +2487,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2493,7 +2540,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2545,7 +2593,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2597,7 +2646,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2649,7 +2699,8 @@
     "dr_mix": 25,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -2701,7 +2752,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2753,7 +2805,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2805,7 +2858,8 @@
     "dr_mix": 35,
     "sb_level": 22,
     "sb_tune": 50,
-    "sb_drop": 70
+    "sb_drop": 70,
+    "a4": 440
    }
   },
   {
@@ -2857,7 +2911,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2909,7 +2964,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -2961,7 +3017,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3013,7 +3070,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3065,7 +3123,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3117,7 +3176,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3169,7 +3229,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3221,7 +3282,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3273,7 +3335,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3325,7 +3388,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3377,7 +3441,8 @@
     "dr_mix": 25,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 25
+    "sb_drop": 25,
+    "a4": 440
    }
   },
   {
@@ -3429,7 +3494,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 35
+    "sb_drop": 35,
+    "a4": 440
    }
   },
   {
@@ -3481,7 +3547,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3533,7 +3600,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 50
+    "sb_drop": 50,
+    "a4": 440
    }
   },
   {
@@ -3585,7 +3653,8 @@
     "dr_mix": 25,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 35
+    "sb_drop": 35,
+    "a4": 440
    }
   },
   {
@@ -3637,7 +3706,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -3689,7 +3759,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3741,7 +3812,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3793,7 +3865,8 @@
     "dr_mix": 25,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 25
+    "sb_drop": 25,
+    "a4": 440
    }
   },
   {
@@ -3845,7 +3918,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3897,7 +3971,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -3949,7 +4024,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4001,7 +4077,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4053,7 +4130,8 @@
     "dr_mix": 25,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4105,7 +4183,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4157,7 +4236,8 @@
     "dr_mix": 40,
     "sb_level": 25,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -4209,7 +4289,8 @@
     "dr_mix": 25,
     "sb_level": 18,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -4261,7 +4342,8 @@
     "dr_mix": 40,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 50
+    "sb_drop": 50,
+    "a4": 440
    }
   },
   {
@@ -4313,7 +4395,8 @@
     "dr_mix": 35,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 45
+    "sb_drop": 45,
+    "a4": 440
    }
   },
   {
@@ -4365,7 +4448,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4417,7 +4501,8 @@
     "dr_mix": 50,
     "sb_level": 25,
     "sb_tune": 50,
-    "sb_drop": 60
+    "sb_drop": 60,
+    "a4": 440
    }
   },
   {
@@ -4469,7 +4554,8 @@
     "dr_mix": 0,
     "sb_level": 18,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -4521,7 +4607,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4573,7 +4660,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4625,7 +4713,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4677,7 +4766,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4729,7 +4819,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4781,7 +4872,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4833,7 +4925,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 40
+    "sb_drop": 40,
+    "a4": 440
    }
   },
   {
@@ -4885,7 +4978,8 @@
     "dr_mix": 20,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 35
+    "sb_drop": 35,
+    "a4": 440
    }
   },
   {
@@ -4937,7 +5031,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 30
+    "sb_drop": 30,
+    "a4": 440
    }
   },
   {
@@ -4989,7 +5084,8 @@
     "dr_mix": 0,
     "sb_level": 0,
     "sb_tune": 50,
-    "sb_drop": 70
+    "sb_drop": 70,
+    "a4": 440
    }
   }
  ]
