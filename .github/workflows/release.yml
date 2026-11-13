@@ -18,13 +18,13 @@ on:
 
 jobs:
   vst:
-    uses: 3dthc/mpc-vst-plugins/.github/workflows/vst-release.yml@455cbac541df8d5bf441bb29d308383c96dcb32d
+    uses: 3dthc/mpc-vst-plugins/.github/workflows/vst-release.yml@860807012d78a1b997863fae618f72d0da5945d1
     permissions: { contents: write }
     secrets: inherit   # optional Apple signing/notarization (mpc-vst-plugins docs/DESKTOP_VST3.md)
     with:
       tag: oxzygen-v${{ inputs.version }}
       version: ${{ inputs.version }}
-      tools_ref: 455cbac541df8d5bf441bb29d308383c96dcb32d
+      tools_ref: 860807012d78a1b997863fae618f72d0da5945d1
       vst_dir: vst
       build: '"$MPC_VST/tools/build_port.sh" vst/vst.json all'
       host_test: '"$MPC_VST/tools/test_port.sh" vst/vst.json'
