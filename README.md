@@ -44,6 +44,20 @@ Needs about 130 MB free on the internal drive; OxZygen uses about 131 MB of RAM 
 Every sample is CC0 (public domain); sources are listed in [CREDITS.md](CREDITS.md). The code is MIT ([LICENSE](LICENSE)).
 Built with the [MPC VST toolchain](https://github.com/open-mpc/mpc-vst-plugins).
 
+## On a computer (MPC Desktop, Logic Pro, DAWs)
+
+Each release also has OxZygen for a computer, with the same sound and touchscreen skin. A project saved on the MPC opens in MPC Desktop (controller mode) with the plugin in place.
+
+- **Mac, MPC Desktop and VST3 hosts:** `-macos-vst3.zip` (`.vst3`).
+- **Mac, Logic Pro and GarageBand:** `-macos-au.zip` (`.component`, the Audio Unit).
+- **Windows** (64-bit): `-windows-vst3.zip` is a single `.vst3` file; copy it into `C:\Program Files\Common Files\VST3`.
+
+Both Mac zips are universal (Apple Silicon and Intel). If macOS says the plugin "can't be verified", put the downloaded zips in Downloads and run this in Terminal. It installs and unblocks the VST3 and the Audio Unit alike, even though the zips' README only says VST3:
+
+```
+curl -fsSL https://raw.githubusercontent.com/3dthc/mpc-vst-plugins/desktop-vst3-openmpc/tools/install_mac_vst3.sh | bash
+```
+
 ## Building it yourself (Ubuntu / WSL)
 
 Needs the toolchain checked out at `~/mpc-vst-plugins` (or set `MPC_VST`) and Docker running.
