@@ -320,6 +320,9 @@ static int I_master, I_velocity, I_breath, I_attack, I_release, I_air, I_dark, I
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
     I_sb_level, I_sb_tune, I_sb_drop, I_orb, I_a4;
 static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
+static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
+#define NTHEME 3
+static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY"};
 static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1;
 static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
 #define NBCAT 7                        /* the browser's categories, after ALL */
@@ -332,6 +335,8 @@ static void init_idx(void) {
     X(master); X(velocity); X(breath); X(attack); X(release); X(air); X(dark); X(lofi); X(motion);
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
     X(sb_level); X(sb_tune); X(sb_drop); X(orb); X(a4);
+    X(theme); X(th_prev); X(th_next); X(th_name);
+    I_look[0] = idx_of("a_look"); I_look[1] = idx_of("b_look"); I_lbl[0] = idx_of("a_lbl"); I_lbl[1] = idx_of("b_lbl");
     X(preset); X(p_name); X(p_prev); X(p_next); X(b_head); X(b_page); X(pg_prev); X(pg_next);
 #undef X
     I_cat1 = idx_of("cat_1"); I_row1 = idx_of("row_1"); I_cpick1 = idx_of("cpick_1"); I_rpick1 = idx_of("rpick_1");
@@ -381,6 +386,10 @@ static void read_slots(oxz_t *s) {
             s->val[I_sound[i]] = (float)snd;
             s->rev++;
         }
+        int th = (int)(s->val[I_theme] + 0.5f);
+        if (th < 0 || th >= NTHEME) th = 0;
+        float look = (float)(th * NCATS + cat), lbl = (float)(th * NSOUNDS + snd);   /* the skin's when= / picture keys */
+        if (s->val[I_look[i]] != look || s->val[I_lbl[i]] != lbl) { s->val[I_look[i]] = look; s->val[I_lbl[i]] = lbl; s->rev++; }
         x->type = snd;
         x->layer = SOUND_LAYER[snd];
         x->inst = SOUND_INST[snd];
@@ -414,7 +423,8 @@ static int is_cat_pad(int i) { return i >= I_cpick1 && i < I_cpick1 + NBCAT + 1;
 static int is_row_pad(int i) { return i >= I_rpick1 && i < I_rpick1 + ROWS; }
 static int is_pad(int i) { return is_cat_pad(i) || is_row_pad(i); }
 static int is_ui(int i) {   /* the browser's own controls and texts: never part of a sound, never saved */
-    return i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
+    return i == I_th_prev || i == I_th_next || i == I_th_name || i == I_look[0] || i == I_look[1] || i == I_lbl[0] ||
+           i == I_lbl[1] || i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
            i == I_pg_next || (i >= I_cat1 && i < I_cat1 + NBCAT + 1) || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
 }
 static int cur_preset(const oxz_t *s) {
@@ -501,6 +511,7 @@ static void upper(char *b) { for (; *b; b++) if (*b >= 'a' && *b <= 'z') *b -= 3
 static int ui_text(oxz_t *s, int i, int on, char *b, int n) {
     int cur = cur_preset(s), len;
     if (i == I_p_name) len = snprintf(b, n, "%s", PRESET_NAME[cur]);
+    else if (i == I_th_name) { int t = (int)(s->val[I_theme] + 0.5f); len = snprintf(b, n, "%s", THEME_NAME[t < 0 || t >= NTHEME ? 0 : t]); }
     else if (i == I_b_head) {
         int m[NPRESET];
         len = snprintf(b, n, "%s   %d PRESETS", BCAT_NAME[s->view], members(s, m));
@@ -870,15 +881,21 @@ static void set_param(void *inst, const char *key, const char *val) {
     if (i == I_orb) { s->energy = fminf(1.0f, s->energy + 0.6f); s->rev++; return; }   /* a tap on the orb */
     if (i == I_preset) { int pr = (int)(x + 0.5f); if (pr != cur_preset(s)) apply_preset(s, pr); return; }
     if (is_pad(i)) { pad(s, i, x); return; }
-    if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next) {
+    if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next || i == I_th_prev || i == I_th_next) {
         s->val[i] = x;
         if (x < 0.5f) return;                  /* the release (the wrapper debounces the press) */
-        if (i == I_p_prev || i == I_p_next) step_preset(s, i == I_p_next ? 1 : -1);
+        if (i == I_th_prev || i == I_th_next) {
+            int t = ((int)(s->val[I_theme] + 0.5f) + (i == I_th_next ? 1 : -1) + NTHEME) % NTHEME;
+            s->val[I_theme] = (float)t;
+            read_slots(s);
+            s->rev++;
+        } else if (i == I_p_prev || i == I_p_next) step_preset(s, i == I_p_next ? 1 : -1);
         else step_page(s, i == I_pg_next ? 1 : -1);
         return;
     }
     if (is_ui(i)) return;                      /* the texts are the engine's */
     s->val[i] = x;
+    if (i == I_theme || i == I_cat[0] || i == I_cat[1]) read_slots(s);   /* the looks follow at once */
 }
 
 static int get_param(void *inst, const char *key, char *b, int n) {

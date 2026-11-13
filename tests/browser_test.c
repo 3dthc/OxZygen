@@ -123,6 +123,28 @@ int main(void) {
     set(u, "rpick_2", "1");
     CHECK((int)val(u, "preset") == 50, "pads ignore a restore's values for a moment");
 
+    /* themes: one press, one step; the look keys follow; presets leave the theme alone; a project keeps it */
+    set(s, "th_next", "1"); set(s, "th_next", "0");
+    CHECK((int)val(s, "theme") == 1, "theme next: one step (%g)", val(s, "theme"));
+    get(s, "th_name", b);
+    CHECK(!strcmp(b, "GREEN"), "theme name: %s", b);
+    read_slots((oxz_t *)s);
+    CHECK((int)val(s, "a_look") == 1 * NCATS + (int)val(s, "a_cat"), "a_look = theme x 8 + category (%g)", val(s, "a_look"));
+    CHECK((int)val(s, "a_lbl") == 1 * NSOUNDS + (int)val(s, "a_sound"), "a_lbl = theme x 23 + sound (%g)", val(s, "a_lbl"));
+    set(s, "preset", "12");
+    CHECK((int)val(s, "theme") == 1, "a preset keeps the theme");
+    set(s, "th_prev", "1"); set(s, "th_prev", "0"); set(s, "th_prev", "1"); set(s, "th_prev", "0");
+    CHECK((int)val(s, "theme") == 2, "theme prev wraps: Green -> Aluminum -> Navy (%g)", val(s, "theme"));
+    ENGINE.get_param(s, "state", st, sizeof st);
+    CHECK(strstr(st, "theme=2;") && !strstr(st, "a_look=") && !strstr(st, "th_name="), "the project keeps the theme, not the looks");
+    void *v = ENGINE.create(NULL);
+    set(v, "state", st);
+    read_slots((oxz_t *)v);
+    CHECK((int)val(v, "theme") == 2 && (int)val(v, "b_look") == 2 * NCATS + (int)val(v, "b_cat"), "restored in Navy, looks follow");
+    set(v, "a_look", "3");
+    CHECK((int)val(v, "a_look") == 2 * NCATS + (int)val(v, "a_cat"), "a host can't set a look");
+    ENGINE.destroy(v);
+
     for (int i = 0; i < 8; i++) { snprintf(k, sizeof k, "cat_%d", i + 1); get(s, k, b); printf("     %s\n", b); }
     ENGINE.destroy(s); ENGINE.destroy(t); ENGINE.destroy(u);
     printf(fails ? "%d FAILED\n" : "PASSED\n", fails);

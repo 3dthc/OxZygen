@@ -36,6 +36,50 @@ W, H = 1280, 628
 BEZEL, PANEL, FG, DIM, LIVE, BRASS = "#b9bdc2", "#cfd2d6", "#15171a", "#4a4f56", "#1f6fff", "#d1a85c"
 READ_BG, READ_TX = "#0b1424", "#7ff0ff"
 
+# Themes (the "theme" parameter, picked on BROWSE): a panel and an accent each. The knob caps, readout boxes and LCDs
+# stay; the accent lights knob rings and pointers, lit buttons and rows, the orb, the Z and every live text.
+# Aluminum's art stays in art/; the others' in art/<key>/.
+_DARK = """
+.klabel, .title { color: %(fg)s !important; text-shadow: 0 1px 0 rgba(0,0,0,.7) !important; }
+.heading { color: %(dim)s !important; text-shadow: 0 1px 0 rgba(0,0,0,.7) !important; }
+.heading::after, .rule { background: linear-gradient(90deg, rgba(%(hi)s,.22), transparent) !important; box-shadow: 0 1px 0 rgba(0,0,0,.5) !important; }
+.grain { opacity: .9 !important; background-image: repeating-linear-gradient(0deg, rgba(%(hi)s,.045) 0 1px, rgba(0,0,0,.08) 1px 2px, transparent 2px 3px) !important;
+  box-shadow: inset 0 1px 0 rgba(%(hi)s,.16), inset 0 -2px 6px rgba(0,0,0,.5) !important; }
+.vbox { box-shadow: inset 0 2px 5px rgba(0,0,0,.95), 0 1px 0 rgba(%(hi)s,.14) !important; }
+.lcd { box-shadow: inset 0 3px 8px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(%(hi)s,.14) !important; }
+.well::before { opacity: .55; }
+"""
+THEMES = [
+    dict(key="aluminum", name="ALUMINUM", dir="", acc="#1f6fff", acc_hi="#3b82ff", acc_lo="#1450c8", glow="31,111,255",
+         ptr="#4d8dff", txt="#7ff0ff", txt_dim="#5a82aa", row_tx="#a9dcef", fg=FG, fg_shadow="rgba(255,255,255,.55)", orb_hue=0,
+         css=""),
+    dict(key="green", name="GREEN", dir="green", acc="#19c27a", acc_hi="#3ee39a", acc_lo="#0f8f58", glow="25,194,122",
+         ptr="#52f0a8", txt="#8cffc4", txt_dim="#4f9a77", row_tx="#b4f0d2", fg="#e6f3ec", fg_shadow="rgba(0,0,0,.7)", orb_hue=-60,
+         css=_DARK % {"fg": "#e6f3ec", "dim": "#9cc3ae", "hi": "200,255,225"} + """
+body { background: radial-gradient(1300px 420px at 50% -80px, rgba(180,255,210,.16), transparent 70%),
+  linear-gradient(180deg, #24493a, #17352a 55%, #0e241c) !important; }
+.well { background: linear-gradient(180deg, #24463a, #1a372c 60%, #152e25) !important;
+  box-shadow: inset 0 1px 0 rgba(200,255,225,.14), 0 0 0 1px rgba(0,20,10,.6), 0 6px 14px rgba(0,20,10,.4) !important; }
+.bezel { background: radial-gradient(circle at 35% 28%, #b8dcc8, #4a7a62 55%, #1a3a2c) !important; }
+"""),
+    dict(key="navy", name="NAVY", dir="navy", acc="#e0a23e", acc_hi="#f2bd5e", acc_lo="#b37a22", glow="224,162,62",
+         ptr="#ffc45e", txt="#ffd280", txt_dim="#a88a5c", row_tx="#f0dcb4", fg="#e8eefa", fg_shadow="rgba(0,0,0,.7)", orb_hue=165,
+         css=_DARK % {"fg": "#e8eefa", "dim": "#9fb4d8", "hi": "200,220,255"} + """
+body { background: radial-gradient(1300px 420px at 50% -80px, rgba(170,200,255,.22), transparent 70%),
+  linear-gradient(180deg, #2c4470, #1c3058 55%, #121f3c) !important; }
+.well { background: linear-gradient(180deg, #2a4068, #1f3256 60%, #192a4a) !important;
+  box-shadow: inset 0 1px 0 rgba(200,220,255,.15), 0 0 0 1px rgba(0,0,20,.6), 0 6px 14px rgba(0,0,20,.4) !important; }
+.bezel { background: radial-gradient(circle at 35% 28%, #b9cbea, #4f6a98 55%, #1f3156) !important; }
+"""),
+]
+TH = THEMES[0]   # the theme being drawn
+
+
+def art(name, th=None):
+    """A theme's art file, as layout.conf names it (relative to the skin folder)."""
+    d = (th or TH)["dir"]
+    return "art/%s%s" % (d + "/" if d else "", name)
+
 ORB_PHASES, ORB_LEVELS, ORB_SIZE = 17, 2, 360   # 34 frames x 360 px = 12240 px, under MPC's 12288 px strip limit
 
 # --- layout -------------------------------------------------------------------------------------------
@@ -62,7 +106,9 @@ LIST_Y, LIST_TH, LIST_GAP = 228, 46, 8 # the first row's top, row height, gap (8
 CAT_LIST = (52, LIST_Y, 236)           # x, y, width: 1 column
 ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
 ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
-PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
+PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel
+THEME_BOX = (1000, 124, 1234, 156)     # the theme picker, right of the THEME heading (screen)
+THEME_PAD = 44   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
 # categories and their sounds (must match params.json); SOUNDS is the derived a_sound/b_sound list, in order
@@ -286,10 +332,10 @@ def strip(frames, size):
 def seg_html(on, w, h):
     """A blank button plate; the renderer writes the option name on it (skin.css sets the font)."""
     if on:
-        bg = ("linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 50%),"
-              "linear-gradient(180deg,#3b82ff,#1f6fff 55%,#1450c8)")
-        sh = "inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.35),0 0 10px rgba(31,111,255,.45)"
-        border = "#0e3c9e"
+        bg = ("linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 50%%),"
+              "linear-gradient(180deg,%s,%s 55%%,%s)" % (TH["acc_hi"], TH["acc"], TH["acc_lo"]))
+        sh = "inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.35),0 0 10px rgba(%s,.45)" % TH["glow"]
+        border = "#0e3c9e" if not TH["dir"] else TH["acc_lo"]
     else:
         bg = ("repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 2px),"
               "linear-gradient(180deg,#4a4e55 0%,#33363c 50%,#26292e 100%)")
@@ -303,7 +349,7 @@ def labels_html(names):
     """Three knob names, centred under knobs 1-3 (a transparent strip a picture widget swaps per sound)."""
     cells = "".join("<div style='width:%dpx;text-align:center'>%s</div>" % (SLOT_KNOB_DX, n.upper()) for n in names)
     return ("<div style='display:flex;width:%dpx;height:%dpx;align-items:center;font:700 23px BC,sans-serif;"
-            "letter-spacing:.14em;color:%s;text-shadow:0 1px 0 rgba(255,255,255,.55)'>%s</div>" % (LBL_W, LBL_H, FG, cells))
+            "letter-spacing:.14em;color:%s;text-shadow:0 1px 0 %s'>%s</div>" % (LBL_W, LBL_H, TH["fg"], TH["fg_shadow"], cells))
 
 
 SKIN_CSS = """/* generated by make_skin.py: the selector's option names in the skin's condensed face */
@@ -359,7 +405,7 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
     radial-gradient(circle at 6px 6px, #f2f3f5 0 1.5px, #9a9fa6 3px, #5b6067 4.5px, transparent 5.5px) 100%% 100%% / 12px 12px no-repeat; }
 .title { position: absolute; font: 700 26px BC, sans-serif; letter-spacing: .24em; color: %(FG)s; text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(255,255,255,.6); }
-.title b { color: %(LIVE)s; font-weight: 700; text-shadow: 0 0 10px rgba(31,111,255,.35); }
+.title b { color: var(--acc); font-weight: 700; text-shadow: 0 0 10px rgba(var(--glow),var(--zglow)); }
 .lcd { position: absolute; border-radius: 10px; background: %(READ_BG)s;
   background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
   box-shadow: inset 0 3px 8px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.2); }
@@ -375,7 +421,7 @@ def bg_player():
     ox, oy = PLAYER["orb"]
     h = ["<div class='grain'></div>"]
     # the orb's shadow on the panel (the orb itself is the live meter on top)
-    h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:340px;height:340px;border-radius:50%%;"
+    h.append("<div class='bezel' style='position:absolute;left:%dpx;top:%dpx;width:340px;height:340px;border-radius:50%%;"
              "background:radial-gradient(circle at 35%% 28%%,#f4f5f7,#b4b8be 55%%,#80858c);"
              "box-shadow:0 18px 36px rgba(0,0,0,.35),inset 0 2px 1px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.35)'></div>"
              % (ox - 170, oy - Y0 - 170))
@@ -398,7 +444,7 @@ def strip_html():
     return ("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:9px'></div>"
             "<div class='arrow' style='left:%dpx;top:%dpx;border-right:11px solid %s'></div>"
             "<div class='arrow' style='left:%dpx;top:%dpx;border-left:11px solid %s'></div>"
-            % (x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 14, cy - 7, READ_TX, x1 - 25, cy - 7, READ_TX))
+            % (x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 14, cy - 7, TH["txt"], x1 - 25, cy - 7, TH["txt"]))
 
 
 def wordmark():
@@ -409,8 +455,15 @@ def wordmark():
 
 def bg_browse():
     h = ["<div class='grain'></div>", wordmark()]
-    for text, x0, x1, y in (("BROWSE", 46, 420, 140), ("PRESETS", 860, 1234, 140)):
+    for text, x0, x1, y in (("BROWSE", 46, 420, 140), ("THEME", 860, 990, 140)):
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
+    # the theme picker: a small LCD with ◀ ▶ (MPC writes the theme's name)
+    x0, y0, x1, y1 = THEME_BOX
+    cy = (y0 + y1) // 2 - Y0
+    h.append("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:8px'></div>"
+             "<div class='arrow' style='left:%dpx;top:%dpx;border-right:11px solid %s'></div>"
+             "<div class='arrow' style='left:%dpx;top:%dpx;border-left:11px solid %s'></div>"
+             % (x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 14, cy - 7, TH["txt"], x1 - 25, cy - 7, TH["txt"]))
     for x0, y0, x1, y1 in (CAT_BOX, ROW_BOX):
         h.append("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx'></div>" % (x0, y0 - Y0, x1 - x0, y1 - y0))
     h.append("<div class='lcdcap' style='left:%dpx;top:%dpx'>CATEGORY</div>" % (CAT_BOX[0] + 18, CAT_BOX[1] - Y0 + 14))
@@ -419,7 +472,7 @@ def bg_browse():
     for i, d in enumerate(("up", "down")):
         x, y = px + i * PG_W, CAT_BOX[1] - Y0 + 8
         tri = ("border-left:9px solid transparent;border-right:9px solid transparent;border-%s:11px solid %s" %
-               ("bottom" if d == "up" else "top", READ_TX))
+               ("bottom" if d == "up" else "top", TH["txt"]))
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:0;height:0;%s;"
                  "filter:drop-shadow(0 0 4px rgba(64,170,255,.8))'></div>" % (x + PG_W // 2 - 9, y + PG_H // 2 - 6, tri))
     # column rules between the preset columns
@@ -437,10 +490,10 @@ def row_html(on, w, h, solid):
         return "<div style='width:%dpx;height:%dpx'></div>" % (w, h)
     if solid:
         return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border-radius:6px;"
-                "background:linear-gradient(180deg,#3b82ff,#1f6fff 55%%,#1450c8);"
-                "box-shadow:inset 0 1px 0 rgba(255,255,255,.45)'></div>" % (w, h))
-    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border-radius:6px;border:2px solid #1f6fff;"
-            "background:rgba(31,111,255,.28);box-shadow:inset 0 0 12px rgba(31,111,255,.45)'></div>" % (w, h))
+                "background:linear-gradient(180deg,%s,%s 55%%,%s);"
+                "box-shadow:inset 0 1px 0 rgba(255,255,255,.45)'></div>" % (w, h, TH["acc_hi"], TH["acc"], TH["acc_lo"]))
+    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border-radius:6px;border:2px solid %s;"
+            "background:rgba(%s,.28);box-shadow:inset 0 0 12px rgba(%s,.45)'></div>" % (w, h, TH["acc"], TH["glow"], TH["glow"]))
 
 
 def bg_sound():  # noqa: E302
@@ -474,67 +527,99 @@ def bg_fx():
     return "".join(h)
 
 
+def hue_shift(img, deg):
+    """The orb in another theme's colour: its hues turned by deg (alpha kept)."""
+    if not deg:
+        return img
+    a = img.getchannel("A")
+    h, sat, v = img.convert("RGB").convert("HSV").split()
+    h = h.point(lambda x: (x + int(round(deg / 360.0 * 256))) % 256)
+    out = Image.merge("HSV", (h, sat, v)).convert("RGB").convert("RGBA")
+    out.putalpha(a)
+    return out
+
+
 def render_art():
+    global TH
     os.makedirs(ART, exist_ok=True)
     tmp = os.path.join(ART, "_page.html")
     with sync_playwright() as pw:
         b = pw.chromium.launch()
         pg = b.new_page(viewport={"width": W, "height": H})
+        orb = None
+        for TH in THEMES:
+            out = os.path.join(ART, TH["dir"]) if TH["dir"] else ART
+            os.makedirs(out, exist_ok=True)
+            var = ":root { --acc: %s; --glow: %s; --zglow: %s; }" % (TH["acc"], TH["glow"], ".35" if not TH["dir"] else ".55")
 
-        def page(body):
-            open(tmp, "w").write("<!doctype html><meta charset=utf-8><style>%s</style><body>%s</body>" % (PAGE_CSS, body))
-            pg.goto("file://" + tmp)
-            pg.evaluate("document.fonts.ready")
-            pg.wait_for_timeout(150)
+            def page(body):
+                open(tmp, "w").write("<!doctype html><meta charset=utf-8><style>%s%s%s</style><body>%s</body>"
+                                     % (PAGE_CSS, var, TH["css"], body))
+                pg.goto("file://" + tmp)
+                pg.evaluate("document.fonts.ready")
+                pg.wait_for_timeout(150)
 
-        # backgrounds
-        for name, fn in (("player", bg_player), ("browse", bg_browse), ("sound", bg_sound), ("fx", bg_fx)):
-            page(fn())
-            Image.open(io.BytesIO(pg.screenshot())).convert("RGB").save(os.path.join(ART, "bg_%s.png" % name), optimize=True)
+            # backgrounds
+            for name, fn in (("player", bg_player), ("browse", bg_browse), ("sound", bg_sound), ("fx", bg_fx)):
+                page(fn())
+                Image.open(io.BytesIO(pg.screenshot())).convert("RGB").save(os.path.join(out, "bg_%s.png" % name), optimize=True)
 
-        # filmstrips
-        page("")
-        pg.add_script_tag(content=DRAW_JS)
-        for r in sorted({PLAYER_R, SLOT_R, FX_R}):
-            s = 2 * r + 10
-            frames = [png(pg.evaluate("([s, v]) => knob(s, v)", [s, i / 127])) for i in range(128)]
-            strip(frames, s).save(os.path.join(ART, "knob%d.png" % r), optimize=True)
-        frames = [png(pg.evaluate("([S, p, n, l]) => orb(S, p, n, l)", [ORB_SIZE, ph, ORB_PHASES, lv]))
-                  for lv in range(ORB_LEVELS) for ph in range(ORB_PHASES)]
-        strip(frames, ORB_SIZE).save(os.path.join(ART, "orb.png"), optimize=True)
+            # filmstrips: knobs in the theme's accent; the orb drawn once and turned to the theme's hue
+            page("")
+            js = DRAW_JS if not TH["dir"] else DRAW_JS.replace(LIVE, TH["acc"]).replace("31,111,255", TH["glow"]).replace("80,150,255", TH["glow"]) \
+                        .replace("#4d8dff", TH["ptr"])
+            pg.add_script_tag(content=js)
+            for r in sorted({PLAYER_R, SLOT_R, FX_R}):
+                sz = 2 * r + 10
+                frames = [png(pg.evaluate("([s, v]) => knob(s, v)", [sz, i / 127])) for i in range(128)]
+                strip(frames, sz).save(os.path.join(out, "knob%d.png" % r), optimize=True)
+            if orb is None:
+                frames = [png(pg.evaluate("([S, p, n, l]) => orb(S, p, n, l)", [ORB_SIZE, ph, ORB_PHASES, lv]))
+                          for lv in range(ORB_LEVELS) for ph in range(ORB_PHASES)]
+                orb = strip(frames, ORB_SIZE)
+            hue_shift(orb, TH["orb_hue"]).save(os.path.join(out, "orb.png"), optimize=True)
 
-        # selector segments, two sizes
-        sizes = [("cat", CAT_SW, CAT_SH), ("oct", OCT_SW, OCT_SH)] + \
-                [("snd%d" % n, snd_sw(n), SND_H) for n in sorted({len(v) for v in PER.values()})]
-        for kind, w, h in sizes:
-            for on in (0, 1):
-                pg.set_content("<style>body{margin:0;background:transparent}</style>" + seg_html(on, w, h))
-                shot = pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": h}, omit_background=True)
-                Image.open(io.BytesIO(shot)).save(os.path.join(ART, "seg_%s_%s.png" % (kind, "on" if on else "off")))
+            # selector segments
+            sizes = [("cat", CAT_SW, CAT_SH), ("oct", OCT_SW, OCT_SH)] + \
+                    [("snd%d" % n, snd_sw(n), SND_H) for n in sorted({len(v) for v in PER.values()})]
+            for kind, w, h in sizes:
+                for on in (0, 1):
+                    pg.set_content("<style>body{margin:0;background:transparent}</style>" + seg_html(on, w, h))
+                    shot = pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": h}, omit_background=True)
+                    Image.open(io.BytesIO(shot)).save(os.path.join(out, "seg_%s_%s.png" % (kind, "on" if on else "off")))
 
-        # BROWSE's rows (off: clear; lit: a bar or an outline) and the clear pads over rows and arrows
-        # MPC flattens a row's picture onto a solid colour, so each is cut from the LCD it sits on (rows are 54 px
-        # apart, a multiple of the 3 px scanlines, so one cut fits every row of a column)
-        lcd = Image.open(os.path.join(ART, "bg_browse.png")).convert("RGBA")
-        for kind, x, w, solid in (("cat", CAT_LIST[0], CAT_LIST[2], True), ("row", ROW_LIST[0], row_col_w(), False)):
-            under = lcd.crop((x, LIST_Y - Y0, x + w, LIST_Y - Y0 + LIST_TH))
-            for on in (0, 1):
-                pg.set_content("<style>body{margin:0;background:transparent}</style>" + row_html(on, w, LIST_TH, solid))
-                shot = Image.open(io.BytesIO(pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": LIST_TH},
-                                                           omit_background=True))).convert("RGBA")
-                out = under.copy()
-                out.alpha_composite(shot)
-                out.convert("RGB").save(os.path.join(ART, "%s_%s.png" % (kind, "on" if on else "off")))
-        for w, h in pad_sizes():
+            # BROWSE's rows (off: the LCD; lit: a bar or an outline). MPC flattens a row's picture onto a solid colour,
+            # so each is cut from the LCD it sits on (rows are 54 px apart, a multiple of the 3 px scanlines, so one cut
+            # fits every row of a column)
+            lcd = Image.open(os.path.join(out, "bg_browse.png")).convert("RGBA")
+            for kind, x, w, solid in (("cat", CAT_LIST[0], CAT_LIST[2], True), ("row", ROW_LIST[0], row_col_w(), False)):
+                under = lcd.crop((x, LIST_Y - Y0, x + w, LIST_Y - Y0 + LIST_TH))
+                for on in (0, 1):
+                    pg.set_content("<style>body{margin:0;background:transparent}</style>" + row_html(on, w, LIST_TH, solid))
+                    shot = Image.open(io.BytesIO(pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": LIST_TH},
+                                                               omit_background=True))).convert("RGBA")
+                    cut = under.copy()
+                    cut.alpha_composite(shot)
+                    cut.convert("RGB").save(os.path.join(out, "%s_%s.png" % (kind, "on" if on else "off")))
+
+            # knob-name strips, one per sound. MPC flattens a picture onto a solid colour, so each is drawn onto the
+            # panel it sits on (slot A's; slot B's panel is the same drawing 630 px to the right)
+            g = slot_geom(*SLOTS[0][2:])
+            lx, ly = g["knobs"][0][0] - SLOT_KNOB_DX // 2, label_top(g["knobs"][0][1]) - 3 - Y0
+            panel = Image.open(os.path.join(out, "bg_sound.png")).convert("RGBA").crop((lx, ly, lx + LBL_W, ly + LBL_H))
+            for snd in SOUNDS:
+                pg.set_content("<style>%s body{margin:0;background:transparent}</style>%s" % (FONT_CSS, labels_html(KNOB_LABELS[snd])))
+                pg.evaluate("document.fonts.ready")
+                pg.wait_for_timeout(80)
+                shot = pg.screenshot(clip={"x": 0, "y": 0, "width": LBL_W, "height": LBL_H}, omit_background=True)
+                lab = Image.open(io.BytesIO(shot)).convert("RGBA")
+                on = panel.copy()   # opaque: drawn with margin=0, over its own panel
+                on.alpha_composite(lab)
+                lab = on
+                lab.save(os.path.join(out, "lbl_%s.png" % snd.lower()))
+        TH = THEMES[0]
+        for w, h in pad_sizes():   # the clear pads that take the taps (the same in every theme)
             Image.new("RGBA", (w, h), (0, 0, 0, 0)).save(os.path.join(ART, "pad_%dx%d.png" % (w, h)))
-
-        # knob-name strips, one per sound
-        for snd in SOUNDS:
-            pg.set_content("<style>%s body{margin:0;background:transparent}</style>%s" % (FONT_CSS, labels_html(KNOB_LABELS[snd])))
-            pg.evaluate("document.fonts.ready")
-            pg.wait_for_timeout(80)
-            shot = pg.screenshot(clip={"x": 0, "y": 0, "width": LBL_W, "height": LBL_H}, omit_background=True)
-            Image.open(io.BytesIO(shot)).save(os.path.join(ART, "lbl_%s.png" % snd.lower()))
         b.close()
     os.remove(tmp)
 
@@ -545,7 +630,8 @@ def row_col_w():
 
 
 def pad_sizes():
-    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H)}
+    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
+            (THEME_PAD, THEME_BOX[3] - THEME_BOX[1])}
 
 
 # --- layout.conf ----------------------------------------------------------------------------------------
@@ -555,87 +641,106 @@ def write_layout():
          "theme_bg=c4c8cc", "theme_ink=eef3fa", "theme_ink_dim=7ff0ff", "theme_accent=1f6fff",
          "theme_seg_active_tx=ffffff", "art_css=skin.css",
          "qlinks_track = velocity,breath,attack,release,air,dark,lofi,motion,master", ""]
+
+    def themed(fn):   # fn(th, when) -> lines, once per theme
+        for n, th in enumerate(THEMES):
+            L.extend(fn(th, " when=theme:%d" % n))
+
+    def knob(th, w, key, label, cx, cy, r, vs, bw):
+        tx = th["txt"].lstrip("#")
+        return ('knob cx=%d cy=%d r=%d label="%s" key=%s strip=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s%s'
+                % (cx, cy, r, label.upper() or key.upper(), key, art("knob%d.png" % r, th), vs, bw, tx, tx, w))
+
     # PLAYER
     L.append("[tab PLAYER]")
-    L.append("art file=art/bg_player.png fit=stretch")
     ox, oy = PLAYER["orb"]
-    L.append("meter cx=%d cy=%d w=%d h=%d key=orb strip=art/orb.png frames=%d"
-             % (ox, oy, ORB_SIZE, ORB_SIZE, ORB_PHASES * ORB_LEVELS))
-    for key, label, cx, cy in PLAYER["knobs"]:
-        L.append('knob cx=%d cy=%d r=%d label="%s" key=%s strip=art/knob%d.png ns=0 vs=%d bw=%d'
-                 % (cx, cy, PLAYER_R, label.upper(), key, PLAYER_R, PLAYER_VS, PLAYER_BW))
     x0, y0, x1, y1 = STRIP
     cy, ph = (y0 + y1) // 2, y1 - y0
-    L.append("readout cx=640 cy=%d w=%d h=%d label=\"\" key=p_name box=0 tsize=26 tcolor=7ff0ff tweight=bold"
-             % (cy, x1 - x0 - 2 * STRIP_PAD, ph - 4))
+    themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_player.png", th), w),
+                          "meter cx=%d cy=%d w=%d h=%d key=orb strip=%s frames=%d%s"
+                          % (ox, oy, ORB_SIZE, ORB_SIZE, art("orb.png", th), ORB_PHASES * ORB_LEVELS, w)] +
+                         [knob(th, w, key, label, cx, cy_, PLAYER_R, PLAYER_VS, PLAYER_BW) for key, label, cx, cy_ in PLAYER["knobs"]] +
+                         ['readout cx=640 cy=%d w=%d h=%d label="" key=p_name box=0 tsize=26 tcolor=%s tweight=bold%s'
+                          % (cy, x1 - x0 - 2 * STRIP_PAD, ph - 4, th["txt"].lstrip("#"), w)])
     for key, cx in (("p_prev", x0 + STRIP_PAD // 2), ("p_next", x1 - STRIP_PAD // 2)):
         pad = "art/pad_%dx%d.png" % (STRIP_PAD, ph)
         L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (cx, cy, STRIP_PAD, ph, key, pad, pad))
     L.append('qlinks "PLAYER" = ' + ",".join(k for k, *_ in PLAYER["knobs"]))
     L.append("")
+
     # BROWSE
     L.append("[tab BROWSE]")
-    L.append("art file=art/bg_browse.png fit=stretch")
     rows_h = 8 * LIST_TH + 7 * LIST_GAP
-    x, y, w = CAT_LIST
-    L.append("list x=%d y=%d w=%d h=%d key=cat cols=1 rows=8 tap=no th=%d gap=%d tsize=30 tcolor=7ff0ff tweight=bold "
-             "talign=left tx=16 img=art/cat_off.png img_on=art/cat_on.png" % (x, y, w, rows_h, LIST_TH, LIST_GAP))
-    for r in range(8):
-        pad = "art/pad_%dx%d.png" % (w, LIST_TH)
-        L.append('button cx=%d cy=%d w=%d h=%d label="" key=cpick_%d img=%s img_on=%s'
-                 % (x + w // 2, y + r * (LIST_TH + LIST_GAP) + LIST_TH // 2, w, LIST_TH, r + 1, pad, pad))
+    cx_, cy_, cw_ = CAT_LIST
     x, y, w, cols = ROW_LIST
     cw = row_col_w()
-    L.append("list x=%d y=%d w=%d h=%d key=row cols=%d rows=8 order=cols tap=no th=%d gap=%d tsize=26 tcolor=a9dcef "
-             "tweight=semibold talign=left tx=14 img=art/row_off.png img_on=art/row_on.png"
-             % (x, y, w, rows_h, cols, LIST_TH, LIST_GAP))
+    hy = CAT_BOX[1] + 8 + PG_H // 2
+    px = ROW_BOX[2] - 18 - 2 * PG_W
+    tx0, ty0, tx1, ty1 = THEME_BOX
+    tcy = (ty0 + ty1) // 2
+    themed(lambda th, wh: [
+        "art file=%s fit=stretch%s" % (art("bg_browse.png", th), wh),
+        "list x=%d y=%d w=%d h=%d key=cat cols=1 rows=8 tap=no th=%d gap=%d tsize=30 tcolor=%s tweight=bold "
+        "talign=left tx=16 img=%s img_on=%s%s" % (cx_, cy_, cw_, rows_h, LIST_TH, LIST_GAP, th["txt"].lstrip("#"),
+                                                  art("cat_off.png", th), art("cat_on.png", th), wh),
+        "list x=%d y=%d w=%d h=%d key=row cols=%d rows=8 order=cols tap=no th=%d gap=%d tsize=26 tcolor=%s "
+        "tweight=semibold talign=left tx=14 img=%s img_on=%s%s" % (x, y, w, rows_h, cols, LIST_TH, LIST_GAP,
+                                                                  th["row_tx"].lstrip("#"), art("row_off.png", th),
+                                                                  art("row_on.png", th), wh),
+        'readout cx=%d cy=%d w=420 h=%d label="" key=b_head box=0 tsize=20 tcolor=%s tweight=bold talign=left%s'
+        % (ROW_BOX[0] + 18 + 210, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
+        'readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=20 tcolor=%s tweight=bold talign=right%s'
+        % (px - 8 - 75, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
+        'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=22 tcolor=%s tweight=bold%s'
+        % ((tx0 + tx1) // 2, tcy, tx1 - tx0 - 2 * THEME_PAD, ty1 - ty0 - 4, th["txt"].lstrip("#"), wh)])
+    for r in range(8):
+        pad = "art/pad_%dx%d.png" % (cw_, LIST_TH)
+        L.append('button cx=%d cy=%d w=%d h=%d label="" key=cpick_%d img=%s img_on=%s'
+                 % (cx_ + cw_ // 2, cy_ + r * (LIST_TH + LIST_GAP) + LIST_TH // 2, cw_, LIST_TH, r + 1, pad, pad))
     for c in range(cols):
         for r in range(8):
             pad = "art/pad_%dx%d.png" % (cw, LIST_TH)
             L.append('button cx=%d cy=%d w=%d h=%d label="" key=rpick_%d img=%s img_on=%s'
                      % (x + c * (cw + LIST_GAP) + cw // 2, y + r * (LIST_TH + LIST_GAP) + LIST_TH // 2, cw, LIST_TH,
                         c * 8 + r + 1, pad, pad))
-    hy = CAT_BOX[1] + 8 + PG_H // 2
-    L.append('readout cx=%d cy=%d w=420 h=%d label="" key=b_head box=0 tsize=20 tcolor=5a82aa tweight=bold talign=left'
-             % (ROW_BOX[0] + 18 + 210, hy, PG_H))
-    px = ROW_BOX[2] - 18 - 2 * PG_W
-    L.append('readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=20 tcolor=5a82aa tweight=bold talign=right'
-             % (px - 8 - 75, hy, PG_H))
     for i, key in enumerate(("pg_prev", "pg_next")):
         pad = "art/pad_%dx%d.png" % (PG_W, PG_H)
         L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (px + i * PG_W + PG_W // 2, hy, PG_W, PG_H, key, pad, pad))
+    for key, bx in (("th_prev", tx0 + THEME_PAD // 2), ("th_next", tx1 - THEME_PAD // 2)):
+        pad = "art/pad_%dx%d.png" % (THEME_PAD, ty1 - ty0)
+        L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (bx, tcy, THEME_PAD, ty1 - ty0, key, pad, pad))
     L.append("")
-    # SOUND
+
+    # SOUND: a category's sounds follow <slot>_look (theme x 8 + category), the knob names <slot>_lbl (theme x 23 + sound)
     L.append("[tab SOUND]")
-    L.append("art file=art/bg_sound.png fit=stretch")
+    themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_sound.png", th), w)])
     for p, name, x0, y0 in SLOTS:
         g = slot_geom(x0, y0)
-        L.append('enum_h cx=%d cy=%d label="" key=%s_cat options="%s" rows=2 sw=%d sh=%d '
-                 'img=art/seg_cat_off.png img_on=art/seg_cat_on.png'
-                 % (g["cat"][0], g["cat"][1], p, ",".join(x.upper() for x in CATS), CAT_SW, CAT_SH))
-        for c in CATS[1:]:   # only the chosen category's sounds are shown
-            n = len(PER[c])
-            L.append('enum_h cx=%d cy=%d label="" key=%s_%s options="%s" sw=%d sh=%d '
-                     'img=art/seg_snd%d_off.png img_on=art/seg_snd%d_on.png when=%s_cat:%s'
-                     % (g["snd"][0], g["snd"][1], p, c.lower(), ",".join(x.upper().replace("BOWED VIBES", "BOWED") for x in PER[c]), snd_sw(n), SND_H,
-                        n, n, p, c))
-        L.append('enum_h cx=%d cy=%d label="" key=%s_oct options="-2,-1,0,+1,+2" sw=%d sh=%d '
-                 'img=art/seg_oct_off.png img_on=art/seg_oct_on.png' % (g["oct"][0], g["oct"][1], p, OCT_SW, OCT_SH))
+        themed(lambda th, w: [
+            'enum_h cx=%d cy=%d label="" key=%s_cat options="%s" rows=2 sw=%d sh=%d img=%s img_on=%s%s'
+            % (g["cat"][0], g["cat"][1], p, ",".join(x.upper() for x in CATS), CAT_SW, CAT_SH,
+               art("seg_cat_off.png", th), art("seg_cat_on.png", th), w),
+            'enum_h cx=%d cy=%d label="" key=%s_oct options="-2,-1,0,+1,+2" sw=%d sh=%d img=%s img_on=%s%s'
+            % (g["oct"][0], g["oct"][1], p, OCT_SW, OCT_SH, art("seg_oct_off.png", th), art("seg_oct_on.png", th), w)])
+        for n, th in enumerate(THEMES):
+            for ci, c in enumerate(CATS[1:], 1):   # only the chosen category's sounds are shown
+                k = len(PER[c])
+                L.append('enum_h cx=%d cy=%d label="" key=%s_%s options="%s" sw=%d sh=%d img=%s img_on=%s when=%s_look:%d'
+                         % (g["snd"][0], g["snd"][1], p, c.lower(),
+                            ",".join(x.upper().replace("BOWED VIBES", "BOWED") for x in PER[c]), snd_sw(k), SND_H,
+                            art("seg_snd%d_off.png" % k, th), art("seg_snd%d_on.png" % k, th), p, n * len(CATS) + ci))
         (cx1, cy1) = g["knobs"][0]
-        L.append('picture x=%d y=%d w=%d h=%d key=%s_sound files="%s"'
+        L.append('picture x=%d y=%d w=%d h=%d key=%s_lbl margin=0 files="%s"'
                  % (cx1 - SLOT_KNOB_DX // 2, label_top(cy1) - 3, LBL_W, LBL_H, p,
-                    ",".join("art/lbl_%s.png" % x.lower() for x in SOUNDS)))
-    for key, label, cx, cy in slot_knobs():
-        L.append('knob cx=%d cy=%d r=%d label="%s" key=%s strip=art/knob%d.png ns=0 vs=%d bw=%d'
-                 % (cx, cy, SLOT_R, label.upper() or key.upper(), key, SLOT_R, SLOT_VS, SLOT_BW))
+                    ",".join(art("lbl_%s.png" % x.lower(), th) for th in THEMES for x in SOUNDS)))
+    themed(lambda th, w: [knob(th, w, key, label, cx, cy_, SLOT_R, SLOT_VS, SLOT_BW) for key, label, cx, cy_ in slot_knobs()])
     L.append('qlinks "SOUND" = ' + ",".join(k for k, *_ in slot_knobs()))
     L.append("")
+
     # FX
     L.append("[tab FX]")
-    L.append("art file=art/bg_fx.png fit=stretch")
-    for key, label, cx, cy in fx_knobs():
-        L.append('knob cx=%d cy=%d r=%d label="%s" key=%s strip=art/knob%d.png ns=0 vs=%d bw=%d'
-                 % (cx, cy, FX_R, label.upper(), key, FX_R, FX_VS, FX_BW))
+    themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_fx.png", th), w)] +
+                         [knob(th, w, key, label, cx, cy_, FX_R, FX_VS, FX_BW) for key, label, cx, cy_ in fx_knobs()])
     # one Q-Link column (4 knobs, one press of the Q-Link button) per panel, top to bottom; "-" pads a 3-knob panel
     cols = []
     for p, *_ in FX:
@@ -649,7 +754,8 @@ def check_keys():
     """Every key the layout uses must exist in params.json (the build would fail later, less clearly)."""
     keys = {p["key"] for p in json.load(open(os.path.join(HERE, "..", "params.json")))["params"]}
     used = [k for k, *_ in PLAYER["knobs"]] + [k for k, *_ in slot_knobs()] + [k for k, *_ in fx_knobs()] + \
-           ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_sound", "b_sound"] + \
+           ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_look", "b_look", "a_lbl", "b_lbl", "theme", "th_name",
+            "th_prev", "th_next"] + \
            ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
            ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
            ["cat_%d" % i for i in range(1, 9)] + ["row_%d" % i for i in range(1, 25)] + \
