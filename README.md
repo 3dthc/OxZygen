@@ -5,9 +5,13 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a 
 
 ![OxZygen on the MPC: the Player page](docs/img/player.png)
 
+![BROWSE page: categories and every preset, theme picker at the top](docs/img/browse.png)
+
 | Sound page | FX page |
 |---|---|
 | ![Sound page: two slots, category and sound pickers, octave, four knobs](docs/img/sound.png) | ![FX page: reverb, delay, drive, sub and output](docs/img/fx.png) |
+
+![The three themes: Aluminum, Green, Navy](docs/img/themes.png)
 
 - Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air), then one of 22 sounds
 - Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
