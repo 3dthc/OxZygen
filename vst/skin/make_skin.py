@@ -438,13 +438,11 @@ def bg_player():
 
 
 def strip_html():
-    """The preset strip: an LCD the width of the orb's bezel, ◀ and ▶ lit in its ends (MPC writes the name)."""
+    """The preset strip: an LCD the width of the orb's bezel; MPC writes the name in it (a label: presets are picked on
+    BROWSE or in MPC's own preset menu)."""
     x0, y0, x1, y1 = STRIP
-    cy = (y0 + y1) // 2 - Y0
     return ("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:9px'></div>"
-            "<div class='arrow' style='left:%dpx;top:%dpx;border-right:11px solid %s'></div>"
-            "<div class='arrow' style='left:%dpx;top:%dpx;border-left:11px solid %s'></div>"
-            % (x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 14, cy - 7, TH["txt"], x1 - 25, cy - 7, TH["txt"]))
+            % (x0, y0 - Y0, x1 - x0, y1 - y0))
 
 
 def wordmark():
@@ -630,7 +628,7 @@ def row_col_w():
 
 
 def pad_sizes():
-    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
+    return {(CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
             (THEME_PAD, THEME_BOX[3] - THEME_BOX[1])}
 
 
@@ -661,10 +659,7 @@ def write_layout():
                           % (ox, oy, ORB_SIZE, ORB_SIZE, art("orb.png", th), ORB_PHASES * ORB_LEVELS, w)] +
                          [knob(th, w, key, label, cx, cy_, PLAYER_R, PLAYER_VS, PLAYER_BW) for key, label, cx, cy_ in PLAYER["knobs"]] +
                          ['readout cx=640 cy=%d w=%d h=%d label="" key=p_name box=0 tsize=26 tcolor=%s tweight=bold%s'
-                          % (cy, x1 - x0 - 2 * STRIP_PAD, ph - 4, th["txt"].lstrip("#"), w)])
-    for key, cx in (("p_prev", x0 + STRIP_PAD // 2), ("p_next", x1 - STRIP_PAD // 2)):
-        pad = "art/pad_%dx%d.png" % (STRIP_PAD, ph)
-        L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (cx, cy, STRIP_PAD, ph, key, pad, pad))
+                          % (cy, x1 - x0 - 24, ph - 4, th["txt"].lstrip("#"), w)])
     L.append('qlinks "PLAYER" = ' + ",".join(k for k, *_ in PLAYER["knobs"]))
     L.append("")
 
@@ -757,7 +752,7 @@ def check_keys():
            ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_look", "b_look", "a_lbl", "b_lbl", "theme", "th_name",
             "th_prev", "th_next"] + \
            ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
-           ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
+           ["p_name", "b_head", "b_page", "pg_prev", "pg_next"] + \
            ["cat_%d" % i for i in range(1, 9)] + ["row_%d" % i for i in range(1, 25)] + \
            ["cpick_%d" % i for i in range(1, 9)] + ["rpick_%d" % i for i in range(1, 25)]
     missing = [k for k in used if k not in keys]
