@@ -85,8 +85,8 @@ ORB_PHASES, ORB_LEVELS, ORB_SIZE = 17, 2, 360   # 34 frames x 360 px = 12240 px,
 # --- layout -------------------------------------------------------------------------------------------
 # knob: (key, label, cx, cy, r, value text size, touch width)
 PLAYER = {
-    "orb": (640, 400),
-    "headings": [("VOICE", 46, 420, 140), ("ATMOSPHERE", 860, 1234, 140)],
+    "orb": (640, 414),
+    "headings": [("VOICE", 46, 420, 132), ("ATMOSPHERE", 860, 1234, 132)],
     "knobs": [
         ("velocity", "Velocity", 125, 286), ("breath", "Breath", 325, 286),
         ("attack", "Attack", 125, 518), ("release", "Release", 325, 518),
@@ -96,8 +96,8 @@ PLAYER = {
 }
 PLAYER_R, PLAYER_VS, PLAYER_BW = 58, 30, 150
 # the preset strip under the wordmark: the name (live), prev / next pads at its ends
-STRIP = (480, 172, 800, 204)           # x0, y0, x1, y1 (screen)
-STRIP_PAD = 44                         # the arrow pads' width
+STRIP = (410, 178, 870, 222)           # x0, y0, x1, y1 (screen): ~16 px clear of the wordmark above and the orb's ticks (238) below
+STRIP_PAD = 64                         # the arrow pads' width
 
 # BROWSE page: categories on the left, that category's presets on the right (3 columns of 8), one LCD each
 CAT_BOX = (40, 182, 300, 682)          # the LCD panels (screen)
@@ -107,7 +107,7 @@ CAT_LIST = (52, LIST_Y, 236)           # x, y, width: 1 column
 ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
 ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
 PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel
-THEME_BOX = (1000, 124, 1234, 156)     # the theme picker, right of the THEME heading (screen)
+THEME_BOX = (1000, 116, 1234, 148)     # the theme picker, right of the THEME heading (screen)
 THEME_PAD = 44   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
@@ -438,22 +438,25 @@ def bg_player():
 
 
 def strip_html():
-    """The preset strip: an LCD the width of the orb's bezel; MPC writes the name in it (a label: presets are picked on
-    BROWSE or in MPC's own preset menu)."""
+    """The preset strip: an LCD the width of the orb's bezel, ◀ and ▶ lit in its ends (MPC writes the name)."""
     x0, y0, x1, y1 = STRIP
-    return ("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:9px'></div>"
-            % (x0, y0 - Y0, x1 - x0, y1 - y0))
+    cy = (y0 + y1) // 2 - Y0
+    big = "border-top-width:11px;border-bottom-width:11px"
+    return ("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:11px'></div>"
+            "<div class='arrow' style='left:%dpx;top:%dpx;%s;border-right:17px solid %s'></div>"
+            "<div class='arrow' style='left:%dpx;top:%dpx;%s;border-left:17px solid %s'></div>"
+            % (x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 22, cy - 11, big, TH["txt"], x1 - 39, cy - 11, big, TH["txt"]))
 
 
 def wordmark():
     return ("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:40px;"
             "letter-spacing:.24em;line-height:48px'>OX<b style='font-size:58px;vertical-align:-5px;"
-            "letter-spacing:.18em'>Z</b>YGEN</div>" % (114 - Y0))
+            "letter-spacing:.18em'>Z</b>YGEN</div>" % (106 - Y0))
 
 
 def bg_browse():
     h = ["<div class='grain'></div>", wordmark()]
-    for text, x0, x1, y in (("BROWSE", 46, 420, 140), ("THEME", 860, 990, 140)):
+    for text, x0, x1, y in (("BROWSE", 46, 420, 132), ("THEME", 860, 990, 132)):
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
     # the theme picker: a small LCD with ◀ ▶ (MPC writes the theme's name)
     x0, y0, x1, y1 = THEME_BOX
@@ -628,7 +631,7 @@ def row_col_w():
 
 
 def pad_sizes():
-    return {(CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
+    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
             (THEME_PAD, THEME_BOX[3] - THEME_BOX[1])}
 
 
@@ -658,8 +661,11 @@ def write_layout():
                           "meter cx=%d cy=%d w=%d h=%d key=orb strip=%s frames=%d%s"
                           % (ox, oy, ORB_SIZE, ORB_SIZE, art("orb.png", th), ORB_PHASES * ORB_LEVELS, w)] +
                          [knob(th, w, key, label, cx, cy_, PLAYER_R, PLAYER_VS, PLAYER_BW) for key, label, cx, cy_ in PLAYER["knobs"]] +
-                         ['readout cx=640 cy=%d w=%d h=%d label="" key=p_name box=0 tsize=26 tcolor=%s tweight=bold%s'
-                          % (cy, x1 - x0 - 24, ph - 4, th["txt"].lstrip("#"), w)])
+                         ['readout cx=640 cy=%d w=%d h=%d label="" key=p_name box=0 tsize=34 tcolor=%s tweight=bold%s'
+                          % (cy, x1 - x0 - 2 * STRIP_PAD, ph - 4, th["txt"].lstrip("#"), w)])
+    for key, cx in (("p_prev", x0 + STRIP_PAD // 2), ("p_next", x1 - STRIP_PAD // 2)):
+        pad = "art/pad_%dx%d.png" % (STRIP_PAD, ph)
+        L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (cx, cy, STRIP_PAD, ph, key, pad, pad))
     L.append('qlinks "PLAYER" = ' + ",".join(k for k, *_ in PLAYER["knobs"]))
     L.append("")
 
@@ -752,7 +758,7 @@ def check_keys():
            ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_look", "b_look", "a_lbl", "b_lbl", "theme", "th_name",
             "th_prev", "th_next"] + \
            ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
-           ["p_name", "b_head", "b_page", "pg_prev", "pg_next"] + \
+           ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
            ["cat_%d" % i for i in range(1, 9)] + ["row_%d" % i for i in range(1, 25)] + \
            ["cpick_%d" % i for i in range(1, 9)] + ["rpick_%d" % i for i in range(1, 25)]
     missing = [k for k in used if k not in keys]
