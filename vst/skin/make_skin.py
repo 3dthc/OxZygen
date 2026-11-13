@@ -4,7 +4,8 @@
     python3 vst/skin/make_skin.py
 
 Every coordinate lives here, so the baked artwork and MPC's live controls always line up. Writes:
-  art/bg_player.png, art/bg_sound.png, art/bg_fx.png  tab backgrounds, 1280x628 (the plugin area)
+  art/bg_player.png, art/bg_browse.png, art/bg_sound.png, art/bg_fx.png   tab backgrounds, 1280x628 (the plugin area)
+  art/cat_*.png, art/row_*.png, art/pad_*.png        BROWSE's rows (off, lit) and the clear pads that take the taps
   art/knob48.png                                     knob filmstrip, 128 frames (light fixed, pointer and arc turn)
   art/orb.png                                        orb meter filmstrip: 2 energy levels x 17 frames, 360x360
   art/seg_cat_*.png, art/seg_snd<n>_*.png, art/seg_oct_*.png   category, sound (n per row) and octave segments
@@ -49,7 +50,19 @@ PLAYER = {
         ("lofi", "Lo-Fi", 955, 518), ("motion", "Motion", 1155, 518),
     ],
 }
-PLAYER_R, PLAYER_VS, PLAYER_BW = 58, 30, 150   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
+PLAYER_R, PLAYER_VS, PLAYER_BW = 58, 30, 150
+# the preset strip under the wordmark: the name (live), prev / next pads at its ends
+STRIP = (480, 172, 800, 204)           # x0, y0, x1, y1 (screen)
+STRIP_PAD = 44                         # the arrow pads' width
+
+# BROWSE page: categories on the left, that category's presets on the right (3 columns of 8), one LCD each
+CAT_BOX = (40, 182, 300, 682)          # the LCD panels (screen)
+ROW_BOX = (320, 182, 1240, 682)
+LIST_Y, LIST_TH, LIST_GAP = 228, 46, 8 # the first row's top, row height, gap (8 rows end at 228 + 8*46 + 7*8 = 652)
+CAT_LIST = (52, LIST_Y, 236)           # x, y, width: 1 column
+ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
+ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
+PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
 # categories and their sounds (must match params.json); SOUNDS is the derived a_sound/b_sound list, in order
@@ -347,6 +360,12 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
 .title { position: absolute; font: 700 26px BC, sans-serif; letter-spacing: .24em; color: %(FG)s; text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(255,255,255,.6); }
 .title b { color: %(LIVE)s; font-weight: 700; text-shadow: 0 0 10px rgba(31,111,255,.35); }
+.lcd { position: absolute; border-radius: 10px; background: %(READ_BG)s;
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
+  box-shadow: inset 0 3px 8px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.2); }
+.lcdcap { position: absolute; font: 700 15px BC, sans-serif; letter-spacing: .16em; color: #5a82aa; }
+.arrow { position: absolute; width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+  filter: drop-shadow(0 0 4px rgba(64,170,255,.8)); }
 .rule { position: absolute; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,.22), transparent);
   box-shadow: 0 1px 0 rgba(255,255,255,.55); }
 """ % {"fonts": FONT_CSS, "FG": FG, "DIM": DIM, "PANEL": PANEL, "LIVE": LIVE, "READ_BG": READ_BG}
@@ -363,17 +382,68 @@ def bg_player():
     h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:304px;height:304px;border-radius:50%%;background:#05070a;"
              "box-shadow:inset 0 3px 8px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.6)'></div>" % (ox - 152, oy - Y0 - 152))
     # wordmark: all caps, the Z carries the emphasis (larger, accent colour)
-    h.append("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:40px;"
-             "letter-spacing:.24em;line-height:48px'>OX<b style='font-size:58px;vertical-align:-5px;"
-             "letter-spacing:.18em'>Z</b>YGEN</div>" % (114 - Y0))
+    h.append(wordmark())
     for text, x0, x1, y in PLAYER["headings"]:
         h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
     for key, label, cx, cy in PLAYER["knobs"]:
         h.append(knob_block(key, label, cx, cy, PLAYER_R, PLAYER_VS, 104, 26))
+    h.append(strip_html())
     return "".join(h)
 
 
-def bg_sound():
+def strip_html():
+    """The preset strip: an LCD the width of the orb's bezel, ◀ and ▶ lit in its ends (MPC writes the name)."""
+    x0, y0, x1, y1 = STRIP
+    cy = (y0 + y1) // 2 - Y0
+    return ("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:9px'></div>"
+            "<div class='arrow' style='left:%dpx;top:%dpx;border-right:11px solid %s'></div>"
+            "<div class='arrow' style='left:%dpx;top:%dpx;border-left:11px solid %s'></div>"
+            % (x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 14, cy - 7, READ_TX, x1 - 25, cy - 7, READ_TX))
+
+
+def wordmark():
+    return ("<div class='title' style='left:0;width:1280px;top:%dpx;text-align:center;font-size:40px;"
+            "letter-spacing:.24em;line-height:48px'>OX<b style='font-size:58px;vertical-align:-5px;"
+            "letter-spacing:.18em'>Z</b>YGEN</div>" % (114 - Y0))
+
+
+def bg_browse():
+    h = ["<div class='grain'></div>", wordmark()]
+    for text, x0, x1, y in (("BROWSE", 46, 420, 140), ("PRESETS", 860, 1234, 140)):
+        h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
+    for x0, y0, x1, y1 in (CAT_BOX, ROW_BOX):
+        h.append("<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx'></div>" % (x0, y0 - Y0, x1 - x0, y1 - y0))
+    h.append("<div class='lcdcap' style='left:%dpx;top:%dpx'>CATEGORY</div>" % (CAT_BOX[0] + 18, CAT_BOX[1] - Y0 + 14))
+    # the page arrows, top right of the presets panel (pads on top take the taps)
+    px = ROW_BOX[2] - 18 - 2 * PG_W
+    for i, d in enumerate(("up", "down")):
+        x, y = px + i * PG_W, CAT_BOX[1] - Y0 + 8
+        tri = ("border-left:9px solid transparent;border-right:9px solid transparent;border-%s:11px solid %s" %
+               ("bottom" if d == "up" else "top", READ_TX))
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:0;height:0;%s;"
+                 "filter:drop-shadow(0 0 4px rgba(64,170,255,.8))'></div>" % (x + PG_W // 2 - 9, y + PG_H // 2 - 6, tri))
+    # column rules between the preset columns
+    x, y, w, cols = ROW_LIST
+    cw = (w - (cols - 1) * ROW_COL_GAP) // cols
+    for c in range(1, cols):
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:1px;height:%dpx;background:#1c2c46'></div>"
+                 % (x + c * (cw + ROW_COL_GAP) - ROW_COL_GAP // 2, LIST_Y - Y0 - 4, 8 * LIST_TH + 7 * LIST_GAP + 8))
+    return "".join(h)
+
+
+def row_html(on, w, h, solid):
+    """A list row's picture: nothing (off), or lit: a solid cobalt bar (the category) or a glowing outline (the preset)."""
+    if not on:
+        return "<div style='width:%dpx;height:%dpx'></div>" % (w, h)
+    if solid:
+        return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border-radius:6px;"
+                "background:linear-gradient(180deg,#3b82ff,#1f6fff 55%%,#1450c8);"
+                "box-shadow:inset 0 1px 0 rgba(255,255,255,.45)'></div>" % (w, h))
+    return ("<div style='width:%dpx;height:%dpx;box-sizing:border-box;border-radius:6px;border:2px solid #1f6fff;"
+            "background:rgba(31,111,255,.28);box-shadow:inset 0 0 12px rgba(31,111,255,.45)'></div>" % (w, h))
+
+
+def bg_sound():  # noqa: E302
     h = ["<div class='grain'></div>"]
     for p, name, x0, y0 in SLOTS:
         g = slot_geom(x0, y0)
@@ -418,7 +488,7 @@ def render_art():
             pg.wait_for_timeout(150)
 
         # backgrounds
-        for name, fn in (("player", bg_player), ("sound", bg_sound), ("fx", bg_fx)):
+        for name, fn in (("player", bg_player), ("browse", bg_browse), ("sound", bg_sound), ("fx", bg_fx)):
             page(fn())
             Image.open(io.BytesIO(pg.screenshot())).convert("RGB").save(os.path.join(ART, "bg_%s.png" % name), optimize=True)
 
@@ -442,6 +512,22 @@ def render_art():
                 shot = pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": h}, omit_background=True)
                 Image.open(io.BytesIO(shot)).save(os.path.join(ART, "seg_%s_%s.png" % (kind, "on" if on else "off")))
 
+        # BROWSE's rows (off: clear; lit: a bar or an outline) and the clear pads over rows and arrows
+        # MPC flattens a row's picture onto a solid colour, so each is cut from the LCD it sits on (rows are 54 px
+        # apart, a multiple of the 3 px scanlines, so one cut fits every row of a column)
+        lcd = Image.open(os.path.join(ART, "bg_browse.png")).convert("RGBA")
+        for kind, x, w, solid in (("cat", CAT_LIST[0], CAT_LIST[2], True), ("row", ROW_LIST[0], row_col_w(), False)):
+            under = lcd.crop((x, LIST_Y - Y0, x + w, LIST_Y - Y0 + LIST_TH))
+            for on in (0, 1):
+                pg.set_content("<style>body{margin:0;background:transparent}</style>" + row_html(on, w, LIST_TH, solid))
+                shot = Image.open(io.BytesIO(pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": LIST_TH},
+                                                           omit_background=True))).convert("RGBA")
+                out = under.copy()
+                out.alpha_composite(shot)
+                out.convert("RGB").save(os.path.join(ART, "%s_%s.png" % (kind, "on" if on else "off")))
+        for w, h in pad_sizes():
+            Image.new("RGBA", (w, h), (0, 0, 0, 0)).save(os.path.join(ART, "pad_%dx%d.png" % (w, h)))
+
         # knob-name strips, one per sound
         for snd in SOUNDS:
             pg.set_content("<style>%s body{margin:0;background:transparent}</style>%s" % (FONT_CSS, labels_html(KNOB_LABELS[snd])))
@@ -451,6 +537,15 @@ def render_art():
             Image.open(io.BytesIO(shot)).save(os.path.join(ART, "lbl_%s.png" % snd.lower()))
         b.close()
     os.remove(tmp)
+
+
+def row_col_w():
+    x, y, w, cols = ROW_LIST
+    return (w - (cols - 1) * ROW_COL_GAP) // cols
+
+
+def pad_sizes():
+    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H)}
 
 
 # --- layout.conf ----------------------------------------------------------------------------------------
@@ -469,7 +564,46 @@ def write_layout():
     for key, label, cx, cy in PLAYER["knobs"]:
         L.append('knob cx=%d cy=%d r=%d label="%s" key=%s strip=art/knob%d.png ns=0 vs=%d bw=%d'
                  % (cx, cy, PLAYER_R, label.upper(), key, PLAYER_R, PLAYER_VS, PLAYER_BW))
+    x0, y0, x1, y1 = STRIP
+    cy, ph = (y0 + y1) // 2, y1 - y0
+    L.append("readout cx=640 cy=%d w=%d h=%d label=\"\" key=p_name box=0 tsize=26 tcolor=7ff0ff tweight=bold"
+             % (cy, x1 - x0 - 2 * STRIP_PAD, ph - 4))
+    for key, cx in (("p_prev", x0 + STRIP_PAD // 2), ("p_next", x1 - STRIP_PAD // 2)):
+        pad = "art/pad_%dx%d.png" % (STRIP_PAD, ph)
+        L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (cx, cy, STRIP_PAD, ph, key, pad, pad))
     L.append('qlinks "PLAYER" = ' + ",".join(k for k, *_ in PLAYER["knobs"]))
+    L.append("")
+    # BROWSE
+    L.append("[tab BROWSE]")
+    L.append("art file=art/bg_browse.png fit=stretch")
+    rows_h = 8 * LIST_TH + 7 * LIST_GAP
+    x, y, w = CAT_LIST
+    L.append("list x=%d y=%d w=%d h=%d key=cat cols=1 rows=8 tap=no th=%d gap=%d tsize=30 tcolor=7ff0ff tweight=bold "
+             "talign=left tx=16 img=art/cat_off.png img_on=art/cat_on.png" % (x, y, w, rows_h, LIST_TH, LIST_GAP))
+    for r in range(8):
+        pad = "art/pad_%dx%d.png" % (w, LIST_TH)
+        L.append('button cx=%d cy=%d w=%d h=%d label="" key=cpick_%d img=%s img_on=%s'
+                 % (x + w // 2, y + r * (LIST_TH + LIST_GAP) + LIST_TH // 2, w, LIST_TH, r + 1, pad, pad))
+    x, y, w, cols = ROW_LIST
+    cw = row_col_w()
+    L.append("list x=%d y=%d w=%d h=%d key=row cols=%d rows=8 order=cols tap=no th=%d gap=%d tsize=26 tcolor=a9dcef "
+             "tweight=semibold talign=left tx=14 img=art/row_off.png img_on=art/row_on.png"
+             % (x, y, w, rows_h, cols, LIST_TH, LIST_GAP))
+    for c in range(cols):
+        for r in range(8):
+            pad = "art/pad_%dx%d.png" % (cw, LIST_TH)
+            L.append('button cx=%d cy=%d w=%d h=%d label="" key=rpick_%d img=%s img_on=%s'
+                     % (x + c * (cw + LIST_GAP) + cw // 2, y + r * (LIST_TH + LIST_GAP) + LIST_TH // 2, cw, LIST_TH,
+                        c * 8 + r + 1, pad, pad))
+    hy = CAT_BOX[1] + 8 + PG_H // 2
+    L.append('readout cx=%d cy=%d w=420 h=%d label="" key=b_head box=0 tsize=20 tcolor=5a82aa tweight=bold talign=left'
+             % (ROW_BOX[0] + 18 + 210, hy, PG_H))
+    px = ROW_BOX[2] - 18 - 2 * PG_W
+    L.append('readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=20 tcolor=5a82aa tweight=bold talign=right'
+             % (px - 8 - 75, hy, PG_H))
+    for i, key in enumerate(("pg_prev", "pg_next")):
+        pad = "art/pad_%dx%d.png" % (PG_W, PG_H)
+        L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s' % (px + i * PG_W + PG_W // 2, hy, PG_W, PG_H, key, pad, pad))
     L.append("")
     # SOUND
     L.append("[tab SOUND]")
@@ -516,7 +650,10 @@ def check_keys():
     keys = {p["key"] for p in json.load(open(os.path.join(HERE, "..", "params.json")))["params"]}
     used = [k for k, *_ in PLAYER["knobs"]] + [k for k, *_ in slot_knobs()] + [k for k, *_ in fx_knobs()] + \
            ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_sound", "b_sound"] + \
-           ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]]
+           ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
+           ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
+           ["cat_%d" % i for i in range(1, 9)] + ["row_%d" % i for i in range(1, 25)] + \
+           ["cpick_%d" % i for i in range(1, 9)] + ["rpick_%d" % i for i in range(1, 25)]
     missing = [k for k in used if k not in keys]
     if missing:
         raise SystemExit("make_skin: keys not in params.json: %s" % ", ".join(missing))

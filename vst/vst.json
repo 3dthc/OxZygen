@@ -31,11 +31,13 @@
     ],
     "cflags_aarch64": []
   },
-  "presets": "presets.json",
   "targets": [
     "armv7",
     "aarch64"
   ],
   "au_vendor": "3dthc",
-  "au_manufacturer": "3Dth"
+  "au_manufacturer": "3Dth",
+  "programs": {
+    "param": "preset"
+  }
 }

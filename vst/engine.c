@@ -15,14 +15,21 @@
  *
  * Samples: <plugin folder>/samples (MODULE_SUBDIR), prepared by samples/prepare.py: mono 16-bit with baked loops,
  * listed in manifest.txt. They load once per process on a background thread and are shared by every instance.
- * The orb: display-only meter "orb" (2 energy levels x 17 frames), stepped here and reported via display_rev. */
+ * The orb: display-only meter "orb" (2 energy levels x 17 frames), stepped here and reported via display_rev.
+ *
+ * Presets (presets_tab.h, from presets.json) are applied here: the "preset" parameter (MPC's PRESET menu, a host's
+ * program list), the name strip's prev / next on the PLAYER page and the BROWSE page's lists all go through
+ * apply_preset(). BROWSE: categories on the left (cat_N, tapped by the cpick_N pads over them), that category's presets
+ * on the right, ROWS to a page (row_N, rpick_N); "<key>_on" lights the listed category and the loaded preset. */
 #include <math.h>
+#include <time.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "engine.h"
 #include "params.h"
+#include "presets_tab.h"
 
 #define SR 44100.0f
 #define MAXV 32              /* voices: one per slot per note */
@@ -295,6 +302,11 @@ typedef struct {
     float energy, orb_t;
     int orb_phase, orb_frame;
     unsigned rev;
+    /* presets and the BROWSE page */
+    int view;                 /* the category listed: 0 = ALL, 1..NBCAT = PRESET_CAT + 1 */
+    int page;                 /* the page of that list shown */
+    double tap_t[NPARAMS];    /* when each pad was last tapped (MPC echoes a tap; one within TAP_S is that echo) */
+    double quiet_until;       /* after opening or a restore: pads ignore the values a project puts back */
 } oxz_t;
 
 #define DLY_MAX 70560          /* 1.6 s */
@@ -308,6 +320,11 @@ static int I_master, I_velocity, I_breath, I_attack, I_release, I_air, I_dark, I
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
     I_sb_level, I_sb_tune, I_sb_drop, I_orb, I_a4;
 static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
+static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1;
+static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
+#define NBCAT 7                        /* the browser's categories, after ALL */
+#define ROWS 24                        /* presets on one page of the list: 3 columns of 8 */
+static const char *BCAT_NAME[NBCAT + 1] = {"ALL", "VOICES", "WINDS", "BRASS", "STRINGS", "BELLS", "SYNTH", "AIR"};
 static int g_idx_done;
 static void init_idx(void) {
     if (g_idx_done) return;
@@ -315,7 +332,10 @@ static void init_idx(void) {
     X(master); X(velocity); X(breath); X(attack); X(release); X(air); X(dark); X(lofi); X(motion);
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
     X(sb_level); X(sb_tune); X(sb_drop); X(orb); X(a4);
+    X(preset); X(p_name); X(p_prev); X(p_next); X(b_head); X(b_page); X(pg_prev); X(pg_next);
 #undef X
+    I_cat1 = idx_of("cat_1"); I_row1 = idx_of("row_1"); I_cpick1 = idx_of("cpick_1"); I_rpick1 = idx_of("rpick_1");
+    for (int k = 0; k < NPRESET_KEYS; k++) PRESET_IDX[k] = idx_of(PRESET_KEYS[k]);
     static const char *CATKEY[NCATS] = {"", "voices", "winds", "brass", "strings", "bells", "synth", "air"};
     for (int sl = 0; sl < 2; sl++) {
         char k[24];
@@ -382,6 +402,125 @@ static const char *KNOB_NAMES[NSOUNDS][3] = {
     {"Cutoff", "Shape", "Chorus"}, {"Cutoff", "Glide", "Chorus"}, {"Cutoff", "Bloom", "Chorus"},
     {"Density", "Drift", "Width"}, {"Grain", "Pitch", "Smear"}};
 
+/* ---------- presets and the BROWSE page ---------- */
+static double wall_s(void) {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    return (double)t.tv_sec + t.tv_nsec / 1e9;
+}
+#define TAP_S 0.25
+#define QUIET_S 2.0
+static int is_cat_pad(int i) { return i >= I_cpick1 && i < I_cpick1 + NBCAT + 1; }
+static int is_row_pad(int i) { return i >= I_rpick1 && i < I_rpick1 + ROWS; }
+static int is_pad(int i) { return is_cat_pad(i) || is_row_pad(i); }
+static int is_ui(int i) {   /* the browser's own controls and texts: never part of a sound, never saved */
+    return i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
+           i == I_pg_next || (i >= I_cat1 && i < I_cat1 + NBCAT + 1) || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
+}
+static int cur_preset(const oxz_t *s) {
+    int p = (int)(s->val[I_preset] + 0.5f);
+    return p < 0 ? 0 : p >= NPRESET ? NPRESET - 1 : p;
+}
+/* the presets the list holds, in order: every one (ALL), or one category's */
+static int members(const oxz_t *s, int *out) {
+    int n = 0;
+    for (int i = 0; i < NPRESET; i++)
+        if (s->view == 0 || PRESET_CAT[i] + 1 == s->view) out[n++] = i;
+    return n;
+}
+static int pages(int n) { return n > 0 ? (n + ROWS - 1) / ROWS : 1; }
+/* the list shows the current preset: its category (unless ALL is listed) and the page it is on */
+static void follow(oxz_t *s) {
+    int cur = cur_preset(s);
+    if (s->view < 0) s->view = PRESET_CAT[cur] + 1;                       /* just opened or restored: its category */
+    if (s->view != 0 && PRESET_CAT[cur] + 1 != s->view) s->view = PRESET_CAT[cur] + 1;   /* Init (no category): ALL */
+    int m[NPRESET], n = members(s, m);
+    s->page = 0;
+    for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
+}
+static void apply_preset(oxz_t *s, int pr) {
+    if (pr < 0) pr = 0;
+    if (pr >= NPRESET) pr = NPRESET - 1;
+    for (int k = 0; k < NPRESET_KEYS; k++)
+        if (PRESET_IDX[k] >= 0 && PRESET_VAL[pr][k] == PRESET_VAL[pr][k]) s->val[PRESET_IDX[k]] = PRESET_VAL[pr][k];
+    s->val[I_preset] = (float)pr;
+    follow(s);
+    s->rev++;
+}
+/* the preset a restored sound is, when a project from before the browser has no "preset" saved: an exact match */
+static int match_preset(const oxz_t *s) {
+    for (int pr = 0; pr < NPRESET; pr++) {
+        int k = 0;
+        for (; k < NPRESET_KEYS; k++) {
+            int i = PRESET_IDX[k];
+            if (i >= 0 && PRESET_VAL[pr][k] == PRESET_VAL[pr][k] && fabsf(s->val[i] - PRESET_VAL[pr][k]) > 0.0015f) break;
+        }
+        if (k == NPRESET_KEYS) return pr;
+    }
+    return 0;
+}
+/* prev / next: the next preset in the listed category (all of them under ALL), wrapping inside it */
+static void step_preset(oxz_t *s, int dir) {
+    int m[NPRESET], n = members(s, m), cur = cur_preset(s), at = -1;
+    if (!n) return;
+    for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
+    int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
+    if (m[k] != cur) apply_preset(s, m[k]);
+}
+static void step_page(oxz_t *s, int dir) {
+    int m[NPRESET], np = pages(members(s, m));
+    s->page = ((s->page + dir) % np + np) % np;
+    s->rev++;
+}
+/* the preset on row r (0-based) of the page shown, or -1 */
+static int row_preset(const oxz_t *s, int r) {
+    int m[NPRESET], n = members(s, m), k = s->page * ROWS + r;
+    return r >= 0 && r < ROWS && k < n ? m[k] : -1;
+}
+/* A pad rests at 0.5; a tap on MPC's screen flips its button, so it arrives as 0 or 1, and MPC sends the value back
+ * once more after it redraws (within TAP_S). Wall clock, not the render clock: it stands still with the transport stopped. */
+static void pad(oxz_t *s, int i, float x) {
+    s->val[i] = 0.5f;
+    if (x > 0.0f && x < 1.0f) return;                       /* back at rest (or a project putting 0.5 back) */
+    double now = wall_s();
+    if (now < s->quiet_until || (s->tap_t[i] > 0 && now - s->tap_t[i] < TAP_S)) return;
+    s->tap_t[i] = now;
+    if (is_cat_pad(i)) {
+        s->view = i - I_cpick1;
+        int m[NPRESET], n = members(s, m), cur = cur_preset(s);
+        s->page = 0;
+        for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
+    } else {
+        int pr = row_preset(s, i - I_rpick1);
+        if (pr >= 0 && pr != cur_preset(s)) { apply_preset(s, pr); return; }
+    }
+    s->rev++;
+}
+static void upper(char *b) { for (; *b; b++) if (*b >= 'a' && *b <= 'z') *b -= 32; }
+/* the browser's texts and lit rows */
+static int ui_text(oxz_t *s, int i, int on, char *b, int n) {
+    int cur = cur_preset(s), len;
+    if (i == I_p_name) len = snprintf(b, n, "%s", PRESET_NAME[cur]);
+    else if (i == I_b_head) {
+        int m[NPRESET];
+        len = snprintf(b, n, "%s   %d PRESETS", BCAT_NAME[s->view], members(s, m));
+    } else if (i == I_b_page) {
+        int m[NPRESET];
+        len = snprintf(b, n, "PAGE %d/%d", s->page + 1, pages(members(s, m)));
+    } else if (i >= I_cat1 && i < I_cat1 + NBCAT + 1) {
+        if (on) return snprintf(b, n, "%d", i - I_cat1 == s->view);
+        len = snprintf(b, n, "%s", BCAT_NAME[i - I_cat1]);
+    } else if (i >= I_row1 && i < I_row1 + ROWS) {
+        int pr = row_preset(s, i - I_row1);
+        if (on) return snprintf(b, n, "%d", pr >= 0 && pr == cur);
+        if (pr < 0) return snprintf(b, n, " ");
+        const char *nm = PRESET_NAME[pr], *sp = strchr(nm, ' ');
+        len = snprintf(b, n, "%s", s->view && PRESET_CAT[pr] >= 0 && sp ? sp + 1 : nm);   /* a category's list: no prefix */
+    } else return 0;
+    if (len > 0) upper(b);
+    return len;
+}
+
 static void *create(const char *data_dir) {
     init_idx();
     oxz_t *s = calloc(1, sizeof *s);
@@ -396,6 +535,9 @@ static void *create(const char *data_dir) {
                                     : PARAMS[i].min + PARAMS[i].def * (PARAMS[i].max - PARAMS[i].min);
     s->noise = 0x9e3779b9u;
     s->sub_target = -1;
+    s->quiet_until = wall_s() + QUIET_S;      /* MPC puts a project's values back right after it opens the plugin */
+    s->view = -1;
+    follow(s);
     read_slots(s);
     pthread_mutex_lock(&g_lock);
     if (g_refs++ == 0) {
@@ -696,6 +838,7 @@ static void set_param(void *inst, const char *key, const char *val) {
     oxz_t *s = inst;
     if (!strcmp(key, "state")) {           /* "key=value;..." from get_param("state") */
         char buf[64];
+        int has_preset = 0;
         const char *p = val;
         while (*p) {
             const char *e = strchr(p, ';');
@@ -703,18 +846,39 @@ static void set_param(void *inst, const char *key, const char *val) {
             if (len < sizeof buf) {
                 memcpy(buf, p, len); buf[len] = 0;
                 char *eq = strchr(buf, '=');
-                if (eq) { *eq = 0; int i = idx_of(buf); if (i >= 0 && i != I_orb) s->val[i] = (float)atof(eq + 1); }
+                if (eq) {
+                    *eq = 0;
+                    int i = idx_of(buf);
+                    if (!strcmp(buf, "preset")) has_preset = 1;
+                    if (i >= 0 && i != I_orb && !is_ui(i)) s->val[i] = (float)atof(eq + 1);   /* the preset's index: no apply */
+                }
             }
             if (!e) break;
             p = e + 1;
         }
+        if (!has_preset) s->val[I_preset] = (float)match_preset(s);   /* a project saved before the browser */
+        s->quiet_until = wall_s() + QUIET_S;
+        s->view = -1;
+        follow(s);
         s->rev++;
         return;
     }
     int i = idx_of(key);
     if (i < 0) return;
+    float x = (float)atof(val);
+    if (x != x) return;
     if (i == I_orb) { s->energy = fminf(1.0f, s->energy + 0.6f); s->rev++; return; }   /* a tap on the orb */
-    s->val[i] = (float)atof(val);
+    if (i == I_preset) { int pr = (int)(x + 0.5f); if (pr != cur_preset(s)) apply_preset(s, pr); return; }
+    if (is_pad(i)) { pad(s, i, x); return; }
+    if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next) {
+        s->val[i] = x;
+        if (x < 0.5f) return;                  /* the release (the wrapper debounces the press) */
+        if (i == I_p_prev || i == I_p_next) step_preset(s, i == I_p_next ? 1 : -1);
+        else step_page(s, i == I_pg_next ? 1 : -1);
+        return;
+    }
+    if (is_ui(i)) return;                      /* the texts are the engine's */
+    s->val[i] = x;
 }
 
 static int get_param(void *inst, const char *key, char *b, int n) {
@@ -723,7 +887,7 @@ static int get_param(void *inst, const char *key, char *b, int n) {
     if (!strcmp(key, "state")) {
         int len = 0;
         for (int i = 0; i < NPARAMS && len < n - 32; i++)
-            if (i != I_orb) len += snprintf(b + len, n - len, "%s=%g;", PARAMS[i].key, s->val[i]);
+            if (i != I_orb && !is_ui(i)) len += snprintf(b + len, n - len, "%s=%g;", PARAMS[i].key, s->val[i]);
         return len;
     }
     size_t kl = strlen(key);
@@ -734,9 +898,18 @@ static int get_param(void *inst, const char *key, char *b, int n) {
         if (k < 0 || k > 2 || t < 0 || t >= NSOUNDS) return 0;
         return snprintf(b, n, "%s %s", sl ? "B" : "A", KNOB_NAMES[t][k]);
     }
+    if (kl > 3 && !strcmp(key + kl - 3, "_on")) {   /* "row_3_on": is that row lit */
+        char k2[32];
+        if (kl - 3 >= sizeof k2) return 0;
+        memcpy(k2, key, kl - 3); k2[kl - 3] = 0;
+        int j = idx_of(k2);
+        return j >= 0 ? ui_text(s, j, 1, b, n) : 0;
+    }
     int i = idx_of(key);
     if (i < 0) return 0;
     if (i == I_orb) return snprintf(b, n, "%d", s->orb_frame);
+    if (is_ui(i) && !is_pad(i) && PARAMS[i].string_display) return ui_text(s, i, 0, b, n);
+    if (is_pad(i)) return snprintf(b, n, "%g", s->val[i]);   /* at rest: 0.5, not rounded to 1 */
     if (PARAMS[i].nopts) {
         int o = (int)(s->val[i] + 0.5f);
         if (o < 0) o = 0;

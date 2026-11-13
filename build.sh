@@ -30,6 +30,7 @@ if [ ! -x "$MPC_VST/tools/build_port.sh" ]; then
 fi
 
 DIR="$(dirname "$CFG")"
+[ "$TARGET" != oxzygen ] || python3 "$HERE/vst/make_presets_h.py"   # presets.json -> the engine's preset table
 NAME="$(python3 -c 'import json,sys; c=json.load(open(sys.argv[1])); print(c["vendor"]+" - VST - "+c["name"])' "$CFG")"
 SO="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["so"])' "$CFG")"
 
