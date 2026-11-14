@@ -1,5 +1,7 @@
 # OXZYGEN
 
+[![Support me on Ko-fi](https://img.shields.io/badge/Support%20me%20on-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/3dthc)
+
 A dark, cinematic VST2 instrument for Akai MPC standalone units: choirs, vowels and sung "doo"s, flutes, reeds, brass,
 atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a CRT crystal-ball orb that reacts as you play.
 
