@@ -630,7 +630,43 @@
     "AIR Smoke Room",
     "AIR Heartbreak Haze",
     "AIR Whisper Swarm",
-    "AIR Attic Wind"
+    "AIR Attic Wind",
+    "NOIR Tired Rhodes",
+    "NOIR 3AM Text",
+    "NOIR Felt Room",
+    "NOIR Pillow Talk Keys",
+    "NOIR Unread",
+    "NOIR Cried Out Lead",
+    "NOIR Cold Shoulder Lead",
+    "NOIR Wilted Lead",
+    "NOIR Drowned Lead",
+    "NOIR Smoke Ring Sax",
+    "NOIR Behind The Wall",
+    "NOIR Overcast Pad",
+    "NOIR Aching Pad",
+    "NOIR Cold Bloom",
+    "NOIR Sinking",
+    "NOIR Gone By Morning",
+    "NOIR Echoes Of You",
+    "NOIR Warm Halo",
+    "NOIR Static Pulse",
+    "NOIR Velvet Funeral",
+    "ASTRO Night Flute",
+    "ASTRO Syrup Flute",
+    "ASTRO Far Planet Pipe",
+    "ASTRO Haze Flute",
+    "ASTRO Starlight Mallets",
+    "ASTRO Orbit Bells",
+    "ASTRO Comet Keys",
+    "ASTRO Zero Gravity",
+    "ASTRO Signal Lead",
+    "ASTRO Siren Rise",
+    "ASTRO Abduction",
+    "ASTRO Far Horn Signal",
+    "ASTRO Violet Planet",
+    "ASTRO Moon Choir",
+    "ASTRO Astronaut Fog",
+    "ASTRO Low Orbit"
    ],
    "default": "Init"
   },
@@ -1403,6 +1439,36 @@
    ],
    "default": "K0",
    "live": true
+  },
+  {
+   "key": "cat_9",
+   "name": "Category 9",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "display": "string"
+  },
+  {
+   "key": "cpick_9",
+   "name": "Category Pad 9",
+   "min": 0.0,
+   "max": 1.0,
+   "default": 0.5
+  },
+  {
+   "key": "cat_10",
+   "name": "Category 10",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "display": "string"
+  },
+  {
+   "key": "cpick_10",
+   "name": "Category Pad 10",
+   "min": 0.0,
+   "max": 1.0,
+   "default": 0.5
   }
  ],
  "sections": [

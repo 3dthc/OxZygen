@@ -17,6 +17,9 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS = json.load(open(os.path.join(HERE, "params.json")))["params"]
 SKIP = {"orb", "a_sound", "b_sound"}   # engine-driven
+import re
+UI = re.compile(r"^(cat_|row_|cpick_|rpick_|p_|th_|b_head$|b_page$|theme$|preset$|[ab]_look$|[ab]_lbl$)")   # the browser and
+# the theme: never in a preset (loading one must not change the theme or the browser's rows)
 
 
 # sound name -> (category, that category's option)
@@ -294,12 +297,89 @@ DESIGNS = [
     ("Numb Bells", dict(**A("Glass", oct="-1", k1=40, k2=30, k3=30, level=85), **B("Synth Pad", oct="-2", k1=15, k2=30, k3=70, level=30),
         release=75, dark=75, air=25, space=88, rv_decay=85, rv_mix=46, dl_mix=25, dl_time=70, dl_feedback=50,
         motion=45, sb_level=40, sb_drop=40)),
+    # --- NOIR (0.7.6): sad, somber, close. Keys from the bells, leads that cry, pads behind a wall ---
+    ("Tired Rhodes", dict(**A("Vibes", k1=55, k2=25, k3=25, level=85), **OFF, _cat="NOIR",
+        attack=5, release=45, dark=70, air=25, lofi=45, motion=55, space=55, rv_mix=26, dl_mix=14, dl_time=62, dl_feedback=30)),
+    ("3AM Text", dict(**A("Glass", k1=10, k2=30, k3=35, level=85), **OFF, _cat="NOIR",
+        attack=0, release=30, dark=55, air=35, lofi=20, motion=25, space=55, rv_mix=26, dl_mix=34, dl_time=60, dl_feedback=45)),
+    ("Felt Room", dict(**A("Vibes", oct="-1", k1=45, k2=10, k3=10, level=85), **B("Bowed Vibes", k1=30, k2=20, k3=20, level=25), _cat="NOIR",
+        attack=0, release=40, dark=85, air=20, lofi=25, motion=20, space=35, rv_size=35, rv_decay=35, rv_mix=22)),
+    ("Pillow Talk Keys", dict(**A("Vibes", k1=50, k2=35, k3=30, level=85), **B("Choir", k1=40, k2=40, k3=70, level=25), _cat="NOIR",
+        release=50, dark=65, air=35, lofi=30, motion=45, space=60, rv_mix=30, dl_mix=18, dl_time=64, dl_feedback=35)),
+    ("Unread", dict(**A("Glass", oct="+1", k1=5, k2=40, k3=30, level=80), **OFF, _cat="NOIR",
+        attack=0, release=35, dark=60, air=40, motion=20, space=65, rv_mix=30, dl_mix=40, dl_time=55, dl_feedback=55)),
+    ("Cried Out Lead", dict(**A("Synth Lead", k1=40, k2=75, k3=45, level=85), **OFF, _cat="NOIR",
+        attack=25, release=55, dark=55, air=35, motion=65, space=75, rv_size=75, rv_decay=80, rv_mix=36, dl_mix=22, dl_time=66, dl_feedback=40)),
+    ("Cold Shoulder Lead", dict(**A("Synth Lead", oct="+1", k1=45, k2=20, k3=85, level=80), **OFF, _cat="NOIR",
+        attack=5, release=35, dark=45, air=40, motion=40, space=60, rv_mix=30, dl_mix=30, dl_time=58, dl_feedback=40,
+        dr_mix=20, dr_amount=30)),
+    ("Wilted Lead", dict(**A("Synth Lead", k1=55, k2=35, k3=100, level=80), **OFF, _cat="NOIR",
+        attack=10, release=40, dark=40, air=45, lofi=35, motion=70, space=65, rv_mix=32, dl_mix=20, dl_time=62)),
+    ("Drowned Lead", dict(**A("Synth Lead", k1=35, k2=55, k3=60, level=80), **B("Vowels", k1=40, k2=45, k3=40, level=35), _cat="NOIR",
+        attack=20, release=65, dark=60, air=40, motion=55, space=90, rv_size=90, rv_decay=88, rv_mix=48, dl_mix=28, dl_time=70, dl_feedback=50)),
+    ("Smoke Ring Sax", dict(**A("Sax", oct="-1", k1=35, k2=65, k3=30, level=85), **OFF, _cat="NOIR",
+        attack=30, release=55, dark=70, air=35, motion=35, space=65, rv_mix=32, dl_mix=18, dl_time=68, dl_feedback=35)),
+    ("Behind The Wall", dict(**A("Synth Pad", k1=10, k2=50, k3=70, level=85), **B("Choir", k1=30, k2=50, k3=70, level=25), _cat="NOIR",
+        attack=45, release=70, dark=90, air=20, motion=80, space=80, rv_decay=75, rv_mix=40)),
+    ("Overcast Pad", dict(**A("Synth Pad", k1=30, k2=45, k3=80, level=75), **B("Tremolo", k1=50, k2=60, k3=40, level=40), _cat="NOIR",
+        attack=55, release=75, dark=65, air=35, motion=70, space=80, rv_decay=78, rv_mix=40)),
+    ("Aching Pad", dict(**A("Choir", k1=40, k2=80, k3=75, level=70), **B("Synth Pad", k1=35, k2=55, k3=85, level=55), _cat="NOIR",
+        attack=50, release=80, dark=55, air=45, motion=60, space=88, rv_size=85, rv_decay=85, rv_mix=44)),
+    ("Cold Bloom", dict(**A("Synth Brass", k1=30, k2=95, k3=70, level=80), **OFF, _cat="NOIR",
+        attack=70, release=75, dark=60, air=35, motion=55, space=82, rv_decay=80, rv_mix=40)),
+    ("Sinking", dict(**A("Strings", oct="-1", k1=60, k2=70, k3=25, level=80), **B("Synth Pad", oct="-1", k1=15, k2=50, k3=60, level=30), _cat="NOIR",
+        attack=55, release=75, dark=80, air=20, motion=45, space=78, rv_decay=75, rv_mix=38)),
+    ("Gone By Morning", dict(**A("Vowels", oct="+1", k1=60, k2=65, k3=20, level=80), **OFF, _cat="NOIR",
+        attack=15, release=55, dark=40, air=55, motion=50, space=80, rv_size=80, rv_decay=80, rv_mix=40, dl_mix=25, dl_time=64, dl_feedback=45)),
+    ("Echoes Of You", dict(**A("Vowels", k1=45, k2=50, k3=10, level=80), **OFF, _cat="NOIR",
+        attack=5, release=40, dark=55, air=45, motion=40, space=70, rv_mix=34, dl_mix=45, dl_time=70, dl_feedback=70)),
+    ("Warm Halo", dict(**A("Choir", k1=55, k2=45, k3=60, level=80), **B("Vibes", k1=60, k2=50, k3=20, level=20), _cat="NOIR",
+        attack=35, release=60, dark=50, air=40, motion=40, space=60, rv_size=50, rv_decay=55, rv_mix=30)),
+    ("Static Pulse", dict(**A("Synth Lead", k1=50, k2=0, k3=40, level=80), **OFF, _cat="NOIR",
+        attack=0, release=10, dark=40, air=40, motion=30, space=40, rv_size=45, rv_decay=25, rv_mix=26, dl_mix=25, dl_time=50, dl_feedback=40,
+        dr_mix=45, dr_amount=50, dr_tone=55)),
+    ("Velvet Funeral", dict(**A("Tubular", oct="-1", k1=70, k2=40, k3=30, level=70), **B("Trombone", oct="-1", k1=25, k2=45, k3=35, level=55), _cat="NOIR",
+        attack=30, release=75, dark=70, air=25, motion=30, space=85, rv_size=85, rv_decay=85, rv_mix=42)),
+    # --- ASTRO (0.7.6): spacey and dark. Flutes in the fog, bells far off, leads that whine ---
+    ("Night Flute", dict(**A("Flute", k1=40, k2=70, k3=35, level=85), **OFF, _cat="ASTRO",
+        attack=15, release=45, dark=60, air=50, motion=40, space=70, rv_mix=32, dl_mix=30, dl_time=62, dl_feedback=45)),
+    ("Syrup Flute", dict(**A("Flute", oct="-1", k1=30, k2=60, k3=30, level=85), **OFF, _cat="ASTRO",
+        attack=25, release=55, dark=65, air=40, lofi=40, motion=55, space=70, rv_mix=32, dl_mix=22, dl_time=68, dl_feedback=40)),
+    ("Far Planet Pipe", dict(**A("Ocarina", oct="+1", k1=50, k2=45, k3=40, level=80), **OFF, _cat="ASTRO",
+        attack=10, release=50, dark=45, air=55, motion=45, space=80, rv_size=80, rv_decay=78, rv_mix=38, dl_mix=38, dl_time=56, dl_feedback=55)),
+    ("Haze Flute", dict(**A("Flute", k1=35, k2=80, k3=40, level=75), **B("Texture", k1=60, k2=43, k3=80, level=35), _cat="ASTRO",
+        attack=30, release=65, dark=55, air=60, motion=60, space=82, rv_decay=80, rv_mix=40, dl_mix=20, dl_time=66)),
+    ("Starlight Mallets", dict(**A("Glass", k1=5, k2=70, k3=55, level=80), **OFF, _cat="ASTRO",
+        attack=0, release=40, dark=35, air=55, motion=30, space=75, rv_mix=34, dl_mix=45, dl_time=52, dl_feedback=60)),
+    ("Orbit Bells", dict(**A("Tubular", k1=75, k2=65, k3=35, level=75), **OFF, _cat="ASTRO",
+        attack=0, release=80, dark=60, air=40, motion=35, space=95, rv_size=95, rv_decay=92, rv_mix=48)),
+    ("Comet Keys", dict(**A("Vibes", oct="+1", k1=40, k2=80, k3=45, level=80), **OFF, _cat="ASTRO",
+        attack=0, release=40, dark=40, air=55, motion=65, space=70, rv_mix=32, dl_mix=35, dl_time=50, dl_feedback=50)),
+    ("Zero Gravity", dict(**A("Bowed Vibes", k1=85, k2=75, k3=40, level=80), **B("Wind", k1=30, k2=60, k3=80, level=20), _cat="ASTRO",
+        attack=70, release=85, dark=45, air=60, motion=55, space=92, rv_size=90, rv_decay=90, rv_mix=46)),
+    ("Signal Lead", dict(**A("Synth Lead", oct="+1", k1=60, k2=60, k3=70, level=75), **OFF, _cat="ASTRO",
+        attack=10, release=45, dark=40, air=45, motion=75, space=70, rv_mix=32, dl_mix=35, dl_time=60, dl_feedback=55)),
+    ("Siren Rise", dict(**A("Synth Lead", k1=45, k2=100, k3=55, level=80), **OFF, _cat="ASTRO",
+        attack=40, release=60, dark=50, air=40, motion=85, space=80, rv_decay=78, rv_mix=40, dl_mix=30, dl_time=66, dl_feedback=60)),
+    ("Abduction", dict(**A("Synth Brass", k1=35, k2=70, k3=80, level=70), **B("Vowels", oct="+1", k1=50, k2=30, k3=50, level=40), _cat="ASTRO",
+        attack=45, release=70, dark=60, air=40, motion=70, space=85, rv_decay=82, rv_mix=42, dl_mix=20, dl_time=70, dl_feedback=45)),
+    ("Far Horn Signal", dict(**A("Mute Trumpet", oct="-1", k1=40, k2=55, k3=30, level=80), **OFF, _cat="ASTRO",
+        attack=25, release=60, dark=70, air=35, motion=35, space=85, rv_size=85, rv_decay=80, rv_mix=40, dl_mix=40, dl_time=72, dl_feedback=65)),
+    ("Violet Planet", dict(**A("Synth Pad", k1=30, k2=60, k3=85, level=70), **B("Choir", oct="-1", k1=35, k2=60, k3=70, level=45), _cat="ASTRO",
+        attack=50, release=80, dark=65, air=40, motion=65, space=88, rv_size=85, rv_decay=85, rv_mix=44)),
+    ("Moon Choir", dict(**A("Vowels", oct="-1", k1=30, k2=40, k3=60, level=80), **B("Choir", k1=40, k2=60, k3=70, level=30), _cat="ASTRO",
+        attack=45, release=75, dark=60, air=40, motion=50, space=88, rv_size=88, rv_decay=85, rv_mix=44)),
+    ("Astronaut Fog", dict(**A("Wind", k1=45, k2=70, k3=85, level=75), **B("Synth Pad", oct="-1", k1=25, k2=50, k3=75, level=50), _cat="ASTRO",
+        attack=60, release=85, dark=55, air=65, motion=70, space=92, rv_decay=88, rv_mix=46)),
+    ("Low Orbit", dict(**A("Strings", oct="-2", k1=55, k2=75, k3=20, level=80), **B("Synth Pad", oct="-1", k1=15, k2=45, k3=70, level=30), _cat="ASTRO",
+        attack=60, release=80, dark=80, air=25, motion=40, space=82, rv_decay=80, rv_mix=40)),
 ]
 
 LEVEL = {'Init': 91, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100, 'Angel Lead': 94, 'Torch Song': 94, 'Saint Air': 74, 'Choir Drift': 83, 'High Heavens': 92, 'Monastery': 63, 'Doo Choir': 96, 'Glass Cathedral': 100, 'Music Box Ghost': 100, 'Wind Over Water': 100, 'Frozen Breath': 93, 'Astro Haze': 100, 'After Hours Fog': 76, 'Black Choir Stabs': 100, 'Dark Vowel Bed': 74, 'Distant Horn': 80, 'Smoke Trumpet': 90, 'Low Brass Hymn': 84, 'Reed Lament': 100, 'Celtic Oboe': 87, 'Frost Strings': 77, 'Shiver': 73, 'Bell Tower': 76, 'Midnight Vibes': 93, 'Bowed Halo': 74, 'Glass Prayer': 73, 'Juno Dawn': 87, 'Neon Lead': 100, 'Night Drive Brass': 92, 'Ghost Synth Choir': 73, 'Scat Doos': 73, 'Vesper Choir': 69, 'Ooh Pad': 63, 'Dah Section': 89, 'Bah Brass Doos': 80, 'Cloister': 66, 'Soprano Light': 75, 'Highland Flute': 79, 'Hollow Ocarina': 88, 'Lowlight Clarinet': 100, 'Reed Choir': 95, 'Sax and Smoke': 90, 'Funeral Horns': 76, 'Harmon Night': 100, 'Bone Choir': 74, 'Sorrow Cellos': 71, 'Shimmer Tremolo': 69, 'Storm Strings': 71, 'Snowfall Vibes': 72, 'Grave Bells': 80, 'Crystal Rain': 79, 'Bowed Choir': 83, 'Ninety Pad': 97, 'Velvet Pad': 85, 'Square Lead': 100, 'Slide Lead': 100, 'Bloom Brass': 100, 'Dark Synth Stabs': 100, 'Ghost Wind': 80, 'Ember Field': 74, 'Octave Dust': 70, 'Underwater Vox': 65, 'Codeine Choir': 70, '4AM Hook Vox': 78, 'Haunted Ad Libs': 56, 'Purple Sax': 93, 'Lean Flute': 100, 'Desert Horn': 74, 'Velvet Room Strings': 67, 'Late Night Keys': 100, 'Faded Bells': 72, 'Codeine Pad': 76, 'Night Ride Lead': 100, 'Ghost Synth Brass': 72, 'Siren Glide': 71, 'Smoke Room': 63, 'Heartbreak Haze': 65, 'Possessed Choir': 75, 'Cluster Strings': 73, 'Dread Drone': 62, 'Nursery Ghost': 81, 'Funeral Toll': 63, 'Whisper Swarm': 57, 'Attic Wind': 64, 'Brass of Doom': 81, 'Stalker Pulse': 94, 'Problem Child Vox': 64, 'Cold Room Keys': 100, 'Lonely Vox Chop': 71, 'Grey Sky Pad': 85, 'Atlanta Fog Flute': 100, 'Numb Bells': 85}   # output level per preset, filled from measured loudness so the set plays back evenly
 
 
-TAG = {"Voices": "VOX", "Winds": "WND", "Brass": "BRS", "Strings": "STR", "Bells": "BEL", "Synth": "SYN", "Air": "AIR"}
+TAG = {"Voices": "VOX", "Winds": "WND", "Brass": "BRS", "Strings": "STR", "Bells": "BEL", "Synth": "SYN", "Air": "AIR",
+       "NOIR": "NOIR", "ASTRO": "ASTRO"}   # NOIR and ASTRO: picked by a design's _cat, not its slot A
 ORDER = list(TAG)
 
 
@@ -307,9 +387,9 @@ def tagged():
     """Init first, then every preset grouped by slot A's category, its name tagged (VOX, WND...) for the MPC list."""
     out = [d for d in DESIGNS if d[0] == "Init"]
     rest = [d for d in DESIGNS if d[0] != "Init"]
-    rest.sort(key=lambda d: ORDER.index(d[1]["a_cat"]))   # stable: keeps each group's own order
+    rest.sort(key=lambda d: ORDER.index(d[1].get("_cat", d[1]["a_cat"])))   # stable: keeps each group's own order
     for name, vals in rest:
-        out.append(("%s %s" % (TAG[vals["a_cat"]], name), vals, name))
+        out.append(("%s %s" % (TAG[vals.get("_cat", vals["a_cat"])], name), {k: v for k, v in vals.items() if k != "_cat"}, name))
     return [(d[0], d[1], d[0]) if len(d) == 2 else d for d in out]
 
 
@@ -317,7 +397,7 @@ def tagged():
 # brass, the drone, two dark pads. Everywhere else it is off (it would put a bass under every flute or bell melody),
 # and where it stays it sits under the sound, not on top of it. Players still have it on the FX page.
 SUB_KEEP = {"Dark Synth Stabs": 25, "Stalker Pulse": 25, "Black Choir Stabs": 20, "Brass of Doom": 25,
-            "Dread Drone": 22, "Codeine Pad": 18, "Grey Sky Pad": 18}
+            "Dread Drone": 22, "Codeine Pad": 18, "Grey Sky Pad": 18, "Sinking": 20, "Low Orbit": 22}
 
 
 def main():
@@ -327,7 +407,7 @@ def main():
         assert len(name) <= 24, name
         values = {}
         for p in PARAMS:
-            if p["key"] not in SKIP:
+            if p["key"] not in SKIP and not UI.match(p["key"]) and "default" in p:   # momentary buttons have none and never go in a preset
                 values[p["key"]] = p["default"]
         values["master"] = LEVEL.get(base, values["master"])
         vals = dict(vals, sb_level=SUB_KEEP.get(base, 0))

@@ -10,7 +10,7 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CATS = ["VOX", "WND", "BRS", "STR", "BEL", "SYN", "AIR"]   # the browser's order: Voices, Winds, Brass, Strings, Bells, Synth, Air
+CATS = ["VOX", "WND", "BRS", "STR", "BEL", "SYN", "AIR", "NOIR", "ASTRO"]   # the browser's order: Voices ... Air, Noir, Astro
 
 
 def value(p, v, where):

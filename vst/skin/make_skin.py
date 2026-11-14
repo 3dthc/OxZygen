@@ -104,6 +104,7 @@ CAT_BOX = (40, 182, 300, 682)          # the LCD panels (screen)
 ROW_BOX = (320, 182, 1240, 682)
 LIST_Y, LIST_TH, LIST_GAP = 228, 46, 8 # the first row's top, row height, gap (8 rows end at 228 + 8*46 + 7*8 = 652)
 CAT_LIST = (52, LIST_Y, 236)           # x, y, width: 1 column
+NCAT_ROWS, CAT_TH, CAT_GAP = 10, 36, 6  # ALL + 9 categories (NOIR, ASTRO in 0.7.6): 10 rows end at 228 + 10*36 + 9*6 = 642
 ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
 ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
 PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel
@@ -593,11 +594,11 @@ def render_art():
             # so each is cut from the LCD it sits on (rows are 54 px apart, a multiple of the 3 px scanlines, so one cut
             # fits every row of a column)
             lcd = Image.open(os.path.join(out, "bg_browse.png")).convert("RGBA")
-            for kind, x, w, solid in (("cat", CAT_LIST[0], CAT_LIST[2], True), ("row", ROW_LIST[0], row_col_w(), False)):
-                under = lcd.crop((x, LIST_Y - Y0, x + w, LIST_Y - Y0 + LIST_TH))
+            for kind, x, w, solid, th_ in (("cat", CAT_LIST[0], CAT_LIST[2], True, CAT_TH), ("row", ROW_LIST[0], row_col_w(), False, LIST_TH)):
+                under = lcd.crop((x, LIST_Y - Y0, x + w, LIST_Y - Y0 + th_))
                 for on in (0, 1):
-                    pg.set_content("<style>body{margin:0;background:transparent}</style>" + row_html(on, w, LIST_TH, solid))
-                    shot = Image.open(io.BytesIO(pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": LIST_TH},
+                    pg.set_content("<style>body{margin:0;background:transparent}</style>" + row_html(on, w, th_, solid))
+                    shot = Image.open(io.BytesIO(pg.screenshot(clip={"x": 0, "y": 0, "width": w, "height": th_},
                                                                omit_background=True))).convert("RGBA")
                     cut = under.copy()
                     cut.alpha_composite(shot)
@@ -631,7 +632,7 @@ def row_col_w():
 
 
 def pad_sizes():
-    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], LIST_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
+    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], CAT_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
             (THEME_PAD, THEME_BOX[3] - THEME_BOX[1])}
 
 
@@ -681,8 +682,8 @@ def write_layout():
     tcy = (ty0 + ty1) // 2
     themed(lambda th, wh: [
         "art file=%s fit=stretch%s" % (art("bg_browse.png", th), wh),
-        "list x=%d y=%d w=%d h=%d key=cat cols=1 rows=8 tap=no th=%d gap=%d tsize=30 tcolor=%s tweight=bold "
-        "talign=left tx=16 img=%s img_on=%s%s" % (cx_, cy_, cw_, rows_h, LIST_TH, LIST_GAP, th["txt"].lstrip("#"),
+        "list x=%d y=%d w=%d h=%d key=cat cols=1 rows=%d tap=no th=%d gap=%d tsize=24 tcolor=%s tweight=bold "
+        "talign=left tx=16 img=%s img_on=%s%s" % (cx_, cy_, cw_, NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP, NCAT_ROWS, CAT_TH, CAT_GAP, th["txt"].lstrip("#"),
                                                   art("cat_off.png", th), art("cat_on.png", th), wh),
         "list x=%d y=%d w=%d h=%d key=row cols=%d rows=8 order=cols tap=no th=%d gap=%d tsize=26 tcolor=%s "
         "tweight=semibold talign=left tx=14 img=%s img_on=%s%s" % (x, y, w, rows_h, cols, LIST_TH, LIST_GAP,
@@ -694,10 +695,10 @@ def write_layout():
         % (px - 8 - 75, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
         'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=22 tcolor=%s tweight=bold%s'
         % ((tx0 + tx1) // 2, tcy, tx1 - tx0 - 2 * THEME_PAD, ty1 - ty0 - 4, th["txt"].lstrip("#"), wh)])
-    for r in range(8):
-        pad = "art/pad_%dx%d.png" % (cw_, LIST_TH)
+    for r in range(NCAT_ROWS):
+        pad = "art/pad_%dx%d.png" % (cw_, CAT_TH)
         L.append('button cx=%d cy=%d w=%d h=%d label="" key=cpick_%d img=%s img_on=%s'
-                 % (cx_ + cw_ // 2, cy_ + r * (LIST_TH + LIST_GAP) + LIST_TH // 2, cw_, LIST_TH, r + 1, pad, pad))
+                 % (cx_ + cw_ // 2, cy_ + r * (CAT_TH + CAT_GAP) + CAT_TH // 2, cw_, CAT_TH, r + 1, pad, pad))
     for c in range(cols):
         for r in range(8):
             pad = "art/pad_%dx%d.png" % (cw, LIST_TH)
@@ -759,8 +760,8 @@ def check_keys():
             "th_prev", "th_next"] + \
            ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
            ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
-           ["cat_%d" % i for i in range(1, 9)] + ["row_%d" % i for i in range(1, 25)] + \
-           ["cpick_%d" % i for i in range(1, 9)] + ["rpick_%d" % i for i in range(1, 25)]
+           ["cat_%d" % i for i in range(1, NCAT_ROWS + 1)] + ["row_%d" % i for i in range(1, 25)] + \
+           ["cpick_%d" % i for i in range(1, NCAT_ROWS + 1)] + ["rpick_%d" % i for i in range(1, 25)]
     missing = [k for k in used if k not in keys]
     if missing:
         raise SystemExit("make_skin: keys not in params.json: %s" % ", ".join(missing))

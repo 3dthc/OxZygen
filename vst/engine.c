@@ -323,11 +323,11 @@ static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_
 static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
 #define NTHEME 3
 static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY"};
-static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1;
+#define NBCAT 9                        /* the browser's categories, after ALL */
+static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1, I_catk[NBCAT + 1], I_cpk[NBCAT + 1];
 static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
-#define NBCAT 7                        /* the browser's categories, after ALL */
 #define ROWS 24                        /* presets on one page of the list: 3 columns of 8 */
-static const char *BCAT_NAME[NBCAT + 1] = {"ALL", "VOICES", "WINDS", "BRASS", "STRINGS", "BELLS", "SYNTH", "AIR"};
+static const char *BCAT_NAME[NBCAT + 1] = {"ALL", "VOICES", "WINDS", "BRASS", "STRINGS", "BELLS", "SYNTH", "AIR", "NOIR", "ASTRO"};
 static int g_idx_done;
 static void init_idx(void) {
     if (g_idx_done) return;
@@ -339,7 +339,9 @@ static void init_idx(void) {
     I_look[0] = idx_of("a_look"); I_look[1] = idx_of("b_look"); I_lbl[0] = idx_of("a_lbl"); I_lbl[1] = idx_of("b_lbl");
     X(preset); X(p_name); X(p_prev); X(p_next); X(b_head); X(b_page); X(pg_prev); X(pg_next);
 #undef X
-    I_cat1 = idx_of("cat_1"); I_row1 = idx_of("row_1"); I_cpick1 = idx_of("cpick_1"); I_rpick1 = idx_of("rpick_1");
+    for (int c = 0; c <= NBCAT; c++) { char k[16]; snprintf(k, sizeof k, "cat_%d", c + 1); I_catk[c] = idx_of(k);
+        snprintf(k, sizeof k, "cpick_%d", c + 1); I_cpk[c] = idx_of(k); }
+    I_cat1 = I_catk[0]; I_row1 = idx_of("row_1"); I_cpick1 = idx_of("cpick_1"); I_rpick1 = idx_of("rpick_1");
     for (int k = 0; k < NPRESET_KEYS; k++) PRESET_IDX[k] = idx_of(PRESET_KEYS[k]);
     static const char *CATKEY[NCATS] = {"", "voices", "winds", "brass", "strings", "bells", "synth", "air"};
     for (int sl = 0; sl < 2; sl++) {
@@ -419,13 +421,16 @@ static double wall_s(void) {
 }
 #define TAP_S 0.25
 #define QUIET_S 2.0
-static int is_cat_pad(int i) { return i >= I_cpick1 && i < I_cpick1 + NBCAT + 1; }
+/* the category rows and their pads: one index each (cat_9 / cpick_9 on came later, so they are not next to cat_8) */
+static int cat_row(int i) { for (int c = 0; c <= NBCAT; c++) if (I_catk[c] == i) return c; return -1; }
+static int cat_pad(int i) { for (int c = 0; c <= NBCAT; c++) if (I_cpk[c] == i) return c; return -1; }
+static int is_cat_pad(int i) { return cat_pad(i) >= 0; }
 static int is_row_pad(int i) { return i >= I_rpick1 && i < I_rpick1 + ROWS; }
 static int is_pad(int i) { return is_cat_pad(i) || is_row_pad(i); }
 static int is_ui(int i) {   /* the browser's own controls and texts: never part of a sound, never saved */
     return i == I_th_prev || i == I_th_next || i == I_th_name || i == I_look[0] || i == I_look[1] || i == I_lbl[0] ||
            i == I_lbl[1] || i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
-           i == I_pg_next || (i >= I_cat1 && i < I_cat1 + NBCAT + 1) || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
+           i == I_pg_next || cat_row(i) >= 0 || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
 }
 static int cur_preset(const oxz_t *s) {
     int p = (int)(s->val[I_preset] + 0.5f);
@@ -496,7 +501,7 @@ static void pad(oxz_t *s, int i, float x) {
     if (now < s->quiet_until || (s->tap_t[i] > 0 && now - s->tap_t[i] < TAP_S)) return;
     s->tap_t[i] = now;
     if (is_cat_pad(i)) {
-        s->view = i - I_cpick1;
+        s->view = cat_pad(i);
         int m[NPRESET], n = members(s, m), cur = cur_preset(s);
         s->page = 0;
         for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
@@ -518,9 +523,9 @@ static int ui_text(oxz_t *s, int i, int on, char *b, int n) {
     } else if (i == I_b_page) {
         int m[NPRESET];
         len = snprintf(b, n, "PAGE %d/%d", s->page + 1, pages(members(s, m)));
-    } else if (i >= I_cat1 && i < I_cat1 + NBCAT + 1) {
-        if (on) return snprintf(b, n, "%d", i - I_cat1 == s->view);
-        len = snprintf(b, n, "%s", BCAT_NAME[i - I_cat1]);
+    } else if (cat_row(i) >= 0) {
+        if (on) return snprintf(b, n, "%d", cat_row(i) == s->view);
+        len = snprintf(b, n, "%s", BCAT_NAME[cat_row(i)]);
     } else if (i >= I_row1 && i < I_row1 + ROWS) {
         int pr = row_preset(s, i - I_row1);
         if (on) return snprintf(b, n, "%d", pr >= 0 && pr == cur);

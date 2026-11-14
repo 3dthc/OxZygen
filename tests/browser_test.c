@@ -63,22 +63,42 @@ int main(void) {
     /* categories: ALL lists every preset with its prefix, on pages */
     untap(s, ""); tap(s, "cpick_1");
     get(s, "b_head", b);
-    CHECK(!strcmp(b, "ALL   96 PRESETS"), "ALL: \"%s\"", b);
+    CHECK(!strcmp(b, "ALL   132 PRESETS"), "ALL: \"%s\"", b);
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 1/4"), "ALL on 4 pages: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 1/6"), "ALL on 6 pages: \"%s\"", b);
     get(s, "row_1", b);
     CHECK(!strcmp(b, "INIT"), "ALL row 1: \"%s\"", b);
     get(s, "row_2", b);
     CHECK(!strcmp(b, "VOX ANGEL LEAD"), "ALL keeps prefixes: \"%s\"", b);
     set(s, "pg_next", "1"); set(s, "pg_next", "0");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 2/4"), "page down: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 2/6"), "page down: \"%s\"", b);
     set(s, "pg_prev", "1"); set(s, "pg_prev", "0"); set(s, "pg_prev", "1");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 4/4"), "page up wraps: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 6/6"), "page up wraps: \"%s\"", b);
     int before = (int)val(s, "preset");
-    untap(s, ""); tap(s, "rpick_24");        /* page 4, row 24: past the end of the list (96 = 4 x 24: the last one) */
-    CHECK((int)val(s, "preset") == 95, "last page, last row: preset 95 (was %d, now %g)", before, val(s, "preset"));
+    untap(s, ""); tap(s, "rpick_24");        /* page 6, row 24: past the end of the list (132 = 5 x 24 + 12): nothing */
+    CHECK((int)val(s, "preset") == before, "an empty row does nothing (was %d, now %g)", before, val(s, "preset"));
+    get(s, "row_13", b);
+    CHECK(!strcmp(b, " "), "rows past the end are blank (\"%s\")", b);
+    untap(s, ""); tap(s, "rpick_12");        /* the last one */
+    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, row 12: the last preset (%g)", val(s, "preset"));
+
+    /* NOIR and ASTRO (0.7.6): their own categories, 20 and 16 presets, listed without the prefix */
+    untap(s, ""); tap(s, "cpick_9");
+    get(s, "b_head", b);
+    CHECK(!strcmp(b, "NOIR   20 PRESETS"), "NOIR: \"%s\"", b);
+    get(s, "row_1", b);
+    CHECK(!strcmp(b, "TIRED RHODES"), "NOIR row 1: \"%s\"", b);
+    get(s, "cat_9_on", b);
+    CHECK(!strcmp(b, "1"), "NOIR lit (\"%s\")", b);
+    untap(s, ""); tap(s, "cpick_10");
+    get(s, "b_head", b);
+    CHECK(!strcmp(b, "ASTRO   16 PRESETS"), "ASTRO: \"%s\"", b);
+    get(s, "cat_10", b);
+    CHECK(!strcmp(b, "ASTRO"), "row 10 reads ASTRO (\"%s\")", b);
+    untap(s, ""); tap(s, "rpick_16");
+    CHECK(!strcmp(PRESET_NAME[(int)val(s, "preset")], "ASTRO Low Orbit"), "ASTRO row 16 loads Low Orbit (%s)", PRESET_NAME[(int)val(s, "preset")]);
 
     /* prev / next step inside the listed category and wrap */
     untap(s, ""); tap(s, "cpick_6");           /* BELLS */
@@ -145,7 +165,7 @@ int main(void) {
     CHECK((int)val(v, "a_look") == 2 * NCATS + (int)val(v, "a_cat"), "a host can't set a look");
     ENGINE.destroy(v);
 
-    for (int i = 0; i < 8; i++) { snprintf(k, sizeof k, "cat_%d", i + 1); get(s, k, b); printf("     %s\n", b); }
+    for (int i = 0; i < NBCAT + 1; i++) { snprintf(k, sizeof k, "cat_%d", i + 1); get(s, k, b); printf("     %s\n", b); }
     ENGINE.destroy(s); ENGINE.destroy(t); ENGINE.destroy(u);
     printf(fails ? "%d FAILED\n" : "PASSED\n", fails);
     return fails != 0;
