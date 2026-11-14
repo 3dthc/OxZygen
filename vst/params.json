@@ -702,7 +702,27 @@
     "ASTRO Violet Planet",
     "ASTRO Moon Choir",
     "ASTRO Astronaut Fog",
-    "ASTRO Low Orbit"
+    "ASTRO Low Orbit",
+    "GEMS Soft Diamond",
+    "GEMS Velvet Bells",
+    "GEMS Music Box Glow",
+    "GEMS Pearl Keys",
+    "GEMS Moonstone",
+    "GEMS Opal Pluck",
+    "GEMS Lullaby Bells",
+    "GEMS Amber Chime",
+    "GEMS Diamond Dust",
+    "GEMS Cut Glass",
+    "GEMS Chandelier",
+    "GEMS Halo Lead",
+    "GEMS Crystal Voice",
+    "GEMS Aurora",
+    "GEMS Snow Globe",
+    "GEMS Diamond Rain",
+    "GEMS High Reed Stack",
+    "GEMS Silk Reed Lead",
+    "GEMS Reed Halo Lead",
+    "GEMS Glass Reed Lead"
    ],
    "default": "Init"
   },
@@ -1570,6 +1590,21 @@
    "max": 1,
    "default": 0,
    "display": "string"
+  },
+  {
+   "key": "cat_11",
+   "name": "Category 11",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "display": "string"
+  },
+  {
+   "key": "cpick_11",
+   "name": "Category Pad 11",
+   "min": 0.0,
+   "max": 1.0,
+   "default": 0.5
   }
  ],
  "sections": [

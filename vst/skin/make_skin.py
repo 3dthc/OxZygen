@@ -104,7 +104,7 @@ CAT_BOX = (40, 182, 300, 682)          # the LCD panels (screen)
 ROW_BOX = (320, 182, 1240, 682)
 LIST_Y, LIST_TH, LIST_GAP = 228, 46, 8 # the first row's top, row height, gap (8 rows end at 228 + 8*46 + 7*8 = 652)
 CAT_LIST = (52, LIST_Y, 236)           # x, y, width: 1 column
-NCAT_ROWS, CAT_TH, CAT_GAP = 10, 36, 6  # ALL + 9 categories (NOIR, ASTRO in 0.7.6): 10 rows end at 228 + 10*36 + 9*6 = 642
+NCAT_ROWS, CAT_TH, CAT_GAP = 11, 34, 5  # ALL + 10 categories (NOIR, ASTRO, GEMS in 0.7.6): 11 rows end at 228 + 11*34 + 10*5 = 652
 ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
 ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
 PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel

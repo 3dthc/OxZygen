@@ -63,22 +63,22 @@ int main(void) {
     /* categories: ALL lists every preset with its prefix, on pages */
     untap(s, ""); tap(s, "cpick_1");
     get(s, "b_head", b);
-    CHECK(!strcmp(b, "ALL   168 PRESETS"), "ALL: \"%s\"", b);
+    CHECK(!strcmp(b, "ALL   188 PRESETS"), "ALL: \"%s\"", b);
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 1/7"), "ALL on 7 pages: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 1/8"), "ALL on 8 pages: \"%s\"", b);
     get(s, "row_1", b);
     CHECK(!strcmp(b, "INIT"), "ALL row 1: \"%s\"", b);
     get(s, "row_2", b);
     CHECK(!strcmp(b, "VOX ANGEL LEAD"), "ALL keeps prefixes: \"%s\"", b);
     set(s, "pg_next", "1"); set(s, "pg_next", "0");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 2/7"), "page down: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 2/8"), "page down: \"%s\"", b);
     set(s, "pg_prev", "1"); set(s, "pg_prev", "0"); set(s, "pg_prev", "1");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 7/7"), "page up wraps: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 8/8"), "page up wraps: \"%s\"", b);
     int before = (int)val(s, "preset");
-    untap(s, ""); tap(s, "rpick_24");        /* page 7, row 24: the last one (168 = 7 x 24) */
-    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, last row: the last preset (was %d, now %g)", before, val(s, "preset"));
+    untap(s, ""); tap(s, "rpick_20");        /* page 8, row 20: the last one (188 = 7 x 24 + 20) */
+    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, row 20: the last preset (was %d, now %g)", before, val(s, "preset"));
     untap(s, ""); tap(s, "cpick_9");         /* NOIR: one page of 20, rows past the end blank and dead */
     get(s, "row_21", b);
     CHECK(!strcmp(b, " "), "rows past the end are blank (\"%s\")", b);
@@ -99,6 +99,12 @@ int main(void) {
     CHECK(!strcmp(b, "ASTRO   16 PRESETS"), "ASTRO: \"%s\"", b);
     get(s, "cat_10", b);
     CHECK(!strcmp(b, "ASTRO"), "row 10 reads ASTRO (\"%s\")", b);
+    untap(s, ""); tap(s, "cpick_11");
+    get(s, "b_head", b);
+    CHECK(!strcmp(b, "GEMS   20 PRESETS"), "GEMS: \"%s\"", b);
+    get(s, "row_1", b);
+    CHECK(!strcmp(b, "SOFT DIAMOND"), "GEMS row 1: \"%s\"", b);
+    untap(s, ""); tap(s, "cpick_10");
     untap(s, ""); tap(s, "rpick_16");
     CHECK(!strcmp(PRESET_NAME[(int)val(s, "preset")], "ASTRO Low Orbit"), "ASTRO row 16 loads Low Orbit (%s)", PRESET_NAME[(int)val(s, "preset")]);
 

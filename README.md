@@ -18,9 +18,9 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a 
 - Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air), then one of 22 sounds
 - Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
 - FX: reverb, ping-pong delay, drive, and a gliding sub
-- 168 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO): beds and textures, up-front leads, keys,
-  plucks, basses and stabs that carry a track alone, NOIR (sad keys, crying leads, muffled pads) and ASTRO (dark flutes,
-  far-off bells, spacey leads)
+- 188 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO, GEMS): beds and textures, up-front leads, keys,
+  plucks, basses and stabs that carry a track alone, NOIR (sad keys, crying leads, muffled pads), ASTRO (dark flutes,
+  far-off bells, spacey leads) and GEMS (soft warm bells, sparkling keys, high reed-and-synth leads)
 - Tempo sync: the delay in note values and Motion locked to the bar (FX page)
 - Gen1 (MPC OS 3.x and 2.x) and Gen2; all samples CC0 ([CREDITS.md](CREDITS.md)), code MIT ([LICENSE](LICENSE))
 
@@ -45,7 +45,7 @@ Needs about 130 MB free on the internal drive; OxZygen uses about 131 MB of RAM 
 - **Player**: the preset's name under the logo (◀ ▶ step through the presets of the category shown on Browse);
   Velocity, Breath, Attack, Release on the left; Air, Filter, Lo-Fi, Motion on the right; the orb in the middle.
   The mod wheel adds movement on every sound (vibrato, drift, filter, shimmer).
-- **Browse**: the categories on the left (All, Voices, Winds, Brass, Strings, Bells, Synth, Air, Noir, Astro), that category's
+- **Browse**: the categories on the left (All, Voices, Winds, Brass, Strings, Bells, Synth, Air, Noir, Astro, Gems), that category's
   presets on the right; tap one to load it. ▲ ▼ turn the pages of a long list.
 - **Sound**: two slots. Pick a category, then a sound, an octave, and its three knobs (their names follow the sound) and Level.
 - **FX**: reverb, ping-pong delay, drive, A4 Tune (415–466 Hz reference pitch), and a sub that follows the lowest note

@@ -326,11 +326,11 @@ static int I_dl_sync, I_mo_sync, I_ds_prev, I_ds_next, I_ds_name, I_ms_prev, I_m
 static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
 #define NTHEME 3
 static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY"};
-#define NBCAT 9                        /* the browser's categories, after ALL */
+#define NBCAT 10                        /* the browser's categories, after ALL */
 static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1, I_catk[NBCAT + 1], I_cpk[NBCAT + 1];
 static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
 #define ROWS 24                        /* presets on one page of the list: 3 columns of 8 */
-static const char *BCAT_NAME[NBCAT + 1] = {"ALL", "VOICES", "WINDS", "BRASS", "STRINGS", "BELLS", "SYNTH", "AIR", "NOIR", "ASTRO"};
+static const char *BCAT_NAME[NBCAT + 1] = {"ALL", "VOICES", "WINDS", "BRASS", "STRINGS", "BELLS", "SYNTH", "AIR", "NOIR", "ASTRO", "GEMS"};
 static int g_idx_done;
 static void init_idx(void) {
     if (g_idx_done) return;

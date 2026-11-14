@@ -448,13 +448,56 @@ DESIGNS = [
         attack=60, release=85, dark=55, air=65, motion=70, space=92, rv_decay=88, rv_mix=46)),
     ("Low Orbit", dict(**A("Strings", oct="-2", k1=55, k2=75, k3=20, level=80), **B("Synth Pad", oct="-1", k1=15, k2=45, k3=70, level=30), _cat="ASTRO",
         attack=60, release=80, dark=80, air=25, motion=40, space=82, rv_decay=80, rv_mix=40)),
+    # --- GEMS (0.7.6): beautiful, sparkling. Warm jewels: a soft, short, rounded bell over a low bed with a slow swirl;
+    # then the bright ones ---
+    ("Soft Diamond", dict(**A("Vibes", k1=35, k2=40, k3=50, level=85), **B("Synth Pad", oct="-1", k1=20, k2=50, k3=80, level=28), _cat="GEMS",
+        attack=0, release=30, dark=46, air=35, motion=45, mo_sync="2 Bars", space=50, rv_mix=26)),
+    ("Velvet Bells", dict(**A("Vibes", k1=40, k2=20, k3=25, level=80), **B("Bowed Vibes", k1=40, k2=30, k3=30, level=35), _cat="GEMS",
+        attack=0, release=35, dark=48, air=30, motion=35, space=50, rv_mix=26)),
+    ("Music Box Glow", dict(**A("Vibes", oct="+1", k1=30, k2=35, k3=30, level=80), **B("Synth Pad", oct="-1", k1=20, k2=45, k3=75, level=30), _cat="GEMS",
+        attack=0, release=30, dark=46, air=40, motion=40, mo_sync="2 Bars", space=55, rv_mix=28)),
+    ("Pearl Keys", dict(**A("Vibes", k1=38, k2=35, k3=35, level=80), **B("Choir", oct="-1", k1=30, k2=55, k3=75, level=30), _cat="GEMS",
+        attack=0, release=35, dark=46, air=40, motion=55, mo_sync="2 Bars", space=58, rv_mix=28)),
+    ("Moonstone", dict(**A("Tubular", k1=30, k2=30, k3=25, level=75), **B("Synth Pad", oct="-1", k1=22, k2=50, k3=85, level=32), _cat="GEMS",
+        attack=0, release=40, dark=60, air=35, motion=45, mo_sync="2 Bars", space=60, rv_mix=30)),
+    ("Opal Pluck", dict(**A("Glass", k1=5, k2=30, k3=25, level=85), **B("Synth Pad", oct="-1", k1=20, k2=50, k3=80, level=28), _cat="GEMS",
+        attack=0, release=28, dark=46, air=35, motion=40, space=50, rv_mix=26)),
+    ("Lullaby Bells", dict(**A("Vibes", k1=40, k2=30, k3=20, level=85), **B("Bowed Vibes", oct="+1", k1=50, k2=40, k3=30, level=20), _cat="GEMS",
+        attack=8, release=40, dark=65, air=35, motion=60, mo_sync="4 Bars", space=60, rv_mix=30)),
+    ("Amber Chime", dict(**A("Vibes", oct="-1", k1=40, k2=25, k3=30, level=80), **B("Horn", oct="-1", k1=15, k2=40, k3=30, level=30), _cat="GEMS",
+        attack=0, release=35, dark=65, air=30, motion=35, space=55, rv_mix=28)),
+    ("Diamond Dust", dict(**A("Glass", oct="+1", k1=5, k2=75, k3=65, level=80), **OFF, _cat="GEMS",
+        attack=0, release=30, dark=15, air=70, motion=25, space=60, rv_mix=28, dl_mix=32, dl_feedback=45, dl_sync="1/8D")),
+    ("Cut Glass", dict(**A("Glass", k1=5, k2=60, k3=70, level=75), **B("Vibes", k1=30, k2=60, k3=70, level=45), _cat="GEMS",
+        attack=0, release=28, dark=15, air=65, motion=20, space=50, rv_mix=24, dl_mix=26, dl_feedback=40, dl_sync="1/8")),
+    ("Chandelier", dict(**A("Vibes", oct="+1", k1=35, k2=80, k3=65, level=75), **B("Glass", oct="+2", k1=5, k2=70, k3=60, level=30), _cat="GEMS",
+        attack=0, release=35, dark=15, air=70, motion=30, space=60, rv_mix=28, dl_mix=28, dl_feedback=45, dl_sync="1/16")),
+    ("Halo Lead", dict(**A("Vowels", oct="+1", k1=60, k2=70, k3=10, level=75), **B("Glass", oct="+1", k1=5, k2=70, k3=60, level=35), _cat="GEMS",
+        attack=5, release=40, dark=20, air=70, motion=35, space=60, rv_mix=28, dl_mix=22, dl_feedback=40, dl_sync="1/4")),
+    ("Crystal Voice", dict(**A("Choir", oct="+1", k1=85, k2=60, k3=35, level=80), **B("Bowed Vibes", oct="+1", k1=60, k2=70, k3=50, level=30), _cat="GEMS",
+        attack=15, release=50, dark=15, air=75, motion=35, space=65, rv_mix=30)),
+    ("Aurora", dict(**A("Bowed Vibes", k1=80, k2=70, k3=50, level=75), **B("Choir", k1=70, k2=65, k3=70, level=45), _cat="GEMS",
+        attack=55, release=75, dark=25, air=65, motion=65, mo_sync="2 Bars", space=80, rv_size=80, rv_decay=80, rv_mix=40)),
+    ("Snow Globe", dict(**A("Texture", k1=25, k2=86, k3=40, level=55), **B("Synth Pad", k1=55, k2=55, k3=90, level=65), _cat="GEMS",
+        attack=30, release=65, dark=25, air=65, motion=60, mo_sync="1 Bar", space=75, rv_mix=34)),
+    ("Diamond Rain", dict(**A("Texture", k1=15, k2=100, k3=25, level=70), **B("Glass", oct="+1", k1=20, k2=80, k3=60, level=35), _cat="GEMS",
+        attack=10, release=60, dark=15, air=75, motion=50, space=80, rv_decay=80, rv_mix=38, dl_mix=25, dl_feedback=50, dl_sync="1/8T")),
+    # reed and synth stacks, voiced to be played high as the main melody
+    ("High Reed Stack", dict(**A("Sax", oct="+1", k1=45, k2=45, k3=60, level=75), **B("Synth Lead", oct="+1", k1=55, k2=30, k3=90, level=50), _cat="GEMS",
+        attack=5, release=40, dark=25, air=60, motion=40, space=60, rv_mix=28, dl_mix=20, dl_feedback=35, dl_sync="1/4")),
+    ("Silk Reed Lead", dict(**A("Sax", oct="+1", k1=40, k2=55, k3=50, level=75), **B("Synth Pad", oct="+1", k1=55, k2=45, k3=90, level=50), _cat="GEMS",
+        attack=10, release=45, dark=30, air=60, motion=40, space=65, rv_mix=30)),
+    ("Reed Halo Lead", dict(**A("Sax", oct="+1", k1=45, k2=50, k3=55, level=75), **B("Choir", oct="+1", k1=80, k2=60, k3=40, level=45), _cat="GEMS",
+        attack=8, release=45, dark=25, air=65, motion=40, space=65, rv_mix=30, dl_mix=16, dl_feedback=30, dl_sync="1/4")),
+    ("Glass Reed Lead", dict(**A("Sax", oct="+1", k1=40, k2=40, k3=65, level=75), **B("Glass", oct="+1", k1=5, k2=60, k3=55, level=40), _cat="GEMS",
+        attack=5, release=40, dark=22, air=65, motion=35, space=60, rv_mix=28, dl_mix=22, dl_feedback=40, dl_sync="1/8D")),
 ]
 
-LEVEL = {'Init': 91, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100, 'Angel Lead': 94, 'Torch Song': 94, 'Saint Air': 74, 'Choir Drift': 83, 'High Heavens': 92, 'Monastery': 63, 'Doo Choir': 96, 'Glass Cathedral': 100, 'Music Box Ghost': 100, 'Wind Over Water': 100, 'Frozen Breath': 93, 'Astro Haze': 100, 'After Hours Fog': 76, 'Black Choir Stabs': 100, 'Dark Vowel Bed': 74, 'Distant Horn': 80, 'Smoke Trumpet': 90, 'Low Brass Hymn': 84, 'Reed Lament': 100, 'Celtic Oboe': 87, 'Frost Strings': 77, 'Shiver': 73, 'Bell Tower': 76, 'Midnight Vibes': 93, 'Bowed Halo': 74, 'Glass Prayer': 73, 'Juno Dawn': 87, 'Neon Lead': 100, 'Night Drive Brass': 92, 'Ghost Synth Choir': 73, 'Scat Doos': 73, 'Vesper Choir': 69, 'Ooh Pad': 63, 'Dah Section': 89, 'Bah Brass Doos': 80, 'Cloister': 66, 'Soprano Light': 75, 'Highland Flute': 79, 'Hollow Ocarina': 88, 'Lowlight Clarinet': 100, 'Reed Choir': 95, 'Sax and Smoke': 90, 'Funeral Horns': 76, 'Harmon Night': 100, 'Bone Choir': 74, 'Sorrow Cellos': 71, 'Shimmer Tremolo': 69, 'Storm Strings': 71, 'Snowfall Vibes': 72, 'Grave Bells': 80, 'Crystal Rain': 79, 'Bowed Choir': 83, 'Ninety Pad': 97, 'Velvet Pad': 85, 'Square Lead': 100, 'Slide Lead': 100, 'Bloom Brass': 100, 'Dark Synth Stabs': 100, 'Ghost Wind': 80, 'Ember Field': 74, 'Octave Dust': 70, 'Underwater Vox': 65, 'Codeine Choir': 70, '4AM Hook Vox': 78, 'Haunted Ad Libs': 56, 'Purple Sax': 93, 'Lean Flute': 100, 'Desert Horn': 74, 'Velvet Room Strings': 67, 'Late Night Keys': 100, 'Faded Bells': 72, 'Codeine Pad': 76, 'Night Ride Lead': 100, 'Ghost Synth Brass': 72, 'Siren Glide': 71, 'Smoke Room': 63, 'Heartbreak Haze': 65, 'Possessed Choir': 75, 'Cluster Strings': 73, 'Dread Drone': 62, 'Nursery Ghost': 81, 'Funeral Toll': 63, 'Whisper Swarm': 57, 'Attic Wind': 64, 'Brass of Doom': 81, 'Stalker Pulse': 94, 'Problem Child Vox': 64, 'Cold Room Keys': 100, 'Lonely Vox Chop': 71, 'Grey Sky Pad': 85, 'Atlanta Fog Flute': 100, 'Numb Bells': 85, 'Golden Hour Lead': 92, 'Sunset Saw Lead': 92, 'Velvet Poly': 92, 'Analog Brass Section': 92, 'Neon Stab': 92, 'Bright Pluck': 92, 'Hollow Square': 92, 'Chord Keys': 92, 'Glide Bass': 92, 'Round Bass': 92, 'Wide Chord Pad': 92, 'Pulse Swell': 92, 'String Machine': 92, 'Dream Brass': 92, 'Digital Bell Keys': 92, 'Glass Piano': 92, 'Celesta Lead': 92, 'Midnight Marimba': 92, 'Front Row Strings': 92, 'Short Strings': 92, 'Octave String Lead': 92, 'Lead Vox Ahh': 92, 'Choir Hit': 92, 'Bright Vocal Pad': 92, 'Solo Flute': 92, 'Pan Lead': 92, 'Soprano Sax Lead': 92, 'Clarinet Melody': 92, 'Solo Trumpet': 92, 'Horn Section Stab': 92, 'Big Brass Swell': 92, 'Evolving Lead': 92, 'Grain Keys': 92, 'Shimmer Motion Bed': 92, 'Sync Echo Keys': 92, 'Bar Sweep Pad': 92}   # output level per preset, filled from measured loudness so the set plays back evenly
+LEVEL = {'Init': 91, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100, 'Angel Lead': 94, 'Torch Song': 94, 'Saint Air': 74, 'Choir Drift': 83, 'High Heavens': 92, 'Monastery': 63, 'Doo Choir': 96, 'Glass Cathedral': 100, 'Music Box Ghost': 100, 'Wind Over Water': 100, 'Frozen Breath': 93, 'Astro Haze': 100, 'After Hours Fog': 76, 'Black Choir Stabs': 100, 'Dark Vowel Bed': 74, 'Distant Horn': 80, 'Smoke Trumpet': 90, 'Low Brass Hymn': 84, 'Reed Lament': 100, 'Celtic Oboe': 87, 'Frost Strings': 77, 'Shiver': 73, 'Bell Tower': 76, 'Midnight Vibes': 93, 'Bowed Halo': 74, 'Glass Prayer': 73, 'Juno Dawn': 87, 'Neon Lead': 100, 'Night Drive Brass': 92, 'Ghost Synth Choir': 73, 'Scat Doos': 73, 'Vesper Choir': 69, 'Ooh Pad': 63, 'Dah Section': 89, 'Bah Brass Doos': 80, 'Cloister': 66, 'Soprano Light': 75, 'Highland Flute': 79, 'Hollow Ocarina': 88, 'Lowlight Clarinet': 100, 'Reed Choir': 95, 'Sax and Smoke': 90, 'Funeral Horns': 76, 'Harmon Night': 100, 'Bone Choir': 74, 'Sorrow Cellos': 71, 'Shimmer Tremolo': 69, 'Storm Strings': 71, 'Snowfall Vibes': 72, 'Grave Bells': 80, 'Crystal Rain': 79, 'Bowed Choir': 83, 'Ninety Pad': 97, 'Velvet Pad': 85, 'Square Lead': 100, 'Slide Lead': 100, 'Bloom Brass': 100, 'Dark Synth Stabs': 100, 'Ghost Wind': 80, 'Ember Field': 74, 'Octave Dust': 70, 'Underwater Vox': 65, 'Codeine Choir': 70, '4AM Hook Vox': 78, 'Haunted Ad Libs': 56, 'Purple Sax': 93, 'Lean Flute': 100, 'Desert Horn': 74, 'Velvet Room Strings': 67, 'Late Night Keys': 100, 'Faded Bells': 72, 'Codeine Pad': 76, 'Night Ride Lead': 100, 'Ghost Synth Brass': 72, 'Siren Glide': 71, 'Smoke Room': 63, 'Heartbreak Haze': 65, 'Possessed Choir': 75, 'Cluster Strings': 73, 'Dread Drone': 62, 'Nursery Ghost': 81, 'Funeral Toll': 63, 'Whisper Swarm': 57, 'Attic Wind': 64, 'Brass of Doom': 81, 'Stalker Pulse': 94, 'Problem Child Vox': 64, 'Cold Room Keys': 100, 'Lonely Vox Chop': 71, 'Grey Sky Pad': 85, 'Atlanta Fog Flute': 100, 'Numb Bells': 85, 'Golden Hour Lead': 92, 'Sunset Saw Lead': 92, 'Velvet Poly': 92, 'Analog Brass Section': 92, 'Neon Stab': 92, 'Bright Pluck': 92, 'Hollow Square': 92, 'Chord Keys': 92, 'Glide Bass': 92, 'Round Bass': 92, 'Wide Chord Pad': 92, 'Pulse Swell': 92, 'String Machine': 92, 'Dream Brass': 92, 'Digital Bell Keys': 92, 'Glass Piano': 92, 'Celesta Lead': 92, 'Midnight Marimba': 92, 'Front Row Strings': 92, 'Short Strings': 92, 'Octave String Lead': 92, 'Lead Vox Ahh': 92, 'Choir Hit': 92, 'Bright Vocal Pad': 92, 'Solo Flute': 92, 'Pan Lead': 92, 'Soprano Sax Lead': 92, 'Clarinet Melody': 92, 'Solo Trumpet': 92, 'Horn Section Stab': 92, 'Big Brass Swell': 92, 'Evolving Lead': 92, 'Grain Keys': 92, 'Shimmer Motion Bed': 92, 'Sync Echo Keys': 92, 'Bar Sweep Pad': 92, 'Soft Diamond': 92, 'Velvet Bells': 92, 'Music Box Glow': 88, 'Pearl Keys': 92, 'Moonstone': 92, 'Opal Pluck': 92, 'Lullaby Bells': 92, 'Amber Chime': 92, 'Diamond Dust': 92, 'Cut Glass': 92, 'Chandelier': 92, 'Halo Lead': 88, 'Crystal Voice': 88, 'Aurora': 92, 'Snow Globe': 88, 'Diamond Rain': 78, 'High Reed Stack': 100, 'Silk Reed Lead': 100, 'Reed Halo Lead': 100, 'Glass Reed Lead': 100}   # output level per preset, filled from measured loudness so the set plays back evenly
 
 
 TAG = {"Voices": "VOX", "Winds": "WND", "Brass": "BRS", "Strings": "STR", "Bells": "BEL", "Synth": "SYN", "Air": "AIR",
-       "NOIR": "NOIR", "ASTRO": "ASTRO"}   # NOIR and ASTRO: picked by a design's _cat, not its slot A
+       "NOIR": "NOIR", "ASTRO": "ASTRO", "GEMS": "GEMS"}   # NOIR and ASTRO: picked by a design's _cat, not its slot A
 ORDER = list(TAG)
 
 
@@ -482,7 +525,7 @@ NOTE_BEATS = [("1/16", 0.25), ("1/8T", 1 / 3), ("1/8", 0.5), ("1/8D", 0.75), ("1
 
 
 def synced(vals):
-    if vals.get("_cat") not in ("NOIR", "ASTRO") or vals.get("dl_mix", 0) < 25 or "dl_sync" in vals:
+    if vals.get("_cat") not in ("NOIR", "ASTRO", "GEMS") or vals.get("dl_mix", 0) < 25 or "dl_sync" in vals:
         return vals
     secs = 0.06 * 25 ** (vals.get("dl_time", 50) / 100.0)
     beats = secs * 90 / 60.0
