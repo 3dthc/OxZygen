@@ -50,7 +50,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -103,7 +105,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -156,7 +160,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -209,7 +215,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -262,7 +270,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -315,7 +325,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -368,7 +380,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -421,7 +435,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -474,7 +490,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -527,7 +545,9 @@
     "sb_level": 20,
     "sb_tune": 50,
     "sb_drop": 45,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -580,7 +600,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 25,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -633,7 +655,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -686,7 +710,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -739,7 +765,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -792,7 +820,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -845,7 +875,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -898,7 +930,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -951,7 +985,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1004,7 +1040,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1057,7 +1095,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1110,7 +1150,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1163,7 +1205,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 60,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1216,7 +1260,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1269,7 +1315,174 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "VOX Lead Vox Ahh",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 10,
+    "release": 35,
+    "air": 60,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 35,
+    "a_cat": "Voices",
+    "a_voices": "Vowels",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 40,
+    "a_k2": 60,
+    "a_k3": 10,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 30,
+    "dl_mix": 16,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/4",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "VOX Choir Hit",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 15,
+    "air": 55,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Voices",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 40,
+    "a_k2": 50,
+    "a_k3": 0,
+    "a_level": 85,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Brass",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 60,
+    "b_k2": 20,
+    "b_k3": 40,
+    "b_level": 30,
+    "rv_size": 48,
+    "rv_decay": 36,
+    "rv_mix": 25,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 25,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "VOX Bright Vocal Pad",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 20,
+    "release": 50,
+    "air": 70,
+    "dark": 15,
+    "lofi": 0,
+    "motion": 40,
+    "a_cat": "Voices",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "+1",
+    "a_k1": 70,
+    "a_k2": 55,
+    "a_k3": 40,
+    "a_level": 80,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 60,
+    "b_k2": 50,
+    "b_k3": 80,
+    "b_level": 30,
+    "rv_size": 55,
+    "rv_decay": 47,
+    "rv_mix": 35,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "2 Bars"
    }
   },
   {
@@ -1322,7 +1535,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1375,7 +1590,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1428,7 +1645,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1481,7 +1700,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 20,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1534,7 +1755,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1587,7 +1810,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1640,7 +1865,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1693,7 +1920,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1746,7 +1975,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1799,7 +2030,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1852,7 +2085,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1905,7 +2140,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -1958,7 +2195,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2011,7 +2250,229 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "WND Solo Flute",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 25,
+    "air": 60,
+    "dark": 20,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Winds",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 50,
+    "a_k2": 45,
+    "a_k3": 60,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 42,
+    "rv_decay": 43,
+    "rv_mix": 16,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "WND Pan Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 30,
+    "air": 60,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Winds",
+    "a_voices": "Choir",
+    "a_winds": "Ocarina",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 55,
+    "a_k2": 65,
+    "a_k3": 55,
+    "a_level": 75,
+    "b_cat": "Winds",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "+1",
+    "b_k1": 30,
+    "b_k2": 70,
+    "b_k3": 50,
+    "b_level": 30,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 30,
+    "dl_mix": 18,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "WND Soprano Sax Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 30,
+    "air": 55,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 35,
+    "a_cat": "Winds",
+    "a_voices": "Choir",
+    "a_winds": "Sax",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "+1",
+    "a_k1": 55,
+    "a_k2": 45,
+    "a_k3": 60,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 45,
+    "rv_decay": 44,
+    "rv_mix": 19,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "WND Clarinet Melody",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 25,
+    "air": 50,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 25,
+    "a_cat": "Winds",
+    "a_voices": "Choir",
+    "a_winds": "Clarinet",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 45,
+    "a_k2": 40,
+    "a_k3": 55,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 42,
+    "rv_decay": 43,
+    "rv_mix": 16,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2064,7 +2525,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2117,7 +2580,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2170,7 +2635,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2223,7 +2690,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 20,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2276,7 +2745,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2329,7 +2800,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2382,7 +2855,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2435,7 +2910,229 @@
     "sb_level": 25,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BRS Dream Brass",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 15,
+    "release": 45,
+    "air": 50,
+    "dark": 35,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Brass",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 35,
+    "a_k2": 50,
+    "a_k3": 60,
+    "a_level": 70,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Brass",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 55,
+    "b_k2": 60,
+    "b_k3": 70,
+    "b_level": 55,
+    "rv_size": 52,
+    "rv_decay": 46,
+    "rv_mix": 31,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BRS Solo Trumpet",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 25,
+    "air": 55,
+    "dark": 20,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Brass",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Mute Trumpet",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 50,
+    "a_k2": 40,
+    "a_k3": 70,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 45,
+    "rv_decay": 44,
+    "rv_mix": 19,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BRS Horn Section Stab",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 12,
+    "air": 50,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Brass",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 30,
+    "a_k2": 35,
+    "a_k3": 70,
+    "a_level": 75,
+    "b_cat": "Brass",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Trombone",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 30,
+    "b_k2": 35,
+    "b_k3": 65,
+    "b_level": 60,
+    "rv_size": 45,
+    "rv_decay": 44,
+    "rv_mix": 21,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 25,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BRS Big Brass Swell",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 45,
+    "release": 50,
+    "air": 50,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Brass",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 40,
+    "a_k2": 60,
+    "a_k3": 65,
+    "a_level": 70,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Brass",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 95,
+    "b_k3": 70,
+    "b_level": 55,
+    "rv_size": 55,
+    "rv_decay": 47,
+    "rv_mix": 33,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2488,7 +3185,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2541,7 +3240,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2594,7 +3295,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2647,7 +3350,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2700,7 +3405,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2753,7 +3460,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2806,7 +3515,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2859,7 +3570,229 @@
     "sb_level": 22,
     "sb_tune": 50,
     "sb_drop": 70,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "STR String Machine",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 15,
+    "release": 45,
+    "air": 55,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 40,
+    "a_cat": "Strings",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 85,
+    "a_k2": 30,
+    "a_k3": 60,
+    "a_level": 70,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 55,
+    "b_k2": 50,
+    "b_k3": 90,
+    "b_level": 50,
+    "rv_size": 52,
+    "rv_decay": 46,
+    "rv_mix": 31,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "STR Front Row Strings",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 10,
+    "release": 35,
+    "air": 55,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 25,
+    "a_cat": "Strings",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 75,
+    "a_k2": 15,
+    "a_k3": 65,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "STR Short Strings",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 8,
+    "air": 50,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Strings",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 60,
+    "a_k2": 0,
+    "a_k3": 60,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 45,
+    "rv_decay": 44,
+    "rv_mix": 19,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "STR Octave String Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 15,
+    "release": 40,
+    "air": 55,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 35,
+    "a_cat": "Strings",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "+1",
+    "a_k1": 40,
+    "a_k2": 20,
+    "a_k3": 70,
+    "a_level": 80,
+    "b_cat": "Strings",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 40,
+    "b_k2": 20,
+    "b_k3": 50,
+    "b_level": 40,
+    "rv_size": 50,
+    "rv_decay": 46,
+    "rv_mix": 27,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2912,7 +3845,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -2965,7 +3900,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3018,7 +3955,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3071,7 +4010,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3124,7 +4065,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3177,7 +4120,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3230,7 +4175,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3283,7 +4230,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3336,7 +4285,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3389,7 +4340,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3442,7 +4395,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 25,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3495,7 +4450,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3548,7 +4505,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3601,7 +4560,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 50,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3654,7 +4615,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3707,7 +4670,284 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BEL Digital Bell Keys",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 35,
+    "air": 65,
+    "dark": 15,
+    "lofi": 0,
+    "motion": 20,
+    "a_cat": "Bells",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Vibes",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 50,
+    "a_k2": 55,
+    "a_k3": 75,
+    "a_level": 75,
+    "b_cat": "Bells",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Glass",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "+1",
+    "b_k1": 10,
+    "b_k2": 50,
+    "b_k3": 70,
+    "b_level": 40,
+    "rv_size": 50,
+    "rv_decay": 46,
+    "rv_mix": 27,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BEL Glass Piano",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 30,
+    "air": 55,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Bells",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Glass",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 5,
+    "a_k2": 35,
+    "a_k3": 55,
+    "a_level": 80,
+    "b_cat": "Bells",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Vibes",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "-1",
+    "b_k1": 45,
+    "b_k2": 20,
+    "b_k3": 40,
+    "b_level": 45,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BEL Celesta Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 25,
+    "air": 60,
+    "dark": 20,
+    "lofi": 0,
+    "motion": 15,
+    "a_cat": "Bells",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Vibes",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "+1",
+    "a_k1": 35,
+    "a_k2": 45,
+    "a_k3": 65,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 20,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BEL Midnight Marimba",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 15,
+    "air": 35,
+    "dark": 55,
+    "lofi": 0,
+    "motion": 5,
+    "a_cat": "Bells",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Vibes",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 15,
+    "a_k2": 10,
+    "a_k3": 20,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 42,
+    "rv_decay": 43,
+    "rv_mix": 16,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "BEL Sync Echo Keys",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 25,
+    "air": 50,
+    "dark": 35,
+    "lofi": 0,
+    "motion": 15,
+    "a_cat": "Bells",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Vibes",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 45,
+    "a_k2": 50,
+    "a_k3": 55,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 21,
+    "dl_time": 50,
+    "dl_feedback": 50,
+    "dl_mix": 38,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3760,7 +5000,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3813,7 +5055,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3866,7 +5110,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 25,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3919,7 +5165,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -3972,7 +5220,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4025,7 +5275,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4078,7 +5330,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4131,7 +5385,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4184,7 +5440,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4237,7 +5495,9 @@
     "sb_level": 25,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4290,7 +5550,9 @@
     "sb_level": 18,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4343,7 +5605,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 50,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4396,7 +5660,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 45,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4449,7 +5715,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4502,7 +5770,9 @@
     "sb_level": 25,
     "sb_tune": 50,
     "sb_drop": 60,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4555,7 +5825,724 @@
     "sb_level": 18,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Golden Hour Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 40,
+    "air": 60,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 35,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Lead",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 75,
+    "a_k2": 15,
+    "a_k3": 95,
+    "a_level": 80,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Brass",
+    "b_air": "Wind",
+    "b_oct": "+1",
+    "b_k1": 60,
+    "b_k2": 30,
+    "b_k3": 90,
+    "b_level": 35,
+    "rv_size": 52,
+    "rv_decay": 46,
+    "rv_mix": 28,
+    "dl_time": 50,
+    "dl_feedback": 40,
+    "dl_mix": 26,
+    "dr_amount": 30,
+    "dr_tone": 65,
+    "dr_mix": 25,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Sunset Saw Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 35,
+    "air": 65,
+    "dark": 20,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Lead",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 85,
+    "a_k2": 10,
+    "a_k3": 100,
+    "a_level": 80,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Lead",
+    "b_air": "Wind",
+    "b_oct": "+1",
+    "b_k1": 70,
+    "b_k2": 10,
+    "b_k3": 70,
+    "b_level": 30,
+    "rv_size": 50,
+    "rv_decay": 46,
+    "rv_mix": 24,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 22,
+    "dr_amount": 35,
+    "dr_tone": 70,
+    "dr_mix": 30,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/4",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Velvet Poly",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 5,
+    "release": 35,
+    "air": 50,
+    "dark": 35,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 60,
+    "a_k2": 40,
+    "a_k3": 75,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 40,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Analog Brass Section",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 10,
+    "release": 30,
+    "air": 55,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 25,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Brass",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 70,
+    "a_k2": 55,
+    "a_k3": 60,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 25,
+    "dr_tone": 60,
+    "dr_mix": 20,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Neon Stab",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 12,
+    "air": 55,
+    "dark": 20,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Brass",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 80,
+    "a_k2": 20,
+    "a_k3": 50,
+    "a_level": 85,
+    "b_cat": "Voices",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 20,
+    "b_k2": 40,
+    "b_k3": 0,
+    "b_level": 30,
+    "rv_size": 45,
+    "rv_decay": 31,
+    "rv_mix": 21,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 45,
+    "dr_tone": 65,
+    "dr_mix": 40,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Bright Pluck",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 8,
+    "air": 60,
+    "dark": 25,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Lead",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 65,
+    "a_k2": 0,
+    "a_k3": 60,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 40,
+    "dl_mix": 28,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/16",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Hollow Square",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 25,
+    "air": 45,
+    "dark": 40,
+    "lofi": 0,
+    "motion": 25,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Lead",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 45,
+    "a_k2": 20,
+    "a_k3": 30,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 45,
+    "rv_decay": 44,
+    "rv_mix": 19,
+    "dl_time": 50,
+    "dl_feedback": 30,
+    "dl_mix": 18,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Chord Keys",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 28,
+    "air": 55,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 20,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 55,
+    "a_k2": 30,
+    "a_k3": 55,
+    "a_level": 80,
+    "b_cat": "Bells",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Vibes",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 45,
+    "b_k2": 40,
+    "b_k3": 50,
+    "b_level": 45,
+    "rv_size": 48,
+    "rv_decay": 45,
+    "rv_mix": 23,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Glide Bass",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 15,
+    "air": 25,
+    "dark": 55,
+    "lofi": 0,
+    "motion": 10,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Lead",
+    "a_air": "Wind",
+    "a_oct": "-2",
+    "a_k1": 40,
+    "a_k2": 60,
+    "a_k3": 20,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 32,
+    "rv_decay": 39,
+    "rv_mix": 4,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 40,
+    "dr_tone": 40,
+    "dr_mix": 30,
+    "sb_level": 30,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Round Bass",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 20,
+    "air": 15,
+    "dark": 70,
+    "lofi": 0,
+    "motion": 5,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Lead",
+    "a_air": "Wind",
+    "a_oct": "-2",
+    "a_k1": 25,
+    "a_k2": 10,
+    "a_k3": 10,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 30,
+    "rv_decay": 38,
+    "rv_mix": 2,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 35,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "SYN Wide Chord Pad",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 20,
+    "release": 55,
+    "air": 55,
+    "dark": 35,
+    "lofi": 0,
+    "motion": 55,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 50,
+    "a_k2": 55,
+    "a_k3": 95,
+    "a_level": 80,
+    "b_cat": "Strings",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 60,
+    "b_k2": 40,
+    "b_k3": 50,
+    "b_level": 35,
+    "rv_size": 57,
+    "rv_decay": 48,
+    "rv_mix": 40,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "1 Bar"
+   }
+  },
+  {
+   "name": "SYN Pulse Swell",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 10,
+    "release": 45,
+    "air": 40,
+    "dark": 60,
+    "lofi": 0,
+    "motion": 85,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 45,
+    "a_k2": 70,
+    "a_k3": 70,
+    "a_level": 85,
+    "b_cat": "Off",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 50,
+    "b_k3": 50,
+    "b_level": 75,
+    "rv_size": 52,
+    "rv_decay": 46,
+    "rv_mix": 31,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "1/4"
+   }
+  },
+  {
+   "name": "SYN Bar Sweep Pad",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 25,
+    "release": 55,
+    "air": 40,
+    "dark": 70,
+    "lofi": 0,
+    "motion": 95,
+    "a_cat": "Synth",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 40,
+    "a_k2": 50,
+    "a_k3": 85,
+    "a_level": 80,
+    "b_cat": "Voices",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 40,
+    "b_k2": 50,
+    "b_k3": 70,
+    "b_level": 30,
+    "rv_size": 55,
+    "rv_decay": 47,
+    "rv_mix": 35,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "1 Bar"
    }
   },
   {
@@ -4608,7 +6595,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4661,7 +6650,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4714,7 +6705,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4767,7 +6760,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4820,7 +6815,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4873,7 +6870,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4926,7 +6925,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 40,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -4979,7 +6980,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 35,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5032,7 +7035,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5085,7 +7090,174 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 70,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "AIR Evolving Lead",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 10,
+    "release": 45,
+    "air": 55,
+    "dark": 35,
+    "lofi": 0,
+    "motion": 60,
+    "a_cat": "Air",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Texture",
+    "a_oct": "Mid",
+    "a_k1": 40,
+    "a_k2": 43,
+    "a_k3": 30,
+    "a_level": 60,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Lead",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 55,
+    "b_k2": 25,
+    "b_k3": 80,
+    "b_level": 65,
+    "rv_size": 55,
+    "rv_decay": 47,
+    "rv_mix": 33,
+    "dl_time": 50,
+    "dl_feedback": 40,
+    "dl_mix": 20,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "1/4D",
+    "mo_sync": "2 Bars"
+   }
+  },
+  {
+   "name": "AIR Grain Keys",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 0,
+    "release": 30,
+    "air": 55,
+    "dark": 30,
+    "lofi": 0,
+    "motion": 30,
+    "a_cat": "Air",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Texture",
+    "a_oct": "Mid",
+    "a_k1": 20,
+    "a_k2": 71,
+    "a_k3": 20,
+    "a_level": 70,
+    "b_cat": "Bells",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Vibes",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 40,
+    "b_k2": 50,
+    "b_k3": 45,
+    "b_level": 55,
+    "rv_size": 50,
+    "rv_decay": 46,
+    "rv_mix": 27,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
+   }
+  },
+  {
+   "name": "AIR Shimmer Motion Bed",
+   "values": {
+    "master": 92,
+    "velocity": 50,
+    "breath": 50,
+    "attack": 30,
+    "release": 65,
+    "air": 65,
+    "dark": 35,
+    "lofi": 0,
+    "motion": 75,
+    "a_cat": "Air",
+    "a_voices": "Choir",
+    "a_winds": "Flute",
+    "a_brass": "Horn",
+    "a_strings": "Sustain",
+    "a_bells": "Church",
+    "a_synth": "Pad",
+    "a_air": "Wind",
+    "a_oct": "Mid",
+    "a_k1": 40,
+    "a_k2": 50,
+    "a_k3": 85,
+    "a_level": 55,
+    "b_cat": "Synth",
+    "b_voices": "Choir",
+    "b_winds": "Flute",
+    "b_brass": "Horn",
+    "b_strings": "Sustain",
+    "b_bells": "Church",
+    "b_synth": "Pad",
+    "b_air": "Wind",
+    "b_oct": "Mid",
+    "b_k1": 50,
+    "b_k2": 60,
+    "b_k3": 90,
+    "b_level": 70,
+    "rv_size": 62,
+    "rv_decay": 50,
+    "rv_mix": 50,
+    "dl_time": 50,
+    "dl_feedback": 35,
+    "dl_mix": 0,
+    "dr_amount": 30,
+    "dr_tone": 60,
+    "dr_mix": 0,
+    "sb_level": 0,
+    "sb_tune": 50,
+    "sb_drop": 30,
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "2 Bars"
    }
   },
   {
@@ -5138,7 +7310,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5191,7 +7365,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/4T",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5244,7 +7420,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5297,7 +7475,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5350,7 +7530,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5403,7 +7585,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5456,7 +7640,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5509,7 +7695,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5562,7 +7750,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5615,7 +7805,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5668,7 +7860,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5721,7 +7915,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5774,7 +7970,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5827,7 +8025,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5880,7 +8080,9 @@
     "sb_level": 20,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5933,7 +8135,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/4T",
+    "mo_sync": "Free"
    }
   },
   {
@@ -5986,7 +8190,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6039,7 +8245,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6092,7 +8300,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6145,7 +8355,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6198,7 +8410,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/4T",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6251,7 +8465,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6304,7 +8520,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6357,7 +8575,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6410,7 +8630,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6463,7 +8685,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6516,7 +8740,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6569,7 +8795,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6622,7 +8850,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/4T",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6675,7 +8905,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/8D",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6728,7 +8960,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6781,7 +9015,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "1/4",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6834,7 +9070,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6887,7 +9125,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6940,7 +9180,9 @@
     "sb_level": 0,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   },
   {
@@ -6993,7 +9235,9 @@
     "sb_level": 22,
     "sb_tune": 50,
     "sb_drop": 30,
-    "a4": 440
+    "a4": 440,
+    "dl_sync": "Free",
+    "mo_sync": "Free"
    }
   }
  ]

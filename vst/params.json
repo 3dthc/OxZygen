@@ -559,6 +559,9 @@
     "VOX Possessed Choir",
     "VOX Problem Child Vox",
     "VOX Lonely Vox Chop",
+    "VOX Lead Vox Ahh",
+    "VOX Choir Hit",
+    "VOX Bright Vocal Pad",
     "WND Lone Flute",
     "WND Midnight Sax",
     "WND Clay Ocarina",
@@ -573,6 +576,10 @@
     "WND Purple Sax",
     "WND Lean Flute",
     "WND Atlanta Fog Flute",
+    "WND Solo Flute",
+    "WND Pan Lead",
+    "WND Soprano Sax Lead",
+    "WND Clarinet Melody",
     "BRS Distant Horn",
     "BRS Smoke Trumpet",
     "BRS Low Brass Hymn",
@@ -581,6 +588,10 @@
     "BRS Bone Choir",
     "BRS Desert Horn",
     "BRS Brass of Doom",
+    "BRS Dream Brass",
+    "BRS Solo Trumpet",
+    "BRS Horn Section Stab",
+    "BRS Big Brass Swell",
     "STR Frost Strings",
     "STR Shiver",
     "STR Sorrow Cellos",
@@ -589,6 +600,10 @@
     "STR Velvet Room Strings",
     "STR Cluster Strings",
     "STR Dread Drone",
+    "STR String Machine",
+    "STR Front Row Strings",
+    "STR Short Strings",
+    "STR Octave String Lead",
     "BEL Glass Cathedral",
     "BEL Music Box Ghost",
     "BEL Bell Tower",
@@ -605,6 +620,11 @@
     "BEL Funeral Toll",
     "BEL Cold Room Keys",
     "BEL Numb Bells",
+    "BEL Digital Bell Keys",
+    "BEL Glass Piano",
+    "BEL Celesta Lead",
+    "BEL Midnight Marimba",
+    "BEL Sync Echo Keys",
     "SYN Juno Dawn",
     "SYN Neon Lead",
     "SYN Night Drive Brass",
@@ -621,6 +641,19 @@
     "SYN Siren Glide",
     "SYN Stalker Pulse",
     "SYN Grey Sky Pad",
+    "SYN Golden Hour Lead",
+    "SYN Sunset Saw Lead",
+    "SYN Velvet Poly",
+    "SYN Analog Brass Section",
+    "SYN Neon Stab",
+    "SYN Bright Pluck",
+    "SYN Hollow Square",
+    "SYN Chord Keys",
+    "SYN Glide Bass",
+    "SYN Round Bass",
+    "SYN Wide Chord Pad",
+    "SYN Pulse Swell",
+    "SYN Bar Sweep Pad",
     "AIR Wind Over Water",
     "AIR Frozen Breath",
     "AIR Astro Haze",
@@ -631,6 +664,9 @@
     "AIR Heartbreak Haze",
     "AIR Whisper Swarm",
     "AIR Attic Wind",
+    "AIR Evolving Lead",
+    "AIR Grain Keys",
+    "AIR Shimmer Motion Bed",
     "NOIR Tired Rhodes",
     "NOIR 3AM Text",
     "NOIR Felt Room",
@@ -1469,6 +1505,71 @@
    "min": 0.0,
    "max": 1.0,
    "default": 0.5
+  },
+  {
+   "key": "dl_sync",
+   "name": "Delay Sync",
+   "options": [
+    "Free",
+    "1/16",
+    "1/8T",
+    "1/8",
+    "1/8D",
+    "1/4T",
+    "1/4",
+    "1/4D",
+    "1/2"
+   ],
+   "default": "Free"
+  },
+  {
+   "key": "mo_sync",
+   "name": "Motion Sync",
+   "options": [
+    "Free",
+    "4 Bars",
+    "2 Bars",
+    "1 Bar",
+    "1/2 Bar",
+    "1/4"
+   ],
+   "default": "Free"
+  },
+  {
+   "key": "ds_prev",
+   "name": "Delay Sync Prev",
+   "momentary": true
+  },
+  {
+   "key": "ds_next",
+   "name": "Delay Sync Next",
+   "momentary": true
+  },
+  {
+   "key": "ds_name",
+   "name": "Delay Sync Name",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "display": "string"
+  },
+  {
+   "key": "ms_prev",
+   "name": "Motion Sync Prev",
+   "momentary": true
+  },
+  {
+   "key": "ms_next",
+   "name": "Motion Sync Next",
+   "momentary": true
+  },
+  {
+   "key": "ms_name",
+   "name": "Motion Sync Name",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "display": "string"
   }
  ],
  "sections": [

@@ -41,17 +41,17 @@ int main(void) {
     get(s, "p_name", b);
     CHECK(!strcmp(b, "VOX ANGEL LEAD"), "name strip: \"%s\"", b);
     get(s, "b_head", b);
-    CHECK(!strcmp(b, "VOICES   23 PRESETS"), "heading follows the preset into its category: \"%s\"", b);
+    CHECK(!strcmp(b, "VOICES   26 PRESETS"), "heading follows the preset into its category: \"%s\"", b);
     get(s, "row_1", b);
     CHECK(!strcmp(b, "ANGEL LEAD"), "row 1 without the prefix: \"%s\"", b);
     get(s, "row_1_on", b);
     CHECK(!strcmp(b, "1"), "row 1 lit (the loaded preset)");
     get(s, "row_24", b);
-    CHECK(!strcmp(b, " "), "row 24 empty in a 23-preset list");
+    CHECK(strcmp(b, " "), "row 24 filled: 26 Voices presets (\"%s\")", b);
     get(s, "cat_2_on", b);
     CHECK(!strcmp(b, "1"), "VOICES lit");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 1/1"), "one page: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 1/2"), "26 presets: two pages: \"%s\"", b);
 
     /* tap row 3: loads the third Voices preset; the echo of the tap does nothing */
     tap(s, "rpick_3");
@@ -63,26 +63,28 @@ int main(void) {
     /* categories: ALL lists every preset with its prefix, on pages */
     untap(s, ""); tap(s, "cpick_1");
     get(s, "b_head", b);
-    CHECK(!strcmp(b, "ALL   132 PRESETS"), "ALL: \"%s\"", b);
+    CHECK(!strcmp(b, "ALL   168 PRESETS"), "ALL: \"%s\"", b);
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 1/6"), "ALL on 6 pages: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 1/7"), "ALL on 7 pages: \"%s\"", b);
     get(s, "row_1", b);
     CHECK(!strcmp(b, "INIT"), "ALL row 1: \"%s\"", b);
     get(s, "row_2", b);
     CHECK(!strcmp(b, "VOX ANGEL LEAD"), "ALL keeps prefixes: \"%s\"", b);
     set(s, "pg_next", "1"); set(s, "pg_next", "0");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 2/6"), "page down: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 2/7"), "page down: \"%s\"", b);
     set(s, "pg_prev", "1"); set(s, "pg_prev", "0"); set(s, "pg_prev", "1");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 6/6"), "page up wraps: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 7/7"), "page up wraps: \"%s\"", b);
     int before = (int)val(s, "preset");
-    untap(s, ""); tap(s, "rpick_24");        /* page 6, row 24: past the end of the list (132 = 5 x 24 + 12): nothing */
-    CHECK((int)val(s, "preset") == before, "an empty row does nothing (was %d, now %g)", before, val(s, "preset"));
-    get(s, "row_13", b);
+    untap(s, ""); tap(s, "rpick_24");        /* page 7, row 24: the last one (168 = 7 x 24) */
+    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, last row: the last preset (was %d, now %g)", before, val(s, "preset"));
+    untap(s, ""); tap(s, "cpick_9");         /* NOIR: one page of 20, rows past the end blank and dead */
+    get(s, "row_21", b);
     CHECK(!strcmp(b, " "), "rows past the end are blank (\"%s\")", b);
-    untap(s, ""); tap(s, "rpick_12");        /* the last one */
-    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, row 12: the last preset (%g)", val(s, "preset"));
+    before = (int)val(s, "preset");
+    untap(s, ""); tap(s, "rpick_21");
+    CHECK((int)val(s, "preset") == before, "an empty row does nothing (%g)", val(s, "preset"));
 
     /* NOIR and ASTRO (0.7.6): their own categories, 20 and 16 presets, listed without the prefix */
     untap(s, ""); tap(s, "cpick_9");
@@ -111,6 +113,37 @@ int main(void) {
     set(s, "p_next", "1"); set(s, "p_next", "0");
     CHECK((int)val(s, "preset") == first_bell, "next comes back");
 
+
+    /* tempo sync (0.7.6): the FX page's pickers step and wrap, the delay follows the tempo, Motion locks to the bar */
+    set(s, "preset", "0");
+    get(s, "ds_name", b);
+    CHECK(!strcmp(b, "FREE"), "delay sync starts FREE (\"%s\")", b);
+    set(s, "ds_next", "1"); set(s, "ds_next", "0"); set(s, "ds_next", "1"); set(s, "ds_next", "0"); set(s, "ds_next", "1");
+    get(s, "ds_name", b);
+    CHECK(!strcmp(b, "1/8") && (int)val(s, "dl_sync") == 3, "three steps: 1/8 (\"%s\")", b);
+    set(s, "ds_prev", "1"); set(s, "ds_prev", "0"); set(s, "ds_prev", "1"); set(s, "ds_prev", "0");
+    set(s, "ds_prev", "1"); set(s, "ds_prev", "0"); set(s, "ds_prev", "1");
+    get(s, "ds_name", b);
+    CHECK(!strcmp(b, "1/2"), "prev wraps past FREE to 1/2 (\"%s\")", b);
+    set(s, "ms_prev", "1");
+    get(s, "ms_name", b);
+    CHECK(!strcmp(b, "1/4"), "motion sync wraps to 1/4 (\"%s\")", b);
+    {   /* the delay: 1/8 at 100 BPM is 0.3 s; it glides there */
+        oxz_t *o = s; int16_t buf[256];
+        set(s, "dl_sync", "3"); set(s, "dl_mix", "50");
+        ENGINE.song_pos(s, 0, 100, 1, 128);
+        for (int k = 0; k < 400; k++) { ENGINE.song_pos(s, k * 128 * 100.0 / 60 / SR, 100, 1, 128); ENGINE.render(s, buf, 128); }
+        CHECK(fabsf(o->dly_time - 0.3f * SR) < 2, "1/8 at 100 BPM: %.4f s (want 0.3000)", o->dly_time / SR);
+        ENGINE.song_pos(s, -1, 0, 0, 128);   /* no tempo: 120 */
+        for (int k = 0; k < 400; k++) ENGINE.render(s, buf, 128);
+        CHECK(fabsf(o->dly_time - 0.25f * SR) < 2, "no tempo: 120 BPM, %.4f s (want 0.2500)", o->dly_time / SR);
+        set(s, "mo_sync", "3");   /* 1 bar */
+        ENGINE.song_pos(s, 6.0, 100, 1, 128); ENGINE.render(s, buf, 128);
+        CHECK(fabs(o->mph - 0.5) < 1e-6, "Motion at beat 6 of a 1-bar cycle: phase %.4f (want 0.5)", o->mph);
+        ENGINE.song_pos(s, 6.0, 100, 1, 128); ENGINE.render(s, buf, 128);
+        CHECK(fabs(o->mph - 0.5) < 1e-6, "same position, same phase (locked to the song, not free-running)");
+        set(s, "dl_sync", "0"); set(s, "mo_sync", "0");
+    }
     /* a host program change / MPC preset menu */
     set(s, "preset", "40");
     get(s, "p_name", b);

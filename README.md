@@ -18,8 +18,10 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a 
 - Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air), then one of 22 sounds
 - Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
 - FX: reverb, ping-pong delay, drive, and a gliding sub
-- 132 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO), including late-night R&B and horror/film-score sets,
-  NOIR (sad keys, crying leads, muffled pads) and ASTRO (dark flutes, far-off bells, spacey leads)
+- 168 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO): beds and textures, up-front leads, keys,
+  plucks, basses and stabs that carry a track alone, NOIR (sad keys, crying leads, muffled pads) and ASTRO (dark flutes,
+  far-off bells, spacey leads)
+- Tempo sync: the delay in note values and Motion locked to the bar (FX page)
 - Gen1 (MPC OS 3.x and 2.x) and Gen2; all samples CC0 ([CREDITS.md](CREDITS.md)), code MIT ([LICENSE](LICENSE))
 
 ## Install

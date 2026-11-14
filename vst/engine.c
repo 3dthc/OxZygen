@@ -307,9 +307,11 @@ typedef struct {
     int page;                 /* the page of that list shown */
     double tap_t[NPARAMS];    /* when each pad was last tapped (MPC echoes a tap; one within TAP_S is that echo) */
     double quiet_until;       /* after opening or a restore: pads ignore the values a project puts back */
+    double bpm, ppq, mph;          /* the host's tempo and song position (song_pos), the synced Motion phase (cycles) */
+    int playing;
 } oxz_t;
 
-#define DLY_MAX 70560          /* 1.6 s */
+#define DLY_MAX 92610          /* 2.1 s: a synced half note down to 60 BPM */
 
 static int idx_of(const char *key) {
     for (int i = 0; i < NPARAMS; i++) if (!strcmp(PARAMS[i].key, key)) return i;
@@ -320,6 +322,7 @@ static int I_master, I_velocity, I_breath, I_attack, I_release, I_air, I_dark, I
     I_rv_size, I_rv_decay, I_rv_mix, I_dl_time, I_dl_feedback, I_dl_mix, I_dr_amount, I_dr_tone, I_dr_mix,
     I_sb_level, I_sb_tune, I_sb_drop, I_orb, I_a4;
 static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
+static int I_dl_sync, I_mo_sync, I_ds_prev, I_ds_next, I_ds_name, I_ms_prev, I_ms_next, I_ms_name;
 static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
 #define NTHEME 3
 static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY"};
@@ -336,6 +339,7 @@ static void init_idx(void) {
     X(rv_size); X(rv_decay); X(rv_mix); X(dl_time); X(dl_feedback); X(dl_mix); X(dr_amount); X(dr_tone); X(dr_mix);
     X(sb_level); X(sb_tune); X(sb_drop); X(orb); X(a4);
     X(theme); X(th_prev); X(th_next); X(th_name);
+    X(dl_sync); X(mo_sync); X(ds_prev); X(ds_next); X(ds_name); X(ms_prev); X(ms_next); X(ms_name);
     I_look[0] = idx_of("a_look"); I_look[1] = idx_of("b_look"); I_lbl[0] = idx_of("a_lbl"); I_lbl[1] = idx_of("b_lbl");
     X(preset); X(p_name); X(p_prev); X(p_next); X(b_head); X(b_page); X(pg_prev); X(pg_next);
 #undef X
@@ -421,6 +425,32 @@ static double wall_s(void) {
 }
 #define TAP_S 0.25
 #define QUIET_S 2.0
+/* Tempo sync (0.7.6). Delay: Free (the Time knob) or a note value. Motion: Free or one sway per 4 bars ... 1/4 note,
+ * locked to the song position while the host plays (so it lands the same on every pass). Vibrato stays free. */
+#define NDSYNC 9
+static const char *DSYNC_NAME[NDSYNC] = {"FREE", "1/16", "1/8T", "1/8", "1/8D", "1/4T", "1/4", "1/4D", "1/2"};
+static const double DSYNC_BEATS[NDSYNC] = {0, 0.25, 1.0 / 3, 0.5, 0.75, 2.0 / 3, 1, 1.5, 2};
+#define NMSYNC 6
+static const char *MSYNC_NAME[NMSYNC] = {"FREE", "4 BARS", "2 BARS", "1 BAR", "1/2 BAR", "1/4"};
+static const double MSYNC_BEATS[NMSYNC] = {0, 16, 8, 4, 2, 1};
+static int sync_ix(float v, int n) { int i = (int)(v + 0.5f); return i < 0 ? 0 : i >= n ? n - 1 : i; }
+static double tempo(const oxz_t *s) { return s->bpm > 1 ? s->bpm : 120.0; }
+static void song_pos(void *inst, double ppq, double bpm, int playing, int frames) {
+    oxz_t *s = inst;
+    (void)frames;
+    s->bpm = bpm; s->ppq = ppq; s->playing = playing;
+}
+/* the synced Motion phase for this block, in cycles; -1 when Motion is free */
+static double motion_phase(oxz_t *s, int frames) {
+    int m = sync_ix(s->val[I_mo_sync], NMSYNC);
+    if (!m) return -1;
+    double beats = MSYNC_BEATS[m];
+    if (s->playing && s->ppq >= 0) s->mph = s->ppq / beats;                       /* locked to the bar */
+    else s->mph += frames / SR * tempo(s) / 60.0 / beats;                          /* stopped: same speed, free */
+    s->mph -= floor(s->mph);
+    return s->mph;
+}
+
 /* the category rows and their pads: one index each (cat_9 / cpick_9 on came later, so they are not next to cat_8) */
 static int cat_row(int i) { for (int c = 0; c <= NBCAT; c++) if (I_catk[c] == i) return c; return -1; }
 static int cat_pad(int i) { for (int c = 0; c <= NBCAT; c++) if (I_cpk[c] == i) return c; return -1; }
@@ -428,7 +458,8 @@ static int is_cat_pad(int i) { return cat_pad(i) >= 0; }
 static int is_row_pad(int i) { return i >= I_rpick1 && i < I_rpick1 + ROWS; }
 static int is_pad(int i) { return is_cat_pad(i) || is_row_pad(i); }
 static int is_ui(int i) {   /* the browser's own controls and texts: never part of a sound, never saved */
-    return i == I_th_prev || i == I_th_next || i == I_th_name || i == I_look[0] || i == I_look[1] || i == I_lbl[0] ||
+    return i == I_th_prev || i == I_th_next || i == I_th_name || i == I_ds_prev || i == I_ds_next || i == I_ds_name ||
+           i == I_ms_prev || i == I_ms_next || i == I_ms_name || i == I_look[0] || i == I_look[1] || i == I_lbl[0] ||
            i == I_lbl[1] || i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
            i == I_pg_next || cat_row(i) >= 0 || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
 }
@@ -516,6 +547,8 @@ static void upper(char *b) { for (; *b; b++) if (*b >= 'a' && *b <= 'z') *b -= 3
 static int ui_text(oxz_t *s, int i, int on, char *b, int n) {
     int cur = cur_preset(s), len;
     if (i == I_p_name) len = snprintf(b, n, "%s", PRESET_NAME[cur]);
+    else if (i == I_ds_name) len = snprintf(b, n, "%s", DSYNC_NAME[sync_ix(s->val[I_dl_sync], NDSYNC)]);
+    else if (i == I_ms_name) len = snprintf(b, n, "%s", MSYNC_NAME[sync_ix(s->val[I_mo_sync], NMSYNC)]);
     else if (i == I_th_name) { int t = (int)(s->val[I_theme] + 0.5f); len = snprintf(b, n, "%s", THEME_NAME[t < 0 || t >= NTHEME ? 0 : t]); }
     else if (i == I_b_head) {
         int m[NPRESET];
@@ -886,10 +919,16 @@ static void set_param(void *inst, const char *key, const char *val) {
     if (i == I_orb) { s->energy = fminf(1.0f, s->energy + 0.6f); s->rev++; return; }   /* a tap on the orb */
     if (i == I_preset) { int pr = (int)(x + 0.5f); if (pr != cur_preset(s)) apply_preset(s, pr); return; }
     if (is_pad(i)) { pad(s, i, x); return; }
-    if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next || i == I_th_prev || i == I_th_next) {
+    if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next || i == I_th_prev || i == I_th_next ||
+        i == I_ds_prev || i == I_ds_next || i == I_ms_prev || i == I_ms_next) {
         s->val[i] = x;
         if (x < 0.5f) return;                  /* the release (the wrapper debounces the press) */
-        if (i == I_th_prev || i == I_th_next) {
+        if (i == I_ds_prev || i == I_ds_next || i == I_ms_prev || i == I_ms_next) {   /* the Sync pickers on FX */
+            int d = i == I_ds_prev || i == I_ds_next, k = d ? I_dl_sync : I_mo_sync, n = d ? NDSYNC : NMSYNC;
+            int up = i == I_ds_next || i == I_ms_next;
+            s->val[k] = (float)((sync_ix(s->val[k], n) + (up ? 1 : -1) + n) % n);
+            s->rev++;
+        } else if (i == I_th_prev || i == I_th_next) {
             int t = ((int)(s->val[I_theme] + 0.5f) + (i == I_th_next ? 1 : -1) + NTHEME) % NTHEME;
             s->val[I_theme] = (float)t;
             read_slots(s);
@@ -1018,7 +1057,8 @@ static const float VB[5][4] = {{50, 60, 170, 180}, {70, 80, 100, 130}, {80, 90, 
 static void render_vowels(oxz_t *s, voice_t *v, float *L, float *R, int frames, float lg, float pmul, float rel_mul) {
     float dt = frames / SR, motion = P(motion);
     const slot_t *sl = &s->slot[v->slot];
-    v->drift += dt * (0.15f + 0.35f * motion);
+    if (sync_ix(s->val[I_mo_sync], NMSYNC)) v->drift = 6.2831853f * (float)s->mph;   /* synced: the sway follows the bar */
+    else v->drift += dt * (0.15f + 0.35f * motion);
     float morph = sl->k1 * 4.0f + sinf(v->drift) * (0.15f + 0.6f * motion);   /* Motion sways the vowel */
     if (morph < 0) morph = 0;
     if (morph > 3.999f) morph = 3.999f;
@@ -1397,6 +1437,8 @@ static void delay_block(oxz_t *s, float *L, float *R, int frames) {
     float mix = P(dl_mix);
     if (mix < 0.001f && s->dly_time == 0) return;
     float target = (0.06f * powf(25.0f, P(dl_time))) * SR;          /* 60 ms .. 1.5 s */
+    int ds = sync_ix(s->val[I_dl_sync], NDSYNC);
+    if (ds) target = fminf((float)(DSYNC_BEATS[ds] * 60.0 / tempo(s) * SR), (float)(DLY_MAX - 4));   /* a note value */
     if (s->dly_time == 0) s->dly_time = target;
     float fb = 0.92f * P(dl_feedback);
     float la = 1.0f - expf(-2.0f * (float)M_PI * (2500.0f + 5000.0f * (1.0f - P(dark))) / SR);
@@ -1448,6 +1490,7 @@ static void render(void *inst, int16_t *out, int frames) {
     memset(s->bus_l, 0, sizeof s->bus_l); memset(s->bus_r, 0, sizeof s->bus_r);
     if (frames > 128) frames = 128;
     float dt = frames / SR, motion = P(motion);
+    double mph = motion_phase(s, frames);   /* >= 0: Motion synced to the tempo */
     read_slots(s);
     float rel_secs = 0.12f + 5.5f * powf(P(release), 1.6f);  /* Release: 0.12 s .. 5.6 s */
     float rel_mul = expf(-1.0f / (SR * rel_secs / 4.6f));     /* -40 dB over rel_secs */
@@ -1465,7 +1508,8 @@ static void render(void *inst, int16_t *out, int frames) {
         v->t += dt;
         float pm = s->bend;
         if (L_ == L_CHOIR || L_ == L_TEXTURE || L_ == L_STRINGS) {
-            v->drift += dt * (0.3f + 0.4f * motion + 3.0f * s->modwheel);
+            if (mph >= 0 && s->modwheel < 0.01f) v->drift = 6.2831853f * (float)mph;   /* synced: every voice sways together */
+            else v->drift += dt * (0.3f + 0.4f * motion + 3.0f * s->modwheel);
             pm += sinf(v->drift) * (0.06f * (0.3f + motion) + 0.22f * s->modwheel);   /* slow ensemble drift; wheel: wider and faster */
         } else if (L_ == L_WINDS || L_ == L_VOWELS || (L_ == L_SYNTH && v->inst == 1)) {
             v->lfo += dt * 6.2831853f * (4.6f + 1.2f * motion);
@@ -1502,7 +1546,8 @@ static void render(void *inst, int16_t *out, int frames) {
        ~5 kHz) comes after it, so it brightens what the filter lets through instead of fighting it. */
     float dark = P(dark), air = P(air);
     float fc = 20000.0f * powf(0.045f, powf(dark, 1.5f)) * (0.64f + 0.36f * (1.0f - dark));   /* 20 kHz .. ~580 Hz */
-    s->flt_ph += frames / SR * 6.2831853f * (0.07f + 0.25f * motion);
+    if (mph >= 0) s->flt_ph = 6.2831853f * (float)mph;
+    else s->flt_ph += frames / SR * 6.2831853f * (0.07f + 0.25f * motion);
     if (s->flt_ph > 6.2831853f) s->flt_ph -= 6.2831853f;
     fc *= exp2f(sinf(s->flt_ph) * 0.35f * motion * fminf(1.0f, dark * 4.0f));             /* drift: up to +-1/3 octave */
     if (s->flt_fc <= 0.0f) s->flt_fc = fc;
@@ -1539,5 +1584,5 @@ static void render(void *inst, int16_t *out, int frames) {
     if (frame != s->orb_frame) { s->orb_frame = frame; s->val[I_orb] = (float)frame; s->rev++; }
 }
 
-static const mpc_engine_t ENGINE = { create, destroy, midi, set_param, get_param, render, NULL, NULL };
+static const mpc_engine_t ENGINE = { create, destroy, midi, set_param, get_param, render, NULL, song_pos };
 const mpc_engine_t *mpc_engine(void) { return &ENGINE; }

@@ -41,7 +41,7 @@ READ_BG, READ_TX = "#0b1424", "#7ff0ff"
 # Aluminum's art stays in art/; the others' in art/<key>/.
 _DARK = """
 .klabel, .title { color: %(fg)s !important; text-shadow: 0 1px 0 rgba(0,0,0,.7) !important; }
-.heading { color: %(dim)s !important; text-shadow: 0 1px 0 rgba(0,0,0,.7) !important; }
+.heading, .synccap { color: %(dim)s !important; text-shadow: 0 1px 0 rgba(0,0,0,.7) !important; }
 .heading::after, .rule { background: linear-gradient(90deg, rgba(%(hi)s,.22), transparent) !important; box-shadow: 0 1px 0 rgba(0,0,0,.5) !important; }
 .grain { opacity: .9 !important; background-image: repeating-linear-gradient(0deg, rgba(%(hi)s,.045) 0 1px, rgba(0,0,0,.08) 1px 2px, transparent 2px 3px) !important;
   box-shadow: inset 0 1px 0 rgba(%(hi)s,.16), inset 0 -2px 6px rgba(0,0,0,.5) !important; }
@@ -170,7 +170,9 @@ FX = [("rv", "Reverb", ["Size", "Decay", "Mix"], 20, 100),
       ("dl", "Delay", ["Time", "Feedback", "Mix"], 650, 100),
       ("dr", "Drive / Tuning", ["Amount", "Tone", "Mix"], 20, 406),
       ("sb", "Sub / Output", ["Level", "Tune", "Drop"], 650, 406)]
-FX_R, FX_VS, FX_BW = 56, 28, 116   # Sub / Output has 4 knobs 122 px apart
+FX_R, FX_VS, FX_BW = 56, 28, 116
+# the Sync pickers (0.7.6), on the title row of their panel: a small LCD with < > like the theme picker (screen coords)
+SYNC_BOXES = [("ds", "SYNC", (1036, 118, 1238, 150)), ("ms", "MOTION", (1036, 424, 1238, 456))]   # Motion: Sub / Output's row (Drive / Tuning's title is long)   # Sub / Output has 4 knobs 122 px apart
 
 
 def fx_knobs():
@@ -391,6 +393,8 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
   letter-spacing: .14em; text-transform: uppercase; text-shadow: 0 1px 0 rgba(255,255,255,.55); }
 .heading { position: absolute; display: flex; align-items: center; gap: 14px; font: 700 22px BC, sans-serif;
   letter-spacing: .3em; color: %(DIM)s; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.synccap { position: absolute; text-align: right; font: 700 20px BC, sans-serif; letter-spacing: .3em; color: %(DIM)s;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6); }
 .heading::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,.25), transparent);
   box-shadow: 0 1px 0 rgba(255,255,255,.5); }
 /* a recessed aluminum plate for each section, with four screws */
@@ -526,6 +530,14 @@ def bg_fx():
         h.append("<div class='rule' style='left:%dpx;top:%dpx;width:566px'></div>" % (x0 + 22, y0 - Y0 + 66))
     for key, label, cx, cy in fx_knobs():
         h.append(knob_block(key, label, cx, cy, FX_R, FX_VS, 96, 23))
+    for _, cap, (x0, y0, x1, y1) in SYNC_BOXES:
+        cy = (y0 + y1) // 2 - Y0
+        h.append("<div class='synccap' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>"
+                 "<div class='lcd' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:8px'></div>"
+                 "<div class='arrow' style='left:%dpx;top:%dpx;border-right:11px solid %s'></div>"
+                 "<div class='arrow' style='left:%dpx;top:%dpx;border-left:11px solid %s'></div>"
+                 % (x0 - 196, cy - 11, 180, cap, x0, y0 - Y0, x1 - x0, y1 - y0, x0 + 14, cy - 7, TH["txt"],
+                    x1 - 25, cy - 7, TH["txt"]))
     return "".join(h)
 
 
@@ -742,7 +754,15 @@ def write_layout():
     # FX
     L.append("[tab FX]")
     themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_fx.png", th), w)] +
-                         [knob(th, w, key, label, cx, cy_, FX_R, FX_VS, FX_BW) for key, label, cx, cy_ in fx_knobs()])
+                         [knob(th, w, key, label, cx, cy_, FX_R, FX_VS, FX_BW) for key, label, cx, cy_ in fx_knobs()] +
+                         ['readout cx=%d cy=%d w=%d h=%d label="" key=%s_name box=0 tsize=20 tcolor=%s tweight=bold%s'
+                          % ((b[0] + b[2]) // 2, (b[1] + b[3]) // 2, b[2] - b[0] - 2 * THEME_PAD, b[3] - b[1] - 4, p,
+                             th["txt"].lstrip("#"), w) for p, _, b in SYNC_BOXES])
+    for p, _, (x0, y0, x1, y1) in SYNC_BOXES:
+        pad = "art/pad_%dx%d.png" % (THEME_PAD, y1 - y0)
+        for key, bx in ((p + "_prev", x0 + THEME_PAD // 2), (p + "_next", x1 - THEME_PAD // 2)):
+            L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=%s img_on=%s'
+                     % (bx, (y0 + y1) // 2, THEME_PAD, y1 - y0, key, pad, pad))
     # one Q-Link column (4 knobs, one press of the Q-Link button) per panel, top to bottom; "-" pads a 3-knob panel
     cols = []
     for p, *_ in FX:
@@ -757,7 +777,7 @@ def check_keys():
     keys = {p["key"] for p in json.load(open(os.path.join(HERE, "..", "params.json")))["params"]}
     used = [k for k, *_ in PLAYER["knobs"]] + [k for k, *_ in slot_knobs()] + [k for k, *_ in fx_knobs()] + \
            ["orb", "a_cat", "b_cat", "a_oct", "b_oct", "a_look", "b_look", "a_lbl", "b_lbl", "theme", "th_name",
-            "th_prev", "th_next"] + \
+            "th_prev", "th_next"] + ["%s_%s" % (p, x) for p, *_ in SYNC_BOXES for x in ("prev", "next", "name")] + \
            ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
            ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
            ["cat_%d" % i for i in range(1, NCAT_ROWS + 1)] + ["row_%d" % i for i in range(1, 25)] + \
