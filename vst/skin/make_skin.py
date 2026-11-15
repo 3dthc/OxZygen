@@ -104,7 +104,8 @@ CAT_BOX = (40, 182, 300, 682)          # the LCD panels (screen)
 ROW_BOX = (320, 182, 1240, 682)
 LIST_Y, LIST_TH, LIST_GAP = 228, 46, 8 # the first row's top, row height, gap (8 rows end at 228 + 8*46 + 7*8 = 652)
 CAT_LIST = (52, LIST_Y, 236)           # x, y, width: 1 column
-NCAT_ROWS, CAT_TH, CAT_GAP = 11, 34, 5  # ALL + 10 categories (NOIR, ASTRO, GEMS in 0.7.6): 11 rows end at 228 + 11*34 + 10*5 = 652
+NCAT, CAT_COLS, NCAT_ROWS, CAT_TH, CAT_GAP = 12, 2, 6, 56, 10
+CAT_CW = (236 - (CAT_COLS - 1) * CAT_GAP) // CAT_COLS   # a category tile: 2 columns of 6, so the names stay big  # ALL + 11 categories (NOIR, ASTRO, GEMS, KEYS in 0.7.6): two columns of 6 rows, ending at 228 + 6*56 + 5*10 = 614
 ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
 ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
 PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel
@@ -113,14 +114,15 @@ THEME_PAD = 44   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit a
 
 # SOUND page: slots A and B side by side, each a 610 x 600 panel
 # categories and their sounds (must match params.json); SOUNDS is the derived a_sound/b_sound list, in order
-CATS = ["Off", "Voices", "Winds", "Brass", "Strings", "Bells", "Synth", "Air"]
+CATS = ["Off", "Voices", "Winds", "Brass", "Strings", "Bells", "Synth", "Air", "Keys", "Mallets"]
 PER = {"Voices": ["Choir", "Vowels"], "Winds": ["Flute", "Ocarina", "Sax", "Clarinet", "Oboe"],
        "Brass": ["Horn", "Mute Trumpet", "Trombone"], "Strings": ["Sustain", "Tremolo"],
        "Bells": ["Church", "Tubular", "Vibes", "Bowed Vibes", "Glass"], "Synth": ["Pad", "Lead", "Brass"],
-       "Air": ["Wind", "Texture"]}
+       "Air": ["Wind", "Texture"], "Keys": ["Piano", "E-Piano", "Harp"],
+       "Mallets": ["Glock", "Chimes", "Kalimba", "Marimba"]}   # short names on the segments (Glockenspiel, Hand Chimes)
 SOUNDS = ["Off", "Choir", "Vowels", "Flute", "Ocarina", "Sax", "Clarinet", "Oboe", "Horn", "Mute Trumpet", "Trombone",
           "Strings", "Tremolo", "Church Bells", "Tubular", "Vibes", "Bowed Vibes", "Glass", "Synth Pad", "Synth Lead",
-          "Synth Brass", "Wind", "Texture"]
+          "Synth Brass", "Wind", "Texture", "Piano", "E-Piano", "Harp", "Glockenspiel", "Hand Chimes", "Kalimba", "Marimba"]
 WIND3 = ["Vibrato", "Breath", "Tone"]
 KNOB_LABELS = {"Off": ["", "", ""], "Choir": ["Vowel", "Spread", "Attack"], "Vowels": ["Morph", "Formant", "Attack"],
                "Flute": WIND3, "Ocarina": WIND3, "Sax": WIND3, "Clarinet": WIND3, "Oboe": WIND3,
@@ -130,9 +132,10 @@ KNOB_LABELS = {"Off": ["", "", ""], "Choir": ["Vowel", "Spread", "Attack"], "Vow
                "Vibes": ["Decay", "Shimmer", "Tone"], "Bowed Vibes": ["Swell", "Shimmer", "Tone"],
                "Glass": ["Swell", "Shimmer", "Tone"], "Synth Pad": ["Cutoff", "Shape", "Chorus"],
                "Synth Lead": ["Cutoff", "Glide", "Chorus"], "Synth Brass": ["Cutoff", "Bloom", "Chorus"],
-               "Wind": ["Density", "Drift", "Width"], "Texture": ["Grain", "Pitch", "Smear"]}   # must match engine.c
+               "Wind": ["Density", "Drift", "Width"], "Texture": ["Grain", "Pitch", "Smear"],
+               **{x: ["Decay", "Shimmer", "Tone"] for x in ("Piano", "E-Piano", "Harp", "Glockenspiel", "Hand Chimes", "Kalimba", "Marimba")}}   # must match engine.c
 SLOTS = [("a", "Sound A", 20, 100), ("b", "Sound B", 650, 100)]
-CAT_SW, CAT_SH = 140, 40               # 4 x 2 grid of categories
+CAT_SW, CAT_SH = 112, 40               # 5 x 2 grid of categories
 SND_ROW, SND_H = 560, 42               # a category's sounds share one row this wide
 OCT_SW, OCT_SH = 80, 38                # five octave segments
 SLOT_KNOB_DX, SLOT_KNOB_DY = 132, 448  # four knobs 132 px apart, centred in the panel, at y0 + 425
@@ -393,7 +396,7 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
   letter-spacing: .14em; text-transform: uppercase; text-shadow: 0 1px 0 rgba(255,255,255,.55); }
 .heading { position: absolute; display: flex; align-items: center; gap: 14px; font: 700 22px BC, sans-serif;
   letter-spacing: .3em; color: %(DIM)s; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
-.synccap { position: absolute; text-align: right; font: 700 20px BC, sans-serif; letter-spacing: .3em; color: %(DIM)s;
+.synccap { position: absolute; text-align: right; font: 700 22px BC, sans-serif; letter-spacing: .3em; color: %(DIM)s;
   text-shadow: 0 1px 0 rgba(255,255,255,.6); }
 .heading::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,.25), transparent);
   box-shadow: 0 1px 0 rgba(255,255,255,.5); }
@@ -414,7 +417,7 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
 .lcd { position: absolute; border-radius: 10px; background: %(READ_BG)s;
   background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
   box-shadow: inset 0 3px 8px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.2); }
-.lcdcap { position: absolute; font: 700 15px BC, sans-serif; letter-spacing: .16em; color: #5a82aa; }
+.lcdcap { position: absolute; font: 700 18px BC, sans-serif; letter-spacing: .16em; color: #5a82aa; }
 .arrow { position: absolute; width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent;
   filter: drop-shadow(0 0 4px rgba(64,170,255,.8)); }
 .rule { position: absolute; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,.22), transparent);
@@ -606,7 +609,7 @@ def render_art():
             # so each is cut from the LCD it sits on (rows are 54 px apart, a multiple of the 3 px scanlines, so one cut
             # fits every row of a column)
             lcd = Image.open(os.path.join(out, "bg_browse.png")).convert("RGBA")
-            for kind, x, w, solid, th_ in (("cat", CAT_LIST[0], CAT_LIST[2], True, CAT_TH), ("row", ROW_LIST[0], row_col_w(), False, LIST_TH)):
+            for kind, x, w, solid, th_ in (("cat", CAT_LIST[0], CAT_CW, True, CAT_TH), ("row", ROW_LIST[0], row_col_w(), False, LIST_TH)):
                 under = lcd.crop((x, LIST_Y - Y0, x + w, LIST_Y - Y0 + th_))
                 for on in (0, 1):
                     pg.set_content("<style>body{margin:0;background:transparent}</style>" + row_html(on, w, th_, solid))
@@ -644,7 +647,7 @@ def row_col_w():
 
 
 def pad_sizes():
-    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_LIST[2], CAT_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
+    return {(STRIP_PAD, STRIP[3] - STRIP[1]), (CAT_CW, CAT_TH), (row_col_w(), LIST_TH), (PG_W, PG_H),
             (THEME_PAD, THEME_BOX[3] - THEME_BOX[1])}
 
 
@@ -694,23 +697,24 @@ def write_layout():
     tcy = (ty0 + ty1) // 2
     themed(lambda th, wh: [
         "art file=%s fit=stretch%s" % (art("bg_browse.png", th), wh),
-        "list x=%d y=%d w=%d h=%d key=cat cols=1 rows=%d tap=no th=%d gap=%d tsize=24 tcolor=%s tweight=bold "
-        "talign=left tx=16 img=%s img_on=%s%s" % (cx_, cy_, cw_, NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP, NCAT_ROWS, CAT_TH, CAT_GAP, th["txt"].lstrip("#"),
+        "list x=%d y=%d w=%d h=%d key=cat cols=%d rows=%d order=cols tap=no th=%d gap=%d tsize=30 tcolor=%s tweight=bold "
+        "talign=left tx=12 img=%s img_on=%s%s" % (cx_, cy_, cw_, NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP, CAT_COLS, NCAT_ROWS, CAT_TH, CAT_GAP, th["txt"].lstrip("#"),
                                                   art("cat_off.png", th), art("cat_on.png", th), wh),
-        "list x=%d y=%d w=%d h=%d key=row cols=%d rows=8 order=cols tap=no th=%d gap=%d tsize=26 tcolor=%s "
+        "list x=%d y=%d w=%d h=%d key=row cols=%d rows=8 order=cols tap=no th=%d gap=%d tsize=30 tcolor=%s "
         "tweight=semibold talign=left tx=14 img=%s img_on=%s%s" % (x, y, w, rows_h, cols, LIST_TH, LIST_GAP,
                                                                   th["row_tx"].lstrip("#"), art("row_off.png", th),
                                                                   art("row_on.png", th), wh),
-        'readout cx=%d cy=%d w=420 h=%d label="" key=b_head box=0 tsize=20 tcolor=%s tweight=bold talign=left%s'
+        'readout cx=%d cy=%d w=420 h=%d label="" key=b_head box=0 tsize=24 tcolor=%s tweight=bold talign=left%s'
         % (ROW_BOX[0] + 18 + 210, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
-        'readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=20 tcolor=%s tweight=bold talign=right%s'
+        'readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=24 tcolor=%s tweight=bold talign=right%s'
         % (px - 8 - 75, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
-        'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=22 tcolor=%s tweight=bold%s'
+        'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=24 tcolor=%s tweight=bold%s'
         % ((tx0 + tx1) // 2, tcy, tx1 - tx0 - 2 * THEME_PAD, ty1 - ty0 - 4, th["txt"].lstrip("#"), wh)])
-    for r in range(NCAT_ROWS):
-        pad = "art/pad_%dx%d.png" % (cw_, CAT_TH)
+    for r in range(NCAT):
+        pad = "art/pad_%dx%d.png" % (CAT_CW, CAT_TH)
         L.append('button cx=%d cy=%d w=%d h=%d label="" key=cpick_%d img=%s img_on=%s'
-                 % (cx_ + cw_ // 2, cy_ + r * (CAT_TH + CAT_GAP) + CAT_TH // 2, cw_, CAT_TH, r + 1, pad, pad))
+                 % (cx_ + (r // NCAT_ROWS) * (CAT_CW + CAT_GAP) + CAT_CW // 2, cy_ + (r % NCAT_ROWS) * (CAT_TH + CAT_GAP) + CAT_TH // 2,
+                    CAT_CW, CAT_TH, r + 1, pad, pad))
     for c in range(cols):
         for r in range(8):
             pad = "art/pad_%dx%d.png" % (cw, LIST_TH)
@@ -755,7 +759,7 @@ def write_layout():
     L.append("[tab FX]")
     themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_fx.png", th), w)] +
                          [knob(th, w, key, label, cx, cy_, FX_R, FX_VS, FX_BW) for key, label, cx, cy_ in fx_knobs()] +
-                         ['readout cx=%d cy=%d w=%d h=%d label="" key=%s_name box=0 tsize=20 tcolor=%s tweight=bold%s'
+                         ['readout cx=%d cy=%d w=%d h=%d label="" key=%s_name box=0 tsize=24 tcolor=%s tweight=bold%s'
                           % ((b[0] + b[2]) // 2, (b[1] + b[3]) // 2, b[2] - b[0] - 2 * THEME_PAD, b[3] - b[1] - 4, p,
                              th["txt"].lstrip("#"), w) for p, _, b in SYNC_BOXES])
     for p, _, (x0, y0, x1, y1) in SYNC_BOXES:
@@ -780,8 +784,8 @@ def check_keys():
             "th_prev", "th_next"] + ["%s_%s" % (p, x) for p, *_ in SYNC_BOXES for x in ("prev", "next", "name")] + \
            ["%s_%s" % (x, c.lower()) for x in "ab" for c in CATS[1:]] + \
            ["p_name", "p_prev", "p_next", "b_head", "b_page", "pg_prev", "pg_next"] + \
-           ["cat_%d" % i for i in range(1, NCAT_ROWS + 1)] + ["row_%d" % i for i in range(1, 25)] + \
-           ["cpick_%d" % i for i in range(1, NCAT_ROWS + 1)] + ["rpick_%d" % i for i in range(1, 25)]
+           ["cat_%d" % i for i in range(1, NCAT + 1)] + ["row_%d" % i for i in range(1, 25)] + \
+           ["cpick_%d" % i for i in range(1, NCAT + 1)] + ["rpick_%d" % i for i in range(1, 25)]
     missing = [k for k in used if k not in keys]
     if missing:
         raise SystemExit("make_skin: keys not in params.json: %s" % ", ".join(missing))

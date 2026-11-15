@@ -15,10 +15,10 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a 
 
 ![The three themes: Aluminum, Green, Navy](docs/img/themes.png)
 
-- Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air), then one of 22 sounds
+- Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air, Keys, Mallets), then one of 29 sounds
 - Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
 - FX: reverb, ping-pong delay, drive, and a gliding sub
-- 188 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO, GEMS): beds and textures, up-front leads, keys,
+- 200 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO, GEMS, KEY): beds and textures, up-front leads, keys,
   plucks, basses and stabs that carry a track alone, NOIR (sad keys, crying leads, muffled pads), ASTRO (dark flutes,
   far-off bells, spacey leads) and GEMS (soft warm bells, sparkling keys, high reed-and-synth leads)
 - Tempo sync: the delay in note values and Motion locked to the bar (FX page)
@@ -37,7 +37,7 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a 
 2. Install it with your MPC plugin manager, or unzip it and follow `INSTALL.md` inside.
 3. On the MPC, add a plugin track and pick **OxZygen**. Presets are in the PRESET menu, grouped by tag.
 
-Needs about 130 MB free on the internal drive; OxZygen uses about 131 MB of RAM once loaded. Tested on an MPC Live II
+Needs about 169 MB free on the internal drive; OxZygen uses about 169 MB of RAM once loaded. Tested on an MPC Live II
 (MPC OS 3.10). The OS 2.x and Gen2 builds haven't been tried on those units yet, so reports are welcome in Issues.
 
 ## Pages
@@ -45,7 +45,7 @@ Needs about 130 MB free on the internal drive; OxZygen uses about 131 MB of RAM 
 - **Player**: the preset's name under the logo (◀ ▶ step through the presets of the category shown on Browse);
   Velocity, Breath, Attack, Release on the left; Air, Filter, Lo-Fi, Motion on the right; the orb in the middle.
   The mod wheel adds movement on every sound (vibrato, drift, filter, shimmer).
-- **Browse**: the categories on the left (All, Voices, Winds, Brass, Strings, Bells, Synth, Air, Noir, Astro, Gems), that category's
+- **Browse**: the categories on the left (All, Voices, Winds, Brass, Strings, Bells, Synth, Air, Noir, Astro, Gems, Keys), that category's
   presets on the right; tap one to load it. ▲ ▼ turn the pages of a long list.
 - **Sound**: two slots. Pick a category, then a sound, an octave, and its three knobs (their names follow the sound) and Level.
 - **FX**: reverb, ping-pong delay, drive, A4 Tune (415–466 Hz reference pitch), and a sub that follows the lowest note
@@ -102,7 +102,7 @@ The skin artwork is pre-rendered and committed. To change the design, edit `vst/
 ## Layout
 - `vst/`: the plugin: `engine.c` (two sound slots and the effects), `make_presets.py` (writes `presets.json`), `params.json` (parameter order is fixed; saved
   projects depend on it; new parameters go at the end), `skin/make_skin.py` (all skin artwork and `layout.conf`)
-- `vst/data/`: the prepared samples the plugin ships with (131 MB, CC0; made by `samples/prepare.py`)
+- `vst/data/`: the prepared samples the plugin ships with (169 MB, CC0; made by `samples/prepare.py`)
 - `tests/sdtest/`: SD card access test plugin
 - `samples/`: fetch the CC0 sources, trim them (`trim.sh`) and prepare them for the engine (`prepare.py`: pitch,
   seamless loops, levels)

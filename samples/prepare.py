@@ -32,6 +32,9 @@ import wave
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ONLY = None   # --only a,b: prepare just these instruments and keep the manifest's other lines (their sources not needed)
+if "--only" in sys.argv:
+    i = sys.argv.index("--only"); ONLY = set(sys.argv[i + 1].split(",")); del sys.argv[i:i + 2]
 SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "build")
 OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, "..", "vst", "data")
 SRC2 = sys.argv[3] if len(sys.argv) > 3 else os.path.join(HERE, "sources")
@@ -39,10 +42,14 @@ SR = 44100
 MAX_LEN = {"flute": 3.2, "ocarina": 3.2, "sax": 3.2, "choir": 3.0,   # seconds kept up to the loop end
            "horn": 3.0, "mtrumpet": 3.0, "trombone": 3.0, "clarinet": 3.0, "oboe": 3.0,
            "strings": 3.4, "trem": 3.0, "bowedvibes": 4.0, "glass": 4.0}
-ONESHOT = {"tubular": 6.0, "vibes": 4.5}                              # struck: seconds kept, no loop
+ONESHOT = {"tubular": 6.0, "vibes": 4.5,                             # struck: seconds kept, no loop
+           "glock": 3.0, "chimes": 4.0, "kalimba": 3.0, "marimba": 2.5, "harp": 4.5, "epiano": 3.5, "piano": 4.5}
+NEW_076 = {"glock", "chimes", "kalimba", "marimba", "harp", "epiano", "piano"}   # added in 0.7.6 (keys and mallets)
+THIN = {"piano": 2, "chimes": 2}   # keep every nth note (the source is sampled closer than the plugin needs)
 TARGET_RMS = {"flute": 0.16, "ocarina": 0.14, "sax": 0.16, "choir": 0.15,
               "horn": 0.16, "mtrumpet": 0.15, "trombone": 0.16, "clarinet": 0.16, "oboe": 0.15,
-              "strings": 0.15, "trem": 0.15, "bowedvibes": 0.14, "glass": 0.13, "tubular": 0.14, "vibes": 0.15}
+              "strings": 0.15, "trem": 0.15, "bowedvibes": 0.14, "glass": 0.13, "tubular": 0.14, "vibes": 0.15,
+              "glock": 0.15, "chimes": 0.15, "kalimba": 0.15, "marimba": 0.15, "harp": 0.15, "epiano": 0.15, "piano": 0.15}
 NO_DETECT = {"tubular"}       # inharmonic: the heard pitch is not the fundamental, so trust the file names
 FORCED_OFFSET = {"tubular": 12}   # ...but VCSL names every instrument an octave low (vibes, bowed vibes and glasses measure +12)
 
@@ -71,6 +78,16 @@ EXTRA = [
     ("vibes", "f", "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets", r"_soft_([A-G]#?\d)_v2_rr1"),
     ("bowedvibes", "std", "vcsl/Idiophones/Struck Idiophones/Vibraphone/Bowed", r"_bowed_([A-G]#?\d)_rr1"),
     ("glass", "std", "vcsl/Idiophones/Friction Idiophones/Wine Glasses/Sustains/Slow", r"glass\d_([A-G]#?\d)_Slow"),
+    ("glock", "p", "vcsl/Idiophones/Struck Idiophones/Glockenspiel", r"glock_soft_([A-G]#?\d)_"),
+    ("glock", "f", "vcsl/Idiophones/Struck Idiophones/Glockenspiel", r"glock_loud_([A-G]#?\d)_"),
+    ("chimes", "std", "vcsl/Idiophones/Struck Idiophones/Hand Chimes", r"sus_([A-G]#?\d)_r01_main"),
+    ("kalimba", "std", "vcsl/Idiophones/Plucked Idiophones/Kalimba, Kenya", r"MainSpirit_([A-G]#?\d)_k"),
+    ("marimba", "p", "vcsl/Idiophones/Struck Idiophones/Marimba", r"Outrigger_([A-G]#?\d)_soft_01"),
+    ("marimba", "f", "vcsl/Idiophones/Struck Idiophones/Marimba", r"Outrigger_([A-G]#?\d)_loud_01"),
+    ("harp", "std", "vcsl/Chordophones/Composite Chordophones/Concert Harp", r"KSHarp_([A-G]#?\d)_mf\d"),
+    ("harp", "std", "vcsl/Chordophones/Composite Chordophones/Concert Harp", r"KSHarp_([A-G]#?\d)_(?:f|p|mp)\d"),   # where no mf take
+    ("epiano", "std", "vcsl/Electrophones/TX81Z/FM Piano", r"FMPiano_([A-G]#?\d)_vl2"),
+    ("piano", "std", "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus", r"Sus_Close_([A-G]#?\d)_vl3_rr1"),
 ]
 NOTE = {"c": 0, "d": 2, "e": 4, "f": 5, "g": 7, "a": 9, "b": 11}
 
@@ -106,8 +123,12 @@ def zones():
             if n < 30:          # a stray file in the source set (sven-ih "2"); not a note
                 continue
             out.append(("choir", "%s_%s" % (singer, vowel), n, p))
+    if ONLY:
+        out = []
     seen = set()
     for inst, var, folder, rx in EXTRA:
+        if ONLY and inst not in ONLY:
+            continue
         for p in sorted(glob.glob(os.path.join(SRC2, folder, "*.wav"))):
             m = re.search(rx, os.path.basename(p))
             if not m:
@@ -117,6 +138,10 @@ def zones():
                 continue
             seen.add((inst, var, n))
             out.append((inst, var, n, p))
+    for inst, nth in THIN.items():   # the notes kept are the same for every layer of the instrument
+        notes = sorted({z[2] for z in out if z[0] == inst})
+        keep = set(notes[::nth]) | set(notes[-1:])
+        out = [z for z in out if z[0] != inst or z[2] in keep]
     return out
 
 
@@ -213,6 +238,9 @@ def main():
             if det is not None and abs(det - root) < 0.75:   # trust the measurement for fine tuning only
                 cents = (det - root) * 100.0
             if inst in ONESHOT:               # struck: ring out to the cap, fade the last 60 ms, no loop
+                if inst in NEW_076:           # start at the strike: drop the silence before it
+                    loud = np.flatnonzero(np.abs(x) > 0.02 * np.max(np.abs(x)))
+                    x = x[max(0, (loud[0] if len(loud) else 0) - int(0.002 * SR)):]
                 y = x[:int(ONESHOT[inst] * SR)].copy()
                 fade = min(len(y), int(0.06 * SR))
                 y[len(y) - fade:] *= np.linspace(1, 0, fade)
@@ -239,6 +267,11 @@ def main():
             w.close()
             total += len(y) * 2
             rows.append((inst, var, root, cents, ls, le, len(y), fn))
+    if ONLY:   # keep the other instruments' lines as they are
+        for ln in open(os.path.join(OUT, "manifest.txt")):
+            f = ln.split()
+            if len(f) == 8 and not ln.startswith("#") and f[0] not in ONLY:
+                rows.append((f[0], f[1], int(f[2]), float(f[3]), int(f[4]), int(f[5]), int(f[6]), f[7]))
     rows.sort(key=lambda r: (r[0], r[1], r[2]))
     with open(os.path.join(OUT, "manifest.txt"), "w") as f:
         f.write("# inst var root cents loop_start loop_end frames file  (generated by samples/prepare.py)\n")

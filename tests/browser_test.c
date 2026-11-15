@@ -63,22 +63,22 @@ int main(void) {
     /* categories: ALL lists every preset with its prefix, on pages */
     untap(s, ""); tap(s, "cpick_1");
     get(s, "b_head", b);
-    CHECK(!strcmp(b, "ALL   188 PRESETS"), "ALL: \"%s\"", b);
+    CHECK(!strcmp(b, "ALL   200 PRESETS"), "ALL: \"%s\"", b);
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 1/8"), "ALL on 8 pages: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 1/9"), "ALL on 9 pages: \"%s\"", b);
     get(s, "row_1", b);
     CHECK(!strcmp(b, "INIT"), "ALL row 1: \"%s\"", b);
     get(s, "row_2", b);
     CHECK(!strcmp(b, "VOX ANGEL LEAD"), "ALL keeps prefixes: \"%s\"", b);
     set(s, "pg_next", "1"); set(s, "pg_next", "0");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 2/8"), "page down: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 2/9"), "page down: \"%s\"", b);
     set(s, "pg_prev", "1"); set(s, "pg_prev", "0"); set(s, "pg_prev", "1");
     get(s, "b_page", b);
-    CHECK(!strcmp(b, "PAGE 8/8"), "page up wraps: \"%s\"", b);
+    CHECK(!strcmp(b, "PAGE 9/9"), "page up wraps: \"%s\"", b);
     int before = (int)val(s, "preset");
-    untap(s, ""); tap(s, "rpick_20");        /* page 8, row 20: the last one (188 = 7 x 24 + 20) */
-    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, row 20: the last preset (was %d, now %g)", before, val(s, "preset"));
+    untap(s, ""); tap(s, "rpick_8");         /* page 9, row 8: the last one (200 = 8 x 24 + 8) */
+    CHECK((int)val(s, "preset") == NPRESET - 1, "last page, row 8: the last preset (was %d, now %g)", before, val(s, "preset"));
     untap(s, ""); tap(s, "cpick_9");         /* NOIR: one page of 20, rows past the end blank and dead */
     get(s, "row_21", b);
     CHECK(!strcmp(b, " "), "rows past the end are blank (\"%s\")", b);
@@ -104,6 +104,16 @@ int main(void) {
     CHECK(!strcmp(b, "GEMS   20 PRESETS"), "GEMS: \"%s\"", b);
     get(s, "row_1", b);
     CHECK(!strcmp(b, "SOFT DIAMOND"), "GEMS row 1: \"%s\"", b);
+    untap(s, ""); tap(s, "cpick_12");
+    get(s, "b_head", b);
+    CHECK(!strcmp(b, "KEYS   17 PRESETS"), "KEYS: \"%s\"", b);
+    untap(s, ""); tap(s, "rpick_1");
+    read_slots(s);                           /* as each audio block does */
+    get(s, "a_sound", b);
+    CHECK(PRESET_CAT[(int)val(s, "preset")] == 10 && ((oxz_t *)s)->slot[0].layer == L_SAMPLED, "KEYS row 1 loads a recorded key or mallet (%s, sound %s)", PRESET_NAME[(int)val(s, "preset")], b);
+    {   /* the 96 presets up to 0.7.5 keep their numbers: a saved project's preset still names the same one */
+        CHECK(!strcmp(PRESET_NAME[1], "VOX Angel Lead") && !strcmp(PRESET_NAME[95], "AIR Attic Wind"), "presets 1 and 95 are where 0.7.5 had them (%s, %s)", PRESET_NAME[1], PRESET_NAME[95]);
+    }
     untap(s, ""); tap(s, "cpick_10");
     untap(s, ""); tap(s, "rpick_16");
     CHECK(!strcmp(PRESET_NAME[(int)val(s, "preset")], "ASTRO Low Orbit"), "ASTRO row 16 loads Low Orbit (%s)", PRESET_NAME[(int)val(s, "preset")]);
@@ -149,6 +159,24 @@ int main(void) {
         ENGINE.song_pos(s, 6.0, 100, 1, 128); ENGINE.render(s, buf, 128);
         CHECK(fabs(o->mph - 0.5) < 1e-6, "same position, same phase (locked to the song, not free-running)");
         set(s, "dl_sync", "0"); set(s, "mo_sync", "0");
+    }
+    {   /* Stop lets go of every note, and nothing rings on with no key down (0.7.6) */
+        oxz_t *o = s; int16_t buf[256]; int on = 0;
+        for (int k = 0; k < NPRESET; k++) if (!strcmp(PRESET_NAME[k], "ASTRO Low Orbit")) { char n[8]; snprintf(n, 8, "%d", k); set(s, "preset", n); }
+        uint8_t n1[3] = {0x90, 40, 100}, n2[3] = {0x90, 47, 100};
+        ENGINE.song_pos(s, 0, 100, 1, 128);
+        ENGINE.midi(s, n1, 3); ENGINE.midi(s, n2, 3);
+        for (int k = 0; k < 400; k++) ENGINE.render(s, buf, 128);
+        ENGINE.song_pos(s, 1, 100, 0, 128);            /* Stop, with both keys still down and no note-off sent */
+        for (int k = 0; k < (int)(25 * SR / 128); k++) ENGINE.render(s, buf, 128);
+        for (int k = 0; k < MAXV; k++) on += o->v[k].active;
+        long pk = 0; for (int k = 0; k < 256; k++) pk = labs(buf[k]) > pk ? labs(buf[k]) : pk;
+        CHECK(on == 0 && pk <= 1 && o->sub_env < 0.001f, "25 s after Stop: silent (voices %d, peak %ld, sub %.4f)", on, pk, o->sub_env);
+        ENGINE.midi(s, n1, 3);                          /* a voice left held with no key down is let go */
+        ENGINE.render(s, buf, 128); o->keys[40] = 0;
+        for (int k = 0; k < (int)(25 * SR / 128); k++) ENGINE.render(s, buf, 128);
+        on = 0; for (int k = 0; k < MAXV; k++) on += o->v[k].active;
+        CHECK(on == 0, "a held voice with no key down ends (voices %d)", on);
     }
     /* a host program change / MPC preset menu */
     set(s, "preset", "40");
