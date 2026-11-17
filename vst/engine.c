@@ -960,6 +960,10 @@ static void set_param(void *inst, const char *key, const char *val) {
 static int get_param(void *inst, const char *key, char *b, int n) {
     oxz_t *s = inst;
     if (!strcmp(key, "display_rev")) return snprintf(b, n, "%u", s->rev);
+    if (!strncmp(key, "preset_category:", 16)) {   /* its BROWSE category, for the Sounds browser's folders (tools/xpl_presets.sh) */
+        int p = atoi(key + 16);
+        return p >= 0 && p < NPRESET && PRESET_CAT[p] >= 0 && PRESET_CAT[p] < NBCAT ? snprintf(b, n, "%s", BCAT_NAME[PRESET_CAT[p] + 1]) : 0;
+    }
     if (!strcmp(key, "state")) {
         int len = 0;
         for (int i = 0; i < NPARAMS && len < n - 32; i++)

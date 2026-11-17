@@ -42,5 +42,6 @@
     "param": "preset"
   },
   "tile": "tile.png",
-  "xpl_presets": "xpl"
+  "xpl_presets": "xpl",
+  "xpl_category": "engine"
 }
