@@ -41,5 +41,6 @@
   "programs": {
     "param": "preset"
   },
-  "tile": "tile.png"
+  "tile": "tile.png",
+  "xpl_presets": "xpl"
 }
