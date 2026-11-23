@@ -26,7 +26,9 @@
 #include <time.h>
 #include <pthread.h>
 #include <sched.h>
+#ifndef _WIN32
 #include <sys/resource.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -98,9 +100,13 @@ static int cmp_zone(const void *a, const void *b) {
 static void *loader(void *arg) {
     (void)arg;
     /* Load samples so the loader never preempts the audio thread: SCHED_IDLE, with a soft nice fallback. */
+#ifdef SCHED_IDLE   /* Linux (MPC); macOS and Windows have no SCHED_IDLE */
     struct sched_param sp = {0};
     pthread_setschedparam(pthread_self(), SCHED_IDLE, &sp);
+#endif
+#ifndef _WIN32
     setpriority(PRIO_PROCESS, 0, 19);
+#endif
     bank_t *b = calloc(1, sizeof *b);
     char path[1024], line[512];
     snprintf(path, sizeof path, "%s/manifest.txt", g_dir);
