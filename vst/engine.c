@@ -21,6 +21,7 @@
  * program list), the name strip's prev / next on the PLAYER page and the BROWSE page's lists all go through
  * apply_preset(). BROWSE: categories on the left (cat_N, tapped by the cpick_N pads over them), that category's presets
  * on the right, ROWS to a page (row_N, rpick_N); "<key>_on" lights the listed category and the loaded preset. */
+#define _GNU_SOURCE  /* SCHED_IDLE (loader priority) is a GNU extension */
 #include <math.h>
 #include <time.h>
 #include <pthread.h>
