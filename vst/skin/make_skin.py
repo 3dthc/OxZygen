@@ -170,7 +170,7 @@ CAT_SW, CAT_SH = 112, 40               # 5 x 2 grid of categories
 SND_ROW, SND_H = 560, 42               # a category's sounds share one row this wide
 OCT_SW, OCT_SH = 80, 38                # five octave segments
 SLOT_KNOB_DX, SLOT_KNOB_DY = 132, 448  # four knobs 132 px apart, centred in the panel, at y0 + 425
-SLOT_R, SLOT_VS, SLOT_BW = 56, 28, 124
+SLOT_R, SLOT_VS, SLOT_BW = 56, 32, 124
 LBL_W, LBL_H = 3 * SLOT_KNOB_DX, 32    # the label strip under knobs 1-3
 
 
@@ -204,7 +204,7 @@ FX = [("rv", "Reverb", ["Size", "Decay", "Mix"], 20, 100),
       ("dl", "Delay", ["Time", "Feedback", "Mix"], 650, 100),
       ("dr", "Drive / Tuning", ["Amount", "Tone", "Mix"], 20, 406),
       ("sb", "Sub / Output", ["Level", "Tune", "Drop"], 650, 406)]
-FX_R, FX_VS, FX_BW = 56, 28, 116
+FX_R, FX_VS, FX_BW = 56, 32, 116
 # the Sync pickers (0.7.6), on the title row of their panel: a small LCD with < > like the theme picker (screen coords)
 SYNC_BOXES = [("ds", "SYNC", (1036, 118, 1238, 150)), ("ms", "MOTION", (1036, 424, 1238, 456))]   # Motion: Sub / Output's row (Drive / Tuning's title is long)   # Sub / Output has 4 knobs 122 px apart
 
@@ -776,7 +776,8 @@ def write_layout():
             L.extend(fn(th, " when=theme:%d" % n))
 
     def knob(th, w, key, label, cx, cy, r, vs, bw, chamber=False):
-        tx = (th["ch"]["val"] if chamber else th["txt"]).lstrip("#")
+        # values in plain text under the knob: near-black on the light Aluminum panels, the theme's ink on dark ones
+        tx = (th["ch"]["val"] if chamber or th["key"] == "aluminum" else th["txt"]).lstrip("#")
         return ('knob cx=%d cy=%d r=%d label="%s" key=%s strip=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s%s'
                 % (cx, cy, r, label.upper() or key.upper(), key, art(("chknob%d.png" if chamber else "knob%d.png") % r, th), vs, bw, tx, tx, w))
 
