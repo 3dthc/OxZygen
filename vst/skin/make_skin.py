@@ -47,7 +47,7 @@ _DARK = """
 .grain { opacity: .9 !important; background-image: repeating-linear-gradient(0deg, rgba(%(hi)s,.045) 0 1px, rgba(0,0,0,.08) 1px 2px, transparent 2px 3px) !important;
   box-shadow: inset 0 1px 0 rgba(%(hi)s,.16), inset 0 -2px 6px rgba(0,0,0,.5) !important; }
 .vbox { box-shadow: inset 0 2px 5px rgba(0,0,0,.95), 0 1px 0 rgba(%(hi)s,.14) !important; }
-.lcd { box-shadow: inset 0 3px 8px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(%(hi)s,.14) !important; }
+.lcd { box-shadow: inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.95), 0 0 0 2px rgba(0,0,0,.55), 0 0 0 3px rgba(%(hi)s,.16) !important; }
 .well::before { opacity: .55; }
 """
 THEMES = [
@@ -434,8 +434,7 @@ def value_box(cx, cy, r, vs, width):
     """The dark readout behind MPC's live value, and where the baked name goes under it."""
     vh = max(30, round(vs * 1.25))
     top = cy + r + 2 - Y0
-    return top, vh, ("<div class='vbox' style='left:%dpx;top:%dpx;width:%dpx;height:%dpx'></div>"
-                     % (cx - width // 2, top, width, vh))
+    return top, vh, ""   # no box: the value sits as plain text under the knob
 
 
 def knob_block(key, label, cx, cy, r, vs, width, label_px):
@@ -478,9 +477,11 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
 .title { position: absolute; font: 700 26px BC, sans-serif; letter-spacing: .24em; color: %(FG)s; text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(255,255,255,.6); }
 .title b { color: var(--acc); font-weight: 700; text-shadow: 0 0 10px rgba(var(--glow),var(--zglow)); }
-.lcd { position: absolute; border-radius: 10px; background: %(READ_BG)s;
-  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
-  box-shadow: inset 0 3px 8px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.2); }
+.lcd { position: absolute; border-radius: 10px; background: %(READ_BG)s;   /* tinted glass in a machined bezel */
+  background-image: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.015) 38%%, transparent 40%%),
+    radial-gradient(120%% 90%% at 50%% 0%%, rgba(90,150,220,.10), transparent 70%%);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.85), inset 0 0 0 1px rgba(0,0,0,.95),
+    0 0 0 2px #7d838a, 0 0 0 3px rgba(0,0,0,.35), 0 1px 0 3px rgba(255,255,255,.55); }
 .lcdcap { position: absolute; font: 700 18px BC, sans-serif; letter-spacing: .16em; color: #5a82aa; }
 .arrow { position: absolute; width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent;
   filter: drop-shadow(0 0 4px rgba(64,170,255,.8)); }
@@ -690,7 +691,7 @@ def render_art():
             pg.add_script_tag(content=js)
             for r in sorted({SLOT_R, FX_R}):
                 sz = 2 * r + 10
-                frames = [png(pg.evaluate("([s, v]) => knob(s, v)", [sz, i / 127])) for i in range(128)]
+                frames = [png(pg.evaluate("([s, v]) => knob2(s, v)", [sz, i / 127])) for i in range(128)]
                 strip(frames, sz).save(os.path.join(out, "knob%d.png" % r), optimize=True)
             sz = 2 * PLAYER_R + 10
             frames = [png(pg.evaluate("([s, v]) => knob2(s, v)", [sz, i / 127])) for i in range(128)]
