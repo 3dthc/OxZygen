@@ -527,8 +527,6 @@ def bg_player(level=0.0):
                  "background:linear-gradient(180deg,#040506 0%%,rgba(%s,%.3f) 70%%,rgba(%s,%.3f) 100%%);"
                  "box-shadow:inset 0 2px 3px #000,0 1px 0 %s,0 0 %dpx rgba(%s,%.3f)'></div>"
                  % (gx0, y, gx1 - gx0, v, 0.05 + 0.9 * a, v, 0.02 + 0.6 * a, c["hi"], round(4 + 16 * a), v, 0.7 * a))
-    h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:%dpx;font-size:17px;letter-spacing:.4em;color:%s !important;text-shadow:none !important'>CHAMBER</div>"
-             % (VENT_BOX[0], Y(VENT_BOX[3]) - 34, VENT_BOX[2] - VENT_BOX[0], c["lb"]))
     # the wall panels and their knobs
     for x0, y0, x1, y1 in PLAYER["panels"]:
         h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:12px;"
