@@ -7,7 +7,8 @@ Every coordinate lives here, so the baked artwork and MPC's live controls always
   art/bg_player.png, art/bg_browse.png, art/bg_sound.png, art/bg_fx.png   tab backgrounds, 1280x628 (the plugin area)
   art/cat_*.png, art/row_*.png, art/pad_*.png        BROWSE's rows (off, lit) and the clear pads that take the taps
   art/knob48.png                                     knob filmstrip, 128 frames (light fixed, pointer and arc turn)
-  art/orb.png                                        orb meter filmstrip: 2 energy levels x 17 frames, 360x360
+  art/vents.png                                      vents meter filmstrip: the chamber's gills at 24 glow levels
+  art/chknob58.png                                   PLAYER knob filmstrip (aluminium skirt, black cap)
   art/seg_cat_*.png, art/seg_snd<n>_*.png, art/seg_oct_*.png   category, sound (n per row) and octave segments
   art/lbl_<sound>.png                                the three knob labels for each sound (a picture follows the sound)
   layout.conf
@@ -52,9 +53,13 @@ _DARK = """
 THEMES = [
     dict(key="aluminum", name="ALUMINUM", dir="", acc="#1f6fff", acc_hi="#3b82ff", acc_lo="#1450c8", glow="31,111,255",
          ptr="#4d8dff", txt="#7ff0ff", txt_dim="#5a82aa", row_tx="#a9dcef", fg=FG, fg_shadow="rgba(255,255,255,.55)", orb_hue=0,
+         ch=dict(bg1="#9aa1a8", bg2="#6b7178", back="#c9dcec", c1="#e2e6ea", c2="#a3aab1", w1="#d6dbe0", w2="#868d94", fl="#767c83",
+                 pn1="#eef1f4", pn2="#b3b9bf", lb="#3d434a", val="#121417", hi="#eef2f5", edge="#f3f5f7", vent="120,190,255"),
          css=""),
     dict(key="green", name="GREEN", dir="green", acc="#19c27a", acc_hi="#3ee39a", acc_lo="#0f8f58", glow="25,194,122",
          ptr="#52f0a8", txt="#8cffc4", txt_dim="#4f9a77", row_tx="#b4f0d2", fg="#e6f3ec", fg_shadow="rgba(0,0,0,.7)", orb_hue=-60,
+         ch=dict(bg1="#5f7a6a", bg2="#3a4d42", back="#b9e6c8", c1="#c3d6c8", c2="#7e9586", w1="#b3c8b9", w2="#5f7568", fl="#536a5c",
+                 pn1="#d6e3d9", pn2="#93a99a", lb="#2c3a31", val="#0f1712", hi="#dfeae2", edge="#e4eee7", vent="90,230,150"),
          css=_DARK % {"fg": "#e6f3ec", "dim": "#9cc3ae", "hi": "200,255,225"} + """
 body { background: radial-gradient(1300px 420px at 50% -80px, rgba(180,255,210,.16), transparent 70%),
   linear-gradient(180deg, #24493a, #17352a 55%, #0e241c) !important; }
@@ -64,12 +69,36 @@ body { background: radial-gradient(1300px 420px at 50% -80px, rgba(180,255,210,.
 """),
     dict(key="navy", name="NAVY", dir="navy", acc="#e0a23e", acc_hi="#f2bd5e", acc_lo="#b37a22", glow="224,162,62",
          ptr="#ffc45e", txt="#ffd280", txt_dim="#a88a5c", row_tx="#f0dcb4", fg="#e8eefa", fg_shadow="rgba(0,0,0,.7)", orb_hue=165,
+         ch=dict(bg1="#2c3e5c", bg2="#18233a", back="#8fb8ff", c1="#53678c", c2="#26344f", w1="#475b80", w2="#1c2840", fl="#1a253b",
+                 pn1="#5b6f94", pn2="#2f3e5c", lb="#c4d0e2", val="#f2f6fb", hi="#5b6f94", edge="#6d82a8", vent="143,184,255"),
          css=_DARK % {"fg": "#e8eefa", "dim": "#9fb4d8", "hi": "200,220,255"} + """
 body { background: radial-gradient(1300px 420px at 50% -80px, rgba(170,200,255,.22), transparent 70%),
   linear-gradient(180deg, #2c4470, #1c3058 55%, #121f3c) !important; }
 .well { background: linear-gradient(180deg, #2a4068, #1f3256 60%, #192a4a) !important;
   box-shadow: inset 0 1px 0 rgba(200,220,255,.15), 0 0 0 1px rgba(0,0,20,.6), 0 6px 14px rgba(0,0,20,.4) !important; }
 .bezel { background: radial-gradient(circle at 35% 28%, #b9cbea, #4f6a98 55%, #1f3156) !important; }
+"""),
+    dict(key="graphite", name="GRAPHITE", dir="graphite", acc="#8fa6bd", acc_hi="#b3c6d8", acc_lo="#5f7488", glow="159,178,198",
+         ptr="#c3d3e3", txt="#dfe7ef", txt_dim="#8a96a2", row_tx="#cfd7df", fg="#e9ecef", fg_shadow="rgba(0,0,0,.7)", orb_hue=0,
+         ch=dict(bg1="#5a5f65", bg2="#383c41", back="#e3e7eb", c1="#9aa0a6", c2="#5a5f65", w1="#8a9096", w2="#45494e", fl="#3e4247",
+                 pn1="#b0b5bb", pn2="#6e7379", lb="#1d2024", val="#0c0d0f", hi="#a6abb1", edge="#b9bec4", vent="235,240,245"),
+         css=_DARK % {"fg": "#e9ecef", "dim": "#aab2ba", "hi": "230,235,240"} + """
+body { background: radial-gradient(1300px 420px at 50% -80px, rgba(230,235,240,.16), transparent 70%),
+  linear-gradient(180deg, #4a4f55, #363a3f 55%, #26292d) !important; }
+.well { background: linear-gradient(180deg, #474b51, #393d42 60%, #303338) !important;
+  box-shadow: inset 0 1px 0 rgba(230,235,240,.14), 0 0 0 1px rgba(0,0,0,.6), 0 6px 14px rgba(0,0,0,.4) !important; }
+.bezel { background: radial-gradient(circle at 35% 28%, #d4d8dc, #6e7379 55%, #2a2d31) !important; }
+"""),
+    dict(key="nebula", name="NEBULA", dir="nebula", acc="#ff8a2a", acc_hi="#ffa552", acc_lo="#c96316", glow="255,138,42",
+         ptr="#ffa552", txt="#ffb46b", txt_dim="#a8774a", row_tx="#f3d2b0", fg="#eceef2", fg_shadow="rgba(0,0,0,.7)", orb_hue=0,
+         ch=dict(bg1="#2a2b30", bg2="#141518", back="#7a4a22", c1="#3f4148", c2="#1d1e22", w1="#383a40", w2="#17181b", fl="#121316",
+                 pn1="#3e4047", pn2="#222328", lb="#a8acb4", val="#f3f4f6", hi="#3e4047", edge="#4a4d55", vent="255,150,60"),
+         css=_DARK % {"fg": "#eceef2", "dim": "#a8acb4", "hi": "255,220,190"} + """
+body { background: radial-gradient(1300px 420px at 50% -80px, rgba(255,170,100,.10), transparent 70%),
+  linear-gradient(180deg, #2a2b30, #1e1f23 55%, #141518) !important; }
+.well { background: linear-gradient(180deg, #2c2e33, #222327 60%, #1b1c20) !important;
+  box-shadow: inset 0 1px 0 rgba(255,220,190,.10), 0 0 0 1px rgba(0,0,0,.7), 0 6px 14px rgba(0,0,0,.5) !important; }
+.bezel { background: radial-gradient(circle at 35% 28%, #6a6d74, #2a2c31 55%, #121316) !important; }
 """),
 ]
 TH = THEMES[0]   # the theme being drawn
@@ -80,13 +109,15 @@ def art(name, th=None):
     d = (th or TH)["dir"]
     return "art/%s%s" % (d + "/" if d else "", name)
 
-ORB_PHASES, ORB_LEVELS, ORB_SIZE = 17, 2, 360   # 34 frames x 360 px = 12240 px, under MPC's 12288 px strip limit
+VENT_LEVELS = 24                     # the vents' glow: 24 steps, cut from the PLAYER background (440 x 384 px each)
+VENT_BOX = (420, 236, 860, 620)       # x0, y0, x1, y1 (screen): between the wall panels, under the preset strip
+GILLS = 14
 
 # --- layout -------------------------------------------------------------------------------------------
 # knob: (key, label, cx, cy, r, value text size, touch width)
 PLAYER = {
-    "orb": (640, 414),
-    "headings": [("VOICE", 46, 420, 132), ("ATMOSPHERE", 860, 1234, 132)],
+    "headings": [("VOICE", 56, 374, 182), ("ATMOSPHERE", 906, 1224, 182)],
+    "panels": [(30, 150, 400, 690), (880, 150, 1250, 690)],
     "knobs": [
         ("velocity", "Velocity", 125, 286), ("breath", "Breath", 325, 286),
         ("attack", "Attack", 125, 518), ("release", "Release", 325, 518),
@@ -240,6 +271,39 @@ function knob(size, v) {
   x.lineWidth = 3.6; x.beginPath(); x.moveTo(a, b + .7); x.lineTo(e, f + .7); x.strokeStyle = 'rgba(0,0,0,.7)'; x.stroke();
   x.save(); x.shadowColor = 'rgba(80,150,255,.9)'; x.shadowBlur = 3; x.lineWidth = 2.6;
   x.beginPath(); x.moveTo(a, b); x.lineTo(e, f); x.strokeStyle = '#4d8dff'; x.stroke(); x.restore();
+  return c.toDataURL('image/png');
+}
+
+function knob2(size, v) {
+  const c = document.createElement('canvas'); c.width = c.height = size * 2;
+  const x = c.getContext('2d'); x.scale(size * 2 / 100, size * 2 / 100);
+  const A = deg => deg * Math.PI / 180;
+  x.lineCap = 'round'; x.lineWidth = 3.6;
+  x.beginPath(); x.arc(50, 50, 46, A(135), A(405)); x.strokeStyle = 'rgba(0,0,0,.28)'; x.stroke();
+  if (v > 0.002) {
+    x.save(); x.shadowColor = 'rgba(31,111,255,.7)'; x.shadowBlur = 3;
+    x.beginPath(); x.arc(50, 50, 46, A(135), A(135 + 270 * v)); x.strokeStyle = LIVE; x.stroke(); x.restore();
+  }
+  x.save(); x.shadowColor = 'rgba(0,0,0,.45)'; x.shadowBlur = 5; x.shadowOffsetY = 3;
+  x.beginPath(); x.arc(50, 50, 40, 0, 2 * Math.PI); x.fillStyle = '#5b6067'; x.fill(); x.restore();
+  // brushed aluminium skirt: a conic sheen, light from the top
+  const s = x.createConicGradient(A(-90), 50, 50);
+  [[0, '#f2f4f6'], [.15, '#9aa0a7'], [.3, '#dfe3e7'], [.5, '#7d838a'], [.7, '#d5d9de'], [.85, '#8f959c'], [1, '#f2f4f6']]
+    .forEach(([o, col]) => s.addColorStop(o, col));
+  x.beginPath(); x.arc(50, 50, 40, 0, 2 * Math.PI); x.fillStyle = s; x.fill();
+  const sh = x.createLinearGradient(0, 10, 0, 90);
+  sh.addColorStop(0, 'rgba(255,255,255,.25)'); sh.addColorStop(1, 'rgba(0,0,0,.35)');
+  x.beginPath(); x.arc(50, 50, 40, 0, 2 * Math.PI); x.fillStyle = sh; x.fill();
+  // matte black cap with a soft top light and a fine edge
+  const g = x.createRadialGradient(42, 36, 2, 50, 50, 33);
+  g.addColorStop(0, '#4a4f56'); g.addColorStop(.6, '#1e2125'); g.addColorStop(1, '#111315');
+  x.beginPath(); x.arc(50, 50, 32, 0, 2 * Math.PI); x.fillStyle = g; x.fill();
+  x.beginPath(); x.arc(50, 50, 32, 0, 2 * Math.PI); x.strokeStyle = 'rgba(0,0,0,.8)'; x.lineWidth = .9; x.stroke();
+  x.beginPath(); x.arc(50, 50, 31.2, A(200), A(340)); x.strokeStyle = 'rgba(255,255,255,.18)'; x.lineWidth = .8; x.stroke();
+  const d = A(135 + 270 * v), P = r => [50 + r * Math.cos(d), 50 + r * Math.sin(d)];
+  const [a, b] = P(8), [e, f] = P(28);
+  x.lineWidth = 3.4; x.beginPath(); x.moveTo(a, b + .6); x.lineTo(e, f + .6); x.strokeStyle = 'rgba(0,0,0,.7)'; x.stroke();
+  x.lineWidth = 2.8; x.beginPath(); x.moveTo(a, b); x.lineTo(e, f); x.strokeStyle = '#eef1f4'; x.stroke();
   return c.toDataURL('image/png');
 }
 
@@ -425,22 +489,63 @@ body { width: 1280px; height: 628px; overflow: hidden; position: relative;
 """ % {"fonts": FONT_CSS, "FG": FG, "DIM": DIM, "PANEL": PANEL, "LIVE": LIVE, "READ_BG": READ_BG}
 
 
-def bg_player():
-    ox, oy = PLAYER["orb"]
-    h = ["<div class='grain'></div>"]
-    # the orb's shadow on the panel (the orb itself is the live meter on top)
-    h.append("<div class='bezel' style='position:absolute;left:%dpx;top:%dpx;width:340px;height:340px;border-radius:50%%;"
-             "background:radial-gradient(circle at 35%% 28%%,#f4f5f7,#b4b8be 55%%,#80858c);"
-             "box-shadow:0 18px 36px rgba(0,0,0,.35),inset 0 2px 1px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.35)'></div>"
-             % (ox - 170, oy - Y0 - 170))
-    h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:304px;height:304px;border-radius:50%%;background:#05070a;"
-             "box-shadow:inset 0 3px 8px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.6)'></div>" % (ox - 152, oy - Y0 - 152))
-    # wordmark: all caps, the Z carries the emphasis (larger, accent colour)
-    h.append(wordmark())
+def bg_player(level=0.0):
+    """The chamber: a metal room in perspective, the gills on its back wall (lit by level, 0..1), the knobs on two
+    wall panels. The vents meter is this picture at VENT_LEVELS levels, cut to VENT_BOX."""
+    c = TH["ch"]
+    Y = lambda y: y - Y0
+    v = c["vent"]
+    h = ["<div style='position:absolute;inset:0;background:radial-gradient(ellipse 34%% 48%% at 50%% 60%%,%s 0%%,%s 62%%,%s 100%%)'></div>"
+         % (c["back"], c["bg1"], c["bg2"])]
+    bx0, by0, bx1, by1 = 300, Y(170), 980, Y(660)   # the back wall
+    h.append("<svg width='1280' height='628' style='position:absolute;left:0;top:0'>"
+             "<defs><linearGradient id='ce' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%(c1)s'/><stop offset='1' stop-color='%(c2)s'/></linearGradient>"
+             "<linearGradient id='wl' x1='0' x2='1'><stop offset='0' stop-color='%(w1)s'/><stop offset='1' stop-color='%(w2)s'/></linearGradient>"
+             "<linearGradient id='wr' x1='1' x2='0'><stop offset='0' stop-color='%(w1)s'/><stop offset='1' stop-color='%(w2)s'/></linearGradient></defs>"
+             "<polygon points='0,0 1280,0 %(bx1)d,%(by0)d %(bx0)d,%(by0)d' fill='url(#ce)'/>"
+             "<polygon points='0,628 1280,628 %(bx1)d,%(by1)d %(bx0)d,%(by1)d' fill='%(fl)s'/>"
+             "<polygon points='0,0 %(bx0)d,%(by0)d %(bx0)d,%(by1)d 0,628' fill='url(#wl)'/>"
+             "<polygon points='1280,0 %(bx1)d,%(by0)d %(bx1)d,%(by1)d 1280,628' fill='url(#wr)'/>"
+             "<rect x='%(bx0)d' y='%(by0)d' width='%(bw)d' height='%(bh)d' fill='none' stroke='%(edge)s' stroke-width='2'/>"
+             "<g stroke='%(edge)s' stroke-opacity='.5'><line x1='0' y1='0' x2='%(bx0)d' y2='%(by0)d'/><line x1='1280' y1='0' x2='%(bx1)d' y2='%(by0)d'/>"
+             "<line x1='0' y1='628' x2='%(bx0)d' y2='%(by1)d'/><line x1='1280' y1='628' x2='%(bx1)d' y2='%(by1)d'/></g>"
+             "<g stroke='rgb(%(v)s)' stroke-opacity='.35' stroke-width='2'><line x1='420' y1='%(f1)d' x2='860' y2='%(f1)d'/>"
+             "<line x1='390' y1='%(f2)d' x2='890' y2='%(f2)d'/><line x1='360' y1='%(f3)d' x2='920' y2='%(f3)d'/></g>"
+             "</svg>" % dict(c, bx0=bx0, by0=by0, bx1=bx1, by1=by1, bw=bx1 - bx0, bh=by1 - by0, v=v,
+                             f1=Y(676), f2=Y(692), f3=Y(708)))
+    # the gills: deep slits cut in the back wall, the gas glowing through them with the sound
+    gx0, gy0, gx1, gy1 = VENT_BOX
+    gx0 += 40; gx1 -= 40; gy0 += 30; gy1 -= 46
+    a = level
+    h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:40px;"
+             "background:radial-gradient(ellipse at 50%% 50%%,rgba(%s,%.3f),rgba(%s,0) 70%%)'></div>"
+             % (gx0 - 40, Y(gy0) - 30, gx1 - gx0 + 80, gy1 - gy0 + 60, v, 0.08 + 0.55 * a, v))
+    pitch = (gy1 - gy0) / GILLS
+    for k in range(GILLS):
+        y = Y(gy0) + round(k * pitch)
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:%dpx;height:11px;border-radius:6px;"
+                 "background:linear-gradient(180deg,#040506 0%%,rgba(%s,%.3f) 70%%,rgba(%s,%.3f) 100%%);"
+                 "box-shadow:inset 0 2px 3px #000,0 1px 0 %s,0 0 %dpx rgba(%s,%.3f)'></div>"
+                 % (gx0, y, gx1 - gx0, v, 0.05 + 0.9 * a, v, 0.02 + 0.6 * a, c["hi"], round(4 + 16 * a), v, 0.7 * a))
+    h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:%dpx;font-size:17px;letter-spacing:.4em;color:%s !important;text-shadow:none !important'>CHAMBER</div>"
+             % (VENT_BOX[0], Y(VENT_BOX[3]) - 34, VENT_BOX[2] - VENT_BOX[0], c["lb"]))
+    # the wall panels and their knobs
+    for x0, y0, x1, y1 in PLAYER["panels"]:
+        h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:%dpx;height:%dpx;border-radius:12px;"
+                 "background:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,rgba(0,0,0,.03) 1px 2px,transparent 2px 3px),"
+                 "linear-gradient(180deg,%s,%s);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(0,0,0,.35),"
+                 "0 0 0 1px rgba(0,0,0,.25),0 10px 26px rgba(0,0,0,.4)'></div>" % (x0, Y(y0), x1 - x0, y1 - y0, c["pn1"], c["pn2"]))
+        for sx, sy in ((x0 + 14, y0 + 14), (x1 - 14, y0 + 14), (x0 + 14, y1 - 14), (x1 - 14, y1 - 14)):
+            h.append("<div style='position:absolute;left:%dpx;top:%dpx;width:9px;height:9px;border-radius:50%%;"
+                     "background:radial-gradient(circle at 35%% 30%%,#f2f3f5,#9a9fa6 55%%,#4a4f56)'></div>" % (sx - 4, Y(sy) - 4))
     for text, x0, x1, y in PLAYER["headings"]:
-        h.append("<div class='heading' style='left:%dpx;top:%dpx;width:%dpx'>%s</div>" % (x0, y - Y0 - 12, x1 - x0, text))
+        h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:%dpx;font-size:20px;letter-spacing:.34em;color:%s !important;"
+                 "text-shadow:none !important;text-align:%s'>%s</div>" % (x0, Y(y) - 12, x1 - x0, c["lb"], "left" if x0 < 640 else "right", text))
     for key, label, cx, cy in PLAYER["knobs"]:
-        h.append(knob_block(key, label, cx, cy, PLAYER_R, PLAYER_VS, 104, 26))
+        top = cy + PLAYER_R + 2 - Y0 + max(30, round(PLAYER_VS * 1.25))
+        h.append("<div class='klabel' style='left:%dpx;top:%dpx;width:200px;font-size:24px;color:%s !important;text-shadow:none !important'>%s</div>"
+                 % (cx - 100, top + 2, c["lb"], label.upper()))
+    h.append(wordmark().replace("class='title' style='", "class='title' style='color:%s !important;text-shadow:none !important;" % c["lb"]))
     h.append(strip_html())
     return "".join(h)
 
@@ -563,7 +668,6 @@ def render_art():
     with sync_playwright() as pw:
         b = pw.chromium.launch()
         pg = b.new_page(viewport={"width": W, "height": H})
-        orb = None
         for TH in THEMES:
             out = os.path.join(ART, TH["dir"]) if TH["dir"] else ART
             os.makedirs(out, exist_ok=True)
@@ -586,15 +690,24 @@ def render_art():
             js = DRAW_JS if not TH["dir"] else DRAW_JS.replace(LIVE, TH["acc"]).replace("31,111,255", TH["glow"]).replace("80,150,255", TH["glow"]) \
                         .replace("#4d8dff", TH["ptr"])
             pg.add_script_tag(content=js)
-            for r in sorted({PLAYER_R, SLOT_R, FX_R}):
+            for r in sorted({SLOT_R, FX_R}):
                 sz = 2 * r + 10
                 frames = [png(pg.evaluate("([s, v]) => knob(s, v)", [sz, i / 127])) for i in range(128)]
                 strip(frames, sz).save(os.path.join(out, "knob%d.png" % r), optimize=True)
-            if orb is None:
-                frames = [png(pg.evaluate("([S, p, n, l]) => orb(S, p, n, l)", [ORB_SIZE, ph, ORB_PHASES, lv]))
-                          for lv in range(ORB_LEVELS) for ph in range(ORB_PHASES)]
-                orb = strip(frames, ORB_SIZE)
-            hue_shift(orb, TH["orb_hue"]).save(os.path.join(out, "orb.png"), optimize=True)
+            sz = 2 * PLAYER_R + 10
+            frames = [png(pg.evaluate("([s, v]) => knob2(s, v)", [sz, i / 127])) for i in range(128)]
+            strip(frames, sz).save(os.path.join(out, "chknob%d.png" % PLAYER_R), optimize=True)
+            # the vents: the chamber at each glow level, cut to VENT_BOX (opaque: MPC flattens pictures)
+            x0, y0, x1, y1 = VENT_BOX
+            vw, vh = x1 - x0, y1 - y0
+            vs = Image.new("RGB", (vw, vh * VENT_LEVELS))
+            for lv in range(VENT_LEVELS):
+                page(bg_player(lv / (VENT_LEVELS - 1)))
+                shot = Image.open(io.BytesIO(pg.screenshot(clip={"x": x0, "y": y0 - Y0, "width": vw, "height": vh}))).convert("RGB")
+                vs.paste(shot, (0, lv * vh))
+            vs.save(os.path.join(out, "vents.png"), optimize=True)
+            page("")
+            pg.add_script_tag(content=js)
 
             # selector segments
             sizes = [("cat", CAT_SW, CAT_SH), ("oct", OCT_SW, OCT_SH)] + \
@@ -663,20 +776,20 @@ def write_layout():
         for n, th in enumerate(THEMES):
             L.extend(fn(th, " when=theme:%d" % n))
 
-    def knob(th, w, key, label, cx, cy, r, vs, bw):
-        tx = th["txt"].lstrip("#")
+    def knob(th, w, key, label, cx, cy, r, vs, bw, chamber=False):
+        tx = (th["ch"]["val"] if chamber else th["txt"]).lstrip("#")
         return ('knob cx=%d cy=%d r=%d label="%s" key=%s strip=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s%s'
-                % (cx, cy, r, label.upper() or key.upper(), key, art("knob%d.png" % r, th), vs, bw, tx, tx, w))
+                % (cx, cy, r, label.upper() or key.upper(), key, art(("chknob%d.png" if chamber else "knob%d.png") % r, th), vs, bw, tx, tx, w))
 
     # PLAYER
     L.append("[tab PLAYER]")
-    ox, oy = PLAYER["orb"]
+    vx0, vy0, vx1, vy1 = VENT_BOX
     x0, y0, x1, y1 = STRIP
     cy, ph = (y0 + y1) // 2, y1 - y0
     themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_player.png", th), w),
                           "meter cx=%d cy=%d w=%d h=%d key=orb strip=%s frames=%d%s"
-                          % (ox, oy, ORB_SIZE, ORB_SIZE, art("orb.png", th), ORB_PHASES * ORB_LEVELS, w)] +
-                         [knob(th, w, key, label, cx, cy_, PLAYER_R, PLAYER_VS, PLAYER_BW) for key, label, cx, cy_ in PLAYER["knobs"]] +
+                          % ((vx0 + vx1) // 2, (vy0 + vy1) // 2, vx1 - vx0, vy1 - vy0, art("vents.png", th), VENT_LEVELS, w)] +
+                         [knob(th, w, key, label, cx, cy_, PLAYER_R, PLAYER_VS, PLAYER_BW, chamber=True) for key, label, cx, cy_ in PLAYER["knobs"]] +
                          ['readout cx=640 cy=%d w=%d h=%d label="" key=p_name box=0 tsize=34 tcolor=%s tweight=bold%s'
                           % (cy, x1 - x0 - 2 * STRIP_PAD, ph - 4, th["txt"].lstrip("#"), w)])
     for key, cx in (("p_prev", x0 + STRIP_PAD // 2), ("p_next", x1 - STRIP_PAD // 2)):

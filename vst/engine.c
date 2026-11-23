@@ -15,7 +15,7 @@
  *
  * Samples: <plugin folder>/samples (MODULE_SUBDIR), prepared by samples/prepare.py: mono 16-bit with baked loops,
  * listed in manifest.txt. They load once per process on a background thread and are shared by every instance.
- * The orb: display-only meter "orb" (2 energy levels x 17 frames), stepped here and reported via display_rev.
+ * The vents: display-only meter "orb" (24 glow levels following the output), stepped here and reported via display_rev.
  *
  * Presets (presets_tab.h, from presets.json) are applied here: the "preset" parameter (MPC's PRESET menu, a host's
  * program list), the name strip's prev / next on the PLAYER page and the BROWSE page's lists all go through
@@ -34,7 +34,7 @@
 #define SR 44100.0f
 #define MAXV 32              /* voices: one per slot per note */
 #define MAXSRC 6             /* sample players per voice: 3 singers x 2 vowels */
-#define ORB_PHASES 17
+#define VENT_LEVELS 24
 
 /* ---------- sample bank: loaded once, shared by all instances ---------- */
 enum { G_CLA_AH, G_CLA_OH, G_CLA_IH, G_MIR_AH, G_MIR_OH, G_MIR_IH, G_SVE_AH, G_SVE_OH, G_SVE_IH,
@@ -326,8 +326,8 @@ static int I_master, I_velocity, I_breath, I_attack, I_release, I_air, I_dark, I
 static int I_cat[2], I_sel[2][NCATS], I_sound[2], I_oct[2], I_k1[2], I_k2[2], I_k3[2], I_level[2];
 static int I_dl_sync, I_mo_sync, I_ds_prev, I_ds_next, I_ds_name, I_ms_prev, I_ms_next, I_ms_name;
 static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
-#define NTHEME 3
-static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY"};
+#define NTHEME 5
+static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY", "GRAPHITE", "NEBULA"};
 #define NBCAT 11                        /* the browser's categories, after ALL */
 static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1, I_catk[NBCAT + 1], I_cpk[NBCAT + 1];
 static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
@@ -1604,13 +1604,14 @@ static void render(void *inst, int16_t *out, int frames) {
         out[2 * f + 1] = (int16_t)(r * 32000.0f);
     }
 
-    /* orb: energy from playing, phase on a timer (Motion), report frame changes */
-    if (held_any) s->energy = fmaxf(s->energy, 0.6f);
-    s->energy *= expf(-dt / 1.5f);
-    s->orb_t += dt;
-    float step = (0.30f - 0.20f * motion) * (s->energy > 0.3f ? 0.7f : 1.0f);
-    if (s->orb_t >= step) { s->orb_t = 0.0f; s->orb_phase = (s->orb_phase + 1) % ORB_PHASES; }
-    int frame = (s->energy > 0.3f ? ORB_PHASES : 0) + s->orb_phase;
+    /* the vents: glow follows the output level (fast up, ~0.5 s down), report frame changes */
+    float pk = 0.0f;
+    for (int f = 0; f < 2 * frames; f++) { float a = fabsf((float)out[f]) * (1.0f / 32000.0f); if (a > pk) pk = a; }
+    float tgt = fminf(1.0f, sqrtf(pk) * 1.8f);         /* sqrt: quiet notes still light the vents */
+    if (held_any) tgt = fmaxf(tgt, 0.25f);
+    s->energy = tgt > s->energy ? tgt : s->energy * expf(-dt / 0.5f);
+    (void)motion;
+    int frame = (int)(fminf(1.0f, s->energy) * (VENT_LEVELS - 1) + 0.5f);
     if (frame != s->orb_frame) { s->orb_frame = frame; s->val[I_orb] = (float)frame; s->rev++; }
 }
 

@@ -3,7 +3,7 @@
 [![Support me on Ko-fi](https://img.shields.io/badge/Support%20me%20on-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/3dthc)
 
 A dark, cinematic VST2 instrument for Akai MPC standalone units: choirs, vowels and sung "doo"s, flutes, reeds, brass,
-atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a CRT crystal-ball orb that reacts as you play.
+atmospheric strings, bells, Juno-style synths, soundscapes and textures, inside a metal chamber whose vents glow as you play.
 
 ![OxZygen on the MPC: the Player page](docs/img/player.png)
 
@@ -13,7 +13,7 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, with a 
 |---|---|
 | ![Sound page: two slots, category and sound pickers, octave, four knobs](docs/img/sound.png) | ![FX page: reverb, delay, drive, sub and output](docs/img/fx.png) |
 
-![The three themes: Aluminum, Green, Navy](docs/img/themes.png)
+![The five themes: Aluminum, Green, Navy, Graphite, Nebula](docs/img/themes.png)
 
 - Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air, Keys, Mallets), then one of 29 sounds
 - Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
@@ -43,7 +43,8 @@ Needs about 169 MB free on the internal drive; OxZygen uses about 169 MB of RAM 
 ## Pages
 
 - **Player**: the preset's name under the logo (◀ ▶ step through the presets of the category shown on Browse);
-  Velocity, Breath, Attack, Release on the left; Air, Filter, Lo-Fi, Motion on the right; the orb in the middle.
+  Velocity, Breath, Attack, Release on the left wall; Air, Filter, Lo-Fi, Motion on the right; the chamber's vents
+  in the middle glow with the sound.
   The mod wheel adds movement on every sound (vibrato, drift, filter, shimmer).
 - **Browse**: the categories on the left (All, Voices, Winds, Brass, Strings, Bells, Synth, Air, Noir, Astro, Gems, Keys), that category's
   presets on the right; tap one to load it. ▲ ▼ turn the pages of a long list.

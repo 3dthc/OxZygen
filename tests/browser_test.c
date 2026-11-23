@@ -178,6 +178,16 @@ int main(void) {
         on = 0; for (int k = 0; k < MAXV; k++) on += o->v[k].active;
         CHECK(on == 0, "a held voice with no key down ends (voices %d)", on);
     }
+    {   /* the vents (meter "orb") glow with the sound: dark in silence, lit while playing, dark again after */
+        int16_t buf[256]; uint8_t on[3] = {0x90, 60, 100}, off[3] = {0x80, 60, 0};
+        CHECK((int)val(s, "orb") == 0, "vents dark in silence (%g)", val(s, "orb"));
+        ENGINE.midi(s, on, 3);
+        for (int k = 0; k < (int)(0.3 * SR / 128); k++) ENGINE.render(s, buf, 128);
+        CHECK(val(s, "orb") >= 8 && val(s, "orb") <= 23, "vents lit while playing (%g)", val(s, "orb"));
+        ENGINE.midi(s, off, 3);
+        for (int k = 0; k < (int)(25 * SR / 128); k++) ENGINE.render(s, buf, 128);
+        CHECK((int)val(s, "orb") == 0, "vents dark again after the note (%g)", val(s, "orb"));
+    }
     /* a host program change / MPC preset menu */
     set(s, "preset", "40");
     get(s, "p_name", b);
@@ -221,15 +231,15 @@ int main(void) {
     set(s, "preset", "12");
     CHECK((int)val(s, "theme") == 1, "a preset keeps the theme");
     set(s, "th_prev", "1"); set(s, "th_prev", "0"); set(s, "th_prev", "1"); set(s, "th_prev", "0");
-    CHECK((int)val(s, "theme") == 2, "theme prev wraps: Green -> Aluminum -> Navy (%g)", val(s, "theme"));
+    CHECK((int)val(s, "theme") == 4, "theme prev wraps: Green -> Aluminum -> Nebula (%g)", val(s, "theme"));
     ENGINE.get_param(s, "state", st, sizeof st);
-    CHECK(strstr(st, "theme=2;") && !strstr(st, "a_look=") && !strstr(st, "th_name="), "the project keeps the theme, not the looks");
+    CHECK(strstr(st, "theme=4;") && !strstr(st, "a_look=") && !strstr(st, "th_name="), "the project keeps the theme, not the looks");
     void *v = ENGINE.create(NULL);
     set(v, "state", st);
     read_slots((oxz_t *)v);
-    CHECK((int)val(v, "theme") == 2 && (int)val(v, "b_look") == 2 * NCATS + (int)val(v, "b_cat"), "restored in Navy, looks follow");
+    CHECK((int)val(v, "theme") == 4 && (int)val(v, "b_look") == 4 * NCATS + (int)val(v, "b_cat"), "restored in Nebula, looks follow");
     set(v, "a_look", "3");
-    CHECK((int)val(v, "a_look") == 2 * NCATS + (int)val(v, "a_cat"), "a host can't set a look");
+    CHECK((int)val(v, "a_look") == 4 * NCATS + (int)val(v, "a_cat"), "a host can't set a look");
     ENGINE.destroy(v);
 
     for (int i = 0; i < NBCAT + 1; i++) { snprintf(k, sizeof k, "cat_%d", i + 1); get(s, k, b); printf("     %s\n", b); }
