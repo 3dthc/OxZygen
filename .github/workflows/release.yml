@@ -33,7 +33,7 @@ jobs:
       build: '"$MPC_VST/tools/build_port.sh" vst/vst.json all'
       host_test: '"$MPC_VST/tools/test_port.sh" vst/vst.json'
       extra: vst/data:samples
-      about: 'OxZygen: two sound slots (voices, winds, brass, strings, bells, synth, air), filter, lo-fi, drive, delay, reverb, sub; 96 presets'
+      about: 'OxZygen: two sound slots (voices, winds, brass, strings, bells, synth, air), filter, lo-fi, drive, delay, reverb, sub; 200 presets'
       plugin_id: oxzygen
       license: MIT
       dry_run: ${{ inputs.dry_run }}
