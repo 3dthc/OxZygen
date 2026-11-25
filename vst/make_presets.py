@@ -18,7 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PARAMS = json.load(open(os.path.join(HERE, "params.json")))["params"]
 SKIP = {"orb", "a_sound", "b_sound"}   # engine-driven
 import re
-UI = re.compile(r"^(cat_|row_|cpick_|rpick_|p_|th_|ds_|ms_|b_head$|b_page$|theme$|preset$|[ab]_look$|[ab]_lbl$)")   # the browser and
+UI = re.compile(r"^(br_|cat_|row_|cpick_|rpick_|p_|th_|ds_|ms_|b_head$|b_page$|theme$|preset$|[ab]_look$|[ab]_lbl$)")   # the browser and
 # the theme: never in a preset (loading one must not change the theme or the browser's rows)
 
 

@@ -21,6 +21,7 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, inside 
 - 220 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO, GEMS, KEY): beds and textures, up-front leads, keys,
   plucks, basses and stabs that carry a track alone, NOIR (sad keys, crying leads, muffled pads), ASTRO (dark flutes,
   far-off bells, spacey leads) and GEMS (soft warm bells, sparkling keys, high reed-and-synth leads)
+- Browse page Q-Links: Q-Link 1 steps through the categories, Q-Link 2 through that category's presets (one click per step)
 - Tempo sync: the delay in note values and Motion locked to the bar (FX page)
 - Gen1 (MPC OS 3.x and 2.x) and Gen2; all samples CC0 ([CREDITS.md](CREDITS.md)), code MIT ([LICENSE](LICENSE))
 

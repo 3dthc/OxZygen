@@ -342,6 +342,7 @@ static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
 #define NTHEME 5
 static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY", "GRAPHITE", "NEBULA"};
 #define NBCAT 11                        /* the browser's categories, after ALL */
+static int I_br_cat, I_br_preset;   /* BROWSE Q-Links: a category, a preset, one click per step */
 static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1, I_catk[NBCAT + 1], I_cpk[NBCAT + 1];
 static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
 #define ROWS 24                        /* presets on one page of the list: 3 columns of 8 */
@@ -356,6 +357,7 @@ static void init_idx(void) {
     X(theme); X(th_prev); X(th_next); X(th_name);
     X(dl_sync); X(mo_sync); X(ds_prev); X(ds_next); X(ds_name); X(ms_prev); X(ms_next); X(ms_name);
     I_look[0] = idx_of("a_look"); I_look[1] = idx_of("b_look"); I_lbl[0] = idx_of("a_lbl"); I_lbl[1] = idx_of("b_lbl");
+    X(br_cat); X(br_preset);
     X(preset); X(p_name); X(p_prev); X(p_next); X(b_head); X(b_page); X(pg_prev); X(pg_next);
 #undef X
     for (int c = 0; c <= NBCAT; c++) { char k[16]; snprintf(k, sizeof k, "cat_%d", c + 1); I_catk[c] = idx_of(k);
@@ -482,7 +484,7 @@ static int is_ui(int i) {   /* the browser's own controls and texts: never part 
     return i == I_th_prev || i == I_th_next || i == I_th_name || i == I_ds_prev || i == I_ds_next || i == I_ds_name ||
            i == I_ms_prev || i == I_ms_next || i == I_ms_name || i == I_look[0] || i == I_look[1] || i == I_lbl[0] ||
            i == I_lbl[1] || i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
-           i == I_pg_next || cat_row(i) >= 0 || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
+           i == I_pg_next || i == I_br_cat || i == I_br_preset || cat_row(i) >= 0 || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
 }
 static int cur_preset(const oxz_t *s) {
     int p = (int)(s->val[I_preset] + 0.5f);
@@ -532,6 +534,30 @@ static void step_preset(oxz_t *s, int dir) {
     if (!n) return;
     for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
     int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
+    if (m[k] != cur) apply_preset(s, m[k]);
+}
+/* BROWSE's Q-Links (and the data wheel). Each rests at 0.5: MPC sends every click as a small step from the value it last
+ * read back (verified on Force, MPC OS 3.9.1: 1/128 for a Q-Link, 0.01 for the wheel), so the side of 0.5 says which way,
+ * and every click moves exactly one category or one preset. They stop at the ends instead of wrapping. */
+static void scroll(oxz_t *s, int i, float x) {
+    s->val[i] = 0.5f;
+    if (fabsf(x - 0.5f) < 0.001f || wall_s() < s->quiet_until) return;   /* at rest, or a project putting 0.5 back */
+    int dir = x > 0.5f ? 1 : -1;
+    if (i == I_br_cat) {
+        int v = (s->view < 0 ? 0 : s->view) + dir;
+        if (v < 0 || v > NBCAT) return;
+        s->view = v;
+        int m[NPRESET], n = members(s, m), cur = cur_preset(s);
+        s->page = 0;
+        for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
+        s->rev++;
+        return;
+    }
+    int m[NPRESET], n = members(s, m), cur = cur_preset(s), at = -1;
+    if (!n) return;
+    for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
+    int k = at < 0 ? (dir > 0 ? 0 : n - 1) : at + dir;   /* the current preset not in this category: its first or last */
+    if (k < 0 || k >= n) return;
     if (m[k] != cur) apply_preset(s, m[k]);
 }
 static void step_page(oxz_t *s, int dir) {
@@ -947,6 +973,7 @@ static void set_param(void *inst, const char *key, const char *val) {
     if (i == I_orb) { s->energy = fminf(1.0f, s->energy + 0.6f); s->rev++; return; }   /* a tap on the orb */
     if (i == I_preset) { int pr = (int)(x + 0.5f); if (pr != cur_preset(s)) apply_preset(s, pr); return; }
     if (is_pad(i)) { pad(s, i, x); return; }
+    if (i == I_br_cat || i == I_br_preset) { scroll(s, i, x); return; }
     if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next || i == I_th_prev || i == I_th_next ||
         i == I_ds_prev || i == I_ds_next || i == I_ms_prev || i == I_ms_next) {
         s->val[i] = x;
@@ -983,6 +1010,11 @@ static int get_param(void *inst, const char *key, char *b, int n) {
             if (i != I_orb && !is_ui(i)) len += snprintf(b + len, n - len, "%s=%g;", PARAMS[i].key, s->val[i]);
         return len;
     }
+    if (!strcmp(key, "br_cat_display")) return snprintf(b, n, "%s", BCAT_NAME[s->view < 0 ? 0 : s->view]);
+    if (!strcmp(key, "br_preset_display")) {   /* the preset, without its category tag */
+        const char *nm = PRESET_NAME[cur_preset(s)], *sp = strchr(nm, ' ');
+        return snprintf(b, n, "%s", sp ? sp + 1 : nm);
+    }
     size_t kl = strlen(key);
     if (kl > 5 && !strcmp(key + kl - 5, "_name") && (key[0] == 'a' || key[0] == 'b') && key[1] == '_' && key[2] == 'k') {
         int sl = key[0] == 'b', k = key[3] - '1';            /* "a_k2_name" -> slot A, knob 2 */
@@ -1002,7 +1034,7 @@ static int get_param(void *inst, const char *key, char *b, int n) {
     if (i < 0) return 0;
     if (i == I_orb) return snprintf(b, n, "%d", s->orb_frame);
     if (is_ui(i) && !is_pad(i) && PARAMS[i].string_display) return ui_text(s, i, 0, b, n);
-    if (is_pad(i)) return snprintf(b, n, "%g", s->val[i]);   /* at rest: 0.5, not rounded to 1 */
+    if (is_pad(i) || i == I_br_cat || i == I_br_preset) return snprintf(b, n, "%g", s->val[i]);   /* at rest: 0.5, not rounded to 1 */
     if (PARAMS[i].nopts) {
         int o = (int)(s->val[i] + 0.5f);
         if (o < 0) o = 0;

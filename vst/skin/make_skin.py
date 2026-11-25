@@ -843,6 +843,8 @@ def write_layout():
     L.append("")
 
     # SOUND: a category's sounds follow <slot>_look (theme x 8 + category), the knob names <slot>_lbl (theme x 23 + sound)
+    # Q-Link 1: category, Q-Link 2: preset in it (one click per step, see scroll() in engine.c); the rest of the column empty
+    L.append('qlinks "BROWSE" = br_cat,br_preset,-,-')
     L.append("[tab SOUND]")
     themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_sound.png", th), w)])
     for p, name, x0, y0 in SLOTS:

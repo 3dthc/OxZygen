@@ -1932,6 +1932,24 @@
    "min": 0.0,
    "max": 1.0,
    "default": 0.5
+  },
+  {
+   "key": "br_cat",
+   "name": "Browse Category",
+   "min": 0,
+   "max": 1,
+   "default": 0.5,
+   "dynamic_display": true,
+   "refresh_display": true
+  },
+  {
+   "key": "br_preset",
+   "name": "Browse Preset",
+   "min": 0,
+   "max": 1,
+   "default": 0.5,
+   "dynamic_display": true,
+   "refresh_display": true
   }
  ],
  "sections": [
