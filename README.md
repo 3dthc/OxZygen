@@ -18,7 +18,7 @@ atmospheric strings, bells, Juno-style synths, soundscapes and textures, inside 
 - Two sound slots: pick a category (Voices, Winds, Brass, Strings, Bells, Synth, Air, Keys, Mallets), then one of 29 sounds
 - Player page: Velocity, Breath, Attack, Release, Air, Filter (resonant), Lo-Fi, Motion; the mod wheel works on every sound
 - FX: reverb, ping-pong delay, drive, and a gliding sub
-- 200 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO, GEMS, KEY): beds and textures, up-front leads, keys,
+- 220 presets tagged by category (VOX, WND, BRS, STR, BEL, SYN, AIR, NOIR, ASTRO, GEMS, KEY): beds and textures, up-front leads, keys,
   plucks, basses and stabs that carry a track alone, NOIR (sad keys, crying leads, muffled pads), ASTRO (dark flutes,
   far-off bells, spacey leads) and GEMS (soft warm bells, sparkling keys, high reed-and-synth leads)
 - Tempo sync: the delay in note values and Motion locked to the bar (FX page)

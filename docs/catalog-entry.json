@@ -16,7 +16,7 @@
     "lo-fi"
   ],
   "license": "MIT",
-  "summary": "A dark, cinematic instrument: choirs, winds, brass, strings, bells, keys, mallets, synths and textures from CC0 recordings, in two layered slots with filter, lo-fi, tempo-synced delay and motion, reverb and sub. 200 presets; a metal-chamber screen whose vents glow as you play, in five themes. Also a VST3 for Mac and Windows and an AU for Mac.",
+  "summary": "A dark, cinematic instrument: choirs, winds, brass, strings, bells, keys, mallets, synths and textures from CC0 recordings, in two layered slots with filter, lo-fi, tempo-synced delay and motion, reverb and sub. 220 presets; a metal-chamber screen whose vents glow as you play, in five themes. Also a VST3 for Mac and Windows and an AU for Mac.",
   "asset_pattern": "OxZygen-*-mpc-armv7.zip",
   "screenshot": "https://raw.githubusercontent.com/3dthc/OxZygen/7e5b90ad5abf8e7b9511f8fc1f372ae5f71c8dbf/docs/img/player.png",
   "tip": "https://ko-fi.com/3dthc"

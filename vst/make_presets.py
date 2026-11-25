@@ -528,11 +528,134 @@ LEVEL = {'Init': 91, 'Lone Flute': 100, 'Midnight Sax': 100, 'Clay Ocarina': 100
 LEVEL_076 = {"Lead Vox Ahh": 81, "Choir Hit": 78, "Bright Vocal Pad": 79, "Solo Flute": 100, "Pan Lead": 93, "Soprano Sax Lead": 90, "Clarinet Melody": 100, "Dream Brass": 84, "Solo Trumpet": 99, "Horn Section Stab": 75, "Big Brass Swell": 83, "String Machine": 83, "Front Row Strings": 82, "Short Strings": 78, "Octave String Lead": 87, "Sync Echo Keys": 100, "Golden Hour Lead": 100, "Sunset Saw Lead": 97, "Velvet Poly": 85, "Analog Brass Section": 91, "Neon Stab": 79, "Bright Pluck": 100, "Hollow Square": 100, "Glide Bass": 100, "Round Bass": 94, "Wide Chord Pad": 76, "Pulse Swell": 89, "Bar Sweep Pad": 89, "Evolving Lead": 81, "Grain Keys": 92, "Shimmer Motion Bed": 76, "Tired Rhodes": 100, "3AM Text": 100, "Felt Room": 100, "Pillow Talk Keys": 90, "Unread": 84, "Cried Out Lead": 91, "Cold Shoulder Lead": 71, "Wilted Lead": 99, "Drowned Lead": 63, "Smoke Ring Sax": 93, "Behind The Wall": 100, "Overcast Pad": 87, "Aching Pad": 73, "Cold Bloom": 69, "Sinking": 60, "Gone By Morning": 64, "Echoes Of You": 86, "Warm Halo": 81, "Static Pulse": 100, "Velvet Funeral": 82, "Night Flute": 100, "Syrup Flute": 100, "Far Planet Pipe": 73, "Haze Flute": 89, "Starlight Mallets": 99, "Orbit Bells": 94, "Comet Keys": 93, "Zero Gravity": 100, "Signal Lead": 99, "Siren Rise": 75, "Abduction": 57, "Far Horn Signal": 73, "Violet Planet": 86, "Moon Choir": 66, "Astronaut Fog": 70, "Low Orbit": 82, "Soft Diamond": 97, "Velvet Bells": 100, "Music Box Glow": 94, "Pearl Keys": 94, "Moonstone": 100, "Opal Pluck": 100, "Lullaby Bells": 72, "Amber Chime": 100, "Diamond Dust": 100, "Cut Glass": 100, "Chandelier": 100, "Halo Lead": 79, "Crystal Voice": 83, "Aurora": 94, "Snow Globe": 77, "Diamond Rain": 56, "High Reed Stack": 93, "Silk Reed Lead": 85, "Reed Halo Lead": 85, "Glass Reed Lead": 92, "Chord Keys": 100, "Digital Bell Keys": 100, "Glass Piano": 100, "Grand Piano": 100, "Soft Piano": 100, "Ballad Piano": 92, "Piano and Pad": 99, "Electric Piano": 100, "Dream E-Piano": 94, "Concert Harp": 100, "Harp Garden": 91, "Celesta Lead": 89, "Midnight Marimba": 100, "Kalimba": 100, "Marimba": 100, "Glockenspiel": 100, "Hand Chimes": 97}
 # LEVEL_076_END
 LEVEL.update(LEVEL_076)
+# 0.8.1: the new and replaced presets, levelled on a held chord and a melody to the library's median
+LEVEL_081 = {"Silver Flute Lead": 67, "Gilded Horn Lead": 82, "Crystal Poly": 97, "Velvet Sax Melody": 93, "Echo Of A Kiss": 68, "Faded Music Box": 80, "Starship Choir": 60, "Violet Comet": 95, "Astronaut Lullaby": 87, "Velvet Lantern": 85, "Moonstone Choir": 65, "Topaz Harp": 89, "Glow Keys": 85, "Moonlight Celesta": 91, "Piano Halo": 83, "Glass Marimba": 92, "Seraph Lead": 59, "Choirboy Melody": 70, "Hymn Chords": 88, "Crystal Flute": 66, "Fairy Ocarina": 78, "Moonlit Clarinet": 97, "Starfall Vibes": 74, "Bell Choir Melody": 89, "Singing Glass": 98, "Halo Saw Lead": 96, "Last Slow Dance": 79, "Rainy Window Keys": 77, "Nebula Flute": 73, "Satellite Bells": 94, "Prism Lead": 100, "Wishing Well": 87, "Sapphire Keys": 97, "Celestial Harp": 74, "Stardust Piano": 86, "Dream Kalimba": 87}
+LEVEL.update(LEVEL_081)
 # the kalimba is all strike: levelled on a held chord it comes out about 5 dB hot when played, so these sit lower
 for _n in ("Opal Pluck", "Kalimba", "3AM Text"):
     LEVEL[_n] = max(40, LEVEL.get(_n, 80) - 32)
 
+# --- 0.8.1: playable "wow" sounds. Ethereal and magical, but built to carry a melody and hold a chord: they speak at
+# once (no slow swell), keep steady pitch (light Motion and vibrato, tight choir spread), and get their sparkle from an
+# octave layer, glass or chimes on top, and a tempo-synced echo rather than from drift. Each is tagged into an existing
+# bank (_cat), so the browser lists it among that bank's presets; in the full list they follow the 0.8.0 presets, so a
+# saved project's preset number still names the same preset.
+NEW_081 = [
+    ("Seraph Lead", dict(**A("Vowels", oct="+1", k1=65, k2=60, k3=20, level=80), **B("Glass", oct="+1", k1=5, k2=40, k3=60, level=30), _cat="Voices",
+        attack=0, release=35, air=70, dark=15, motion=15, space=60, rv_mix=28, dl_mix=24, dl_feedback=40, dl_sync="1/8D")),
+    ("Choirboy Melody", dict(**A("Vowels", oct="+1", k1=80, k2=65, k3=15, level=85), **B("Choir", oct="+1", k1=95, k2=20, k3=15, level=15), _cat="Voices",
+        attack=0, release=40, air=65, dark=20, motion=15, space=60, rv_mix=30)),
+    ("Hymn Chords", dict(**A("Harp", k1=100, k2=0, k3=70, level=80), **B("Choir", k1=60, k2=20, k3=15, level=25), _cat="Voices",
+        attack=0, release=50, air=55, dark=30, motion=15, space=65, rv_mix=32)),
+    ("Crystal Flute", dict(**A("Flute", oct="+1", k1=30, k2=35, k3=70, level=85), **B("Glockenspiel", oct="+1", k1=60, k2=20, k3=70, level=25), _cat="Winds",
+        attack=0, release=35, air=65, dark=15, motion=15, space=60, rv_mix=28, dl_mix=22, dl_feedback=35, dl_sync="1/4")),
+    ("Fairy Ocarina", dict(**A("Ocarina", oct="+1", k1=30, k2=30, k3=60, level=85), **B("Hand Chimes", oct="+1", k1=60, k2=20, k3=60, level=25), _cat="Winds",
+        attack=0, release=40, air=60, dark=20, motion=15, space=60, rv_mix=30, dl_mix=20, dl_feedback=35, dl_sync="1/8D")),
+    ("Moonlit Clarinet", dict(**A("Clarinet", k1=30, k2=35, k3=65, level=85), **B("Bowed Vibes", oct="+1", k1=10, k2=30, k3=60, level=40), _cat="Winds",
+        attack=0, release=45, air=60, dark=20, motion=15, space=65, rv_mix=32, dl_mix=22, dl_feedback=40, dl_sync="1/4")),
+    ("Starfall Vibes", dict(**A("Vibes", oct="+1", k1=70, k2=45, k3=60, level=85), **B("Glass", oct="+1", k1=5, k2=40, k3=60, level=25), _cat="Bells",
+        attack=0, release=45, air=60, dark=20, motion=15, space=65, rv_mix=32, dl_mix=25, dl_feedback=45, dl_sync="1/8D")),
+    ("Bell Choir Melody", dict(**A("Hand Chimes", oct="+1", k1=60, k2=30, k3=60, level=80), **B("Choir", oct="+1", k1=90, k2=20, k3=15, level=22), _cat="Bells",
+        attack=0, release=45, air=60, dark=20, motion=15, space=65, rv_mix=34)),
+    ("Singing Glass", dict(**A("Glass", k1=10, k2=30, k3=65, level=85), **B("Glockenspiel", k1=50, k2=20, k3=60, level=35), _cat="Bells",
+        attack=0, release=45, air=60, dark=20, motion=15, space=65, rv_mix=32)),
+    ("Celestial Harp", dict(**A("Harp", k1=100, k2=0, k3=85, level=80), **B("Choir", oct="+1", k1=95, k2=30, k3=20, level=30), _cat="Keys",
+        attack=0, release=55, air=65, dark=15, motion=15, space=70, rv_mix=34, dl_mix=18, dl_feedback=35, dl_sync="1/8D")),
+    ("Stardust Piano", dict(**A("Piano", k1=100, k2=0, k3=80, level=85), **B("Glockenspiel", oct="+1", k1=50, k2=20, k3=70, level=25), _cat="Keys",
+        attack=0, release=40, air=60, dark=15, motion=10, space=55, rv_mix=28, dl_mix=22, dl_feedback=40, dl_sync="1/8D")),
+    ("Dream Kalimba", dict(**A("Kalimba", k1=100, k2=0, k3=75, level=70), **B("Bowed Vibes", oct="+1", k1=15, k2=30, k3=50, level=30), _cat="Keys",
+        attack=0, release=45, air=55, dark=25, motion=15, space=60, rv_mix=30, dl_mix=25, dl_feedback=45, dl_sync="1/8")),
+    ("Prism Lead", dict(**A("Synth Lead", oct="+1", k1=65, k2=10, k3=60, level=75), **B("Glockenspiel", oct="+1", k1=60, k2=20, k3=80, level=30), _cat="GEMS",
+        attack=0, release=35, air=65, dark=15, motion=10, space=60, rv_mix=28, dl_mix=25, dl_feedback=40, dl_sync="1/8D")),
+    ("Wishing Well", dict(**A("Hand Chimes", k1=70, k2=40, k3=70, level=80), **B("Vowels", oct="+1", k1=60, k2=60, k3=22, level=30), _cat="GEMS",
+        attack=0, release=50, air=65, dark=15, motion=15, space=65, rv_mix=34, dl_mix=28, dl_feedback=50, dl_sync="1/4")),
+    ("Sapphire Keys", dict(**A("E-Piano", oct="+1", k1=90, k2=20, k3=75, level=75), **B("Glass", oct="+1", k1=5, k2=40, k3=65, level=45), _cat="GEMS",
+        attack=0, release=45, air=70, dark=10, motion=15, space=65, rv_mix=32, dl_mix=28, dl_feedback=45, dl_sync="1/8D")),
+    ("Nebula Flute", dict(**A("Flute", k1=30, k2=40, k3=50, level=85), **B("Synth Lead", oct="+1", k1=55, k2=10, k3=70, level=25), _cat="ASTRO",
+        attack=0, release=45, dark=45, air=55, motion=15, space=75, rv_decay=70, rv_mix=36, dl_mix=30, dl_feedback=50, dl_sync="1/4D")),
+    ("Satellite Bells", dict(**A("Glockenspiel", k1=60, k2=30, k3=60, level=80), **B("Synth Pad", k1=40, k2=40, k3=80, level=20), _cat="ASTRO",
+        attack=0, release=50, dark=45, air=50, motion=20, space=75, rv_mix=36, dl_mix=32, dl_feedback=55, dl_sync="1/8D")),
+    ("Last Slow Dance", dict(**A("Vibes", k1=65, k2=50, k3=40, level=80), **B("Vowels", oct="+1", k1=20, k2=50, k3=22, level=35), _cat="NOIR",
+        attack=0, release=45, dark=50, air=40, motion=15, lofi=12, space=60, rv_mix=30, dl_mix=22, dl_feedback=35, dl_sync="1/4")),
+    ("Rainy Window Keys", dict(**A("Piano", k1=100, k2=0, k3=45, level=85), **B("Hand Chimes", oct="+1", k1=60, k2=20, k3=50, level=30), _cat="NOIR",
+        attack=0, release=55, dark=50, air=40, motion=10, lofi=0, space=70, rv_size=75, rv_decay=70, rv_mix=40, dl_mix=30, dl_feedback=50, dl_sync="1/8D")),
+    ("Halo Saw Lead", dict(**A("Synth Lead", oct="+1", k1=70, k2=15, k3=70, level=75), **B("Choir", oct="+1", k1=90, k2=30, k3=15, level=30), _cat="Synth",
+        attack=0, release=35, air=60, dark=20, motion=10, space=60, rv_mix=28, dl_mix=25, dl_feedback=40, dl_sync="1/8D")),
+]
+
+# Near-duplicates (measured: the same sound in all but name) become new sounds in the same place and bank.
+REPLACE_081 = {
+    "Glass Piano": ("Moonlight Celesta", dict(**A("Glockenspiel", k1=70, k2=20, k3=55, level=80), **B("Piano", k1=100, k2=0, k3=60, level=35),
+        attack=0, release=45, air=55, dark=20, motion=10, space=60, rv_mix=30, dl_mix=18, dl_feedback=35, dl_sync="1/8D")),
+    "Piano and Pad": ("Piano Halo", dict(**A("Piano", k1=100, k2=0, k3=70, level=80), **B("Choir", oct="+1", k1=95, k2=30, k3=15, level=25),
+        attack=0, release=45, air=55, dark=25, motion=10, space=60, rv_mix=28, dl_mix=15, dl_feedback=30, dl_sync="1/4")),
+    "Solo Flute": ("Silver Flute Lead", dict(**A("Flute", oct="+1", k1=35, k2=30, k3=75, level=85), **OFF,
+        attack=0, release=35, air=60, dark=15, motion=10, space=55, rv_mix=26, dl_mix=18, dl_feedback=35, dl_sync="1/8D")),
+    "Solo Trumpet": ("Gilded Horn Lead", dict(**A("Horn", oct="+1", k1=30, k2=40, k3=65, level=85), **B("Glass", oct="+1", k1=5, k2=30, k3=60, level=20),
+        attack=0, release=40, air=55, dark=20, motion=10, space=60, rv_mix=28, dl_mix=15, dl_feedback=30, dl_sync="1/4")),
+    "Smoke Ring Sax": ("Velvet Sax Melody", dict(**A("Sax", k1=35, k2=40, k3=50, level=80), **B("E-Piano", oct="+1", k1=80, k2=30, k3=55, level=45),
+        attack=0, release=45, dark=35, air=50, motion=10, lofi=0, space=65, rv_mix=34, dl_mix=28, dl_feedback=45, dl_sync="1/4D")),
+    "Neon Stab": ("Crystal Poly", dict(**A("Synth Brass", k1=60, k2=20, k3=60, level=80), **B("Glockenspiel", oct="+1", k1=50, k2=20, k3=70, level=30),
+        attack=0, release=35, air=60, dark=20, motion=10, space=55, rv_mix=26, dl_mix=20, dl_feedback=35, dl_sync="1/8D")),
+    "Static Pulse": ("Faded Music Box", dict(**A("Glockenspiel", k1=50, k2=20, k3=40, level=80), **B("Vowels", k1=10, k2=40, k3=22, level=25),
+        attack=0, release=45, dark=50, air=35, motion=10, lofi=15, space=60, rv_mix=30, dl_mix=22, dl_feedback=40, dl_sync="1/4")),
+    "Opal Pluck": ("Topaz Harp", dict(**A("Harp", oct="+1", k1=90, k2=20, k3=80, level=80), **B("Hand Chimes", oct="+1", k1=60, k2=20, k3=70, level=30),
+        attack=0, release=40, air=65, dark=15, motion=10, space=60, rv_mix=28, dl_mix=22, dl_feedback=40, dl_sync="1/16")),
+    "Midnight Marimba": ("Glass Marimba", dict(**A("Marimba", k1=90, k2=20, k3=70, level=80), **B("Glass", oct="+1", k1=5, k2=30, k3=60, level=30),
+        attack=0, release=40, air=55, dark=25, motion=10, space=55, rv_mix=28, dl_mix=18, dl_feedback=35, dl_sync="1/8D")),
+    "Moonstone": ("Moonstone Choir", dict(**A("Vowels", k1=35, k2=45, k3=20, level=75), **B("Vibes", oct="+1", k1=60, k2=30, k3=60, level=50),
+        attack=0, release=45, air=65, dark=15, motion=15, space=65, rv_mix=32, dl_mix=22, dl_feedback=40, dl_sync="1/8D")),
+    "Chord Keys": ("Glow Keys", dict(**A("E-Piano", k1=95, k2=40, k3=55, level=75), **B("Vibes", oct="+1", k1=60, k2=30, k3=60, level=45),
+        attack=0, release=45, air=60, dark=20, motion=10, space=60, rv_mix=30, dl_mix=20, dl_feedback=35, dl_sync="1/8D")),
+    "Velvet Bells": ("Velvet Lantern", dict(**A("Vibes", k1=55, k2=40, k3=40, level=80), **B("Flute", k1=25, k2=35, k3=45, level=30),
+        attack=0, release=45, air=50, dark=35, motion=15, space=60, rv_mix=30)),
+    "Astronaut Fog": ("Astronaut Lullaby", dict(**A("Kalimba", k1=100, k2=0, k3=65, level=70), **B("Bowed Vibes", k1=15, k2=30, k3=40, level=30),
+        attack=0, release=50, dark=45, air=45, motion=15, space=75, rv_mix=34, dl_mix=30, dl_feedback=55, dl_sync="1/4D")),
+    "Abduction": ("Starship Choir", dict(**A("Vowels", oct="+1", k1=60, k2=55, k3=22, level=75), **B("Synth Lead", oct="+1", k1=50, k2=10, k3=60, level=30),
+        attack=0, release=45, dark=40, air=55, motion=15, space=75, rv_mix=34, dl_mix=25, dl_feedback=45, dl_sync="1/8D")),
+    "Violet Planet": ("Violet Comet", dict(**A("Synth Lead", oct="+1", k1=55, k2=40, k3=75, level=75), **B("Glass", oct="+1", k1=5, k2=40, k3=60, level=30),
+        attack=0, release=45, dark=40, air=55, motion=15, space=75, rv_mix=34, dl_mix=28, dl_feedback=45, dl_sync="1/4")),
+    "Echoes Of You": ("Echo Of A Kiss", dict(**A("Vowels", k1=45, k2=45, k3=22, level=80), **B("Piano", k1=100, k2=0, k3=40, level=30),
+        attack=0, release=45, dark=45, air=40, motion=10, lofi=12, space=60, rv_mix=30, dl_mix=22, dl_feedback=40, dl_sync="1/4")),
+}
+
+# Leads that drifted or swelled in (measured): a melody needs them to speak at once and stay in tune. Pads are left
+# as they were (measured: their waver comes from the choir recording's vibrato, which no setting removes).
+LEAD_WORDS = ("Lead", "Flute", "Sax", "Vox", "Hook", "Pipe", "Clarinet", "Ocarina", "Song", "Melody", "Trumpet", "Signal", "Doo", "Doos")
+def tighten(name, v):
+    v = dict(v)
+    lead = any(re.search(r"\b%s\b" % w, name) for w in LEAD_WORDS)   # whole words: "Doo" is not "Doom"
+    if name in ("Evolving Lead", "Underwater Vox"):   # measured worse when tightened: kept as designed
+        return v
+    if not lead:      # pads keep their settings: their waver is the choir recording's own vibrato, not a knob
+        return v
+    def sound(x):
+        cat = v.get(x + "_cat")
+        return cat and v.get("%s_%s" % (x, cat.lower()))
+    v["motion"] = min(v.get("motion", 45), 20 if lead else 35)
+    for x in "ab":
+        cat, snd = v.get(x + "_cat"), sound(x)
+        if not cat or cat == "Off":
+            continue
+        if cat == "Winds" or cat == "Brass":
+            v[x + "_k1"] = min(v.get(x + "_k1", 50), 30 if lead else 40)          # vibrato
+        if snd == "Choir":
+            v[x + "_k2"] = min(v.get(x + "_k2", 50), 40 if lead else 55)          # spread
+            if lead: v[x + "_k3"] = min(v.get(x + "_k3", 50), 18)                 # attack
+        if snd == "Vowels" and lead:
+            v[x + "_k3"] = min(v.get(x + "_k3", 50), 22)
+        if cat == "Air" and snd == "Texture":
+            v[x + "_k2"] = 43 if lead else v.get(x + "_k2", 43)                    # texture pitch: unison under a lead
+        if cat == "Strings" and lead:
+            v[x + "_k2"] = min(v.get(x + "_k2", 50), 20)                          # swell
+        if snd in ("Bowed Vibes", "Glass") and lead:
+            v[x + "_k1"] = min(v.get(x + "_k1", 50), 15)                          # swell
+    if lead:
+        v["attack"] = min(v.get("attack", 50), 8)
+    return v
+
 FIRST_076 = "Golden Hour Lead"   # the first design added in 0.7.6
+FIRST_081 = NEW_081[0][0]   # the first design added in 0.8.1
 TAG = {"Voices": "VOX", "Winds": "WND", "Brass": "BRS", "Strings": "STR", "Bells": "BEL", "Synth": "SYN", "Air": "AIR",
        "NOIR": "NOIR", "ASTRO": "ASTRO", "GEMS": "GEMS", "Keys": "KEY", "Mallets": "KEY"}   # NOIR and ASTRO: picked by a design's _cat, not its slot A
 ORDER = list(TAG)
@@ -541,13 +664,19 @@ ORDER = list(TAG)
 def tagged():
     """Init first, then every preset grouped by slot A's category, its name tagged (VOX, WND...) for the MPC list."""
     out = [d for d in DESIGNS if d[0] == "Init"]
-    designs = [(n, synced(v)) for n, v in DESIGNS]
+    designs = []
+    for n, v in DESIGNS + NEW_081:
+        if n in REPLACE_081:                    # same place, same bank, new sound
+            nn, nv = REPLACE_081[n]
+            n, v = nn, dict(nv, _cat=v.get("_cat", v.get("a_cat")))
+        designs.append((n, synced(tighten(n, v))))
     rest = [d for d in designs if d[0] != "Init"]
     # the 96 presets up to 0.7.5 keep their places in the list (a saved project's preset number still names the same
-    # preset); everything newer follows, grouped the same way
-    cut = [n for n, _ in rest].index(FIRST_076)
+    # preset); everything newer follows, grouped the same way, then the 0.8.1 additions
+    names = [n for n, _ in rest]
+    cut, cut2 = names.index(FIRST_076), names.index(FIRST_081)
     key = lambda d: ORDER.index(d[1].get("_cat", d[1]["a_cat"]))   # stable: keeps each group's own order
-    rest = sorted(rest[:cut], key=key) + sorted(rest[cut:], key=key)
+    rest = sorted(rest[:cut], key=key) + sorted(rest[cut:cut2], key=key) + sorted(rest[cut2:], key=key)
     for name, vals in rest:
         out.append(("%s %s" % (TAG[vals.get("_cat", vals["a_cat"])], name), {k: v for k, v in vals.items() if k != "_cat"}, name))
     return [(d[0], d[1], d[0]) if len(d) == 2 else d for d in out]
