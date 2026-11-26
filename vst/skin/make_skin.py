@@ -691,10 +691,14 @@ def render_art():
             js = DRAW_JS if not TH["dir"] else DRAW_JS.replace(LIVE, TH["acc"]).replace("31,111,255", TH["glow"]).replace("80,150,255", TH["glow"]) \
                         .replace("#4d8dff", TH["ptr"])
             pg.add_script_tag(content=js)
-            for r in sorted({SLOT_R, FX_R, BR_R}):
+            for r in sorted({SLOT_R, FX_R}):
                 sz = 2 * r + 10
                 frames = [png(pg.evaluate("([s, v]) => knob2(s, v)", [sz, i / 127])) for i in range(128)]
                 strip(frames, sz).save(os.path.join(out, "knob%d.png" % r), optimize=True)
+            if not TH["dir"]:   # BROWSE's invisible controls: a clear strip, once (every theme points at it)
+                from PIL import Image as _I
+                csz = 2 * BR_R + 10
+                strip([_I.new("RGBA", (csz, csz), (0, 0, 0, 0))] * 128, csz).save(os.path.join(out, "clear%d.png" % BR_R), optimize=True)
             sz = 2 * PLAYER_R + 10
             frames = [png(pg.evaluate("([s, v]) => knob2(s, v)", [sz, i / 127])) for i in range(128)]
             strip(frames, sz).save(os.path.join(out, "chknob%d.png" % PLAYER_R), optimize=True)
@@ -821,14 +825,13 @@ def write_layout():
                                                                   art("row_on.png", th), wh),
         'readout cx=%d cy=%d w=%d h=%d label="" key=b_head box=0 tsize=24 tcolor=%s tweight=bold talign=left%s'
         % (ROW_BOX[0] + 18 + HEAD_W // 2, hy, HEAD_W, PG_H, th["txt_dim"].lstrip("#"), wh),
-        # BANK and PRESET: small knobs the data wheel can drive once tapped, and the Q-Links' controls on this page; each
-        # shows what it picked beside it (lay=side: knob at the left of the box, the value text in the rest)
-        'knob cx=%d cy=%d r=%d label="BANK" key=br_cat strip=%s lay=side bw=%d bh=%d vs=26 ink=%s ink_dim=%s%s'
-        % (cx_ + cw_ // 2, (cy_ + NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP + CAT_BOX[3]) // 2, BR_R, art("knob%d.png" % BR_R, th),
-           cw_, CAT_BOX[3] - (cy_ + NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP) - 16, th["txt"].lstrip("#"), th["txt"].lstrip("#"), wh),
-        'knob cx=%d cy=%d r=%d label="PRESET" key=br_preset strip=%s lay=side bw=%d bh=%d vs=22 ink=%s ink_dim=%s%s'
-        % ((ROW_BOX[0] + 18 + HEAD_W + 16 + px - 8 - 150 - 16) // 2, hy, BR_R, art("knob%d.png" % BR_R, th),
-           (px - 8 - 150 - 16) - (ROW_BOX[0] + 18 + HEAD_W + 16), PG_H + 6, th["txt"].lstrip("#"), th["txt"].lstrip("#"), wh),
+        # BANK and PRESET: invisible controls (a clear picture, no name, no value) over empty space. MPC only lets the data
+        # wheel and the Q-Link screen follow a parameter that some control on the page shows, so these give the two
+        # Q-Links (bank, preset) their controls; a tap on them only selects them.
+        'knob cx=%d cy=%d r=%d label="BANK" key=br_cat strip=art/clear%d.png ns=0 vs=0 bw=%d%s'
+        % (cx_ + cw_ // 2, (cy_ + NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP + CAT_BOX[3]) // 2, BR_R, BR_R, cw_, wh),
+        'knob cx=%d cy=%d r=%d label="PRESET" key=br_preset strip=art/clear%d.png ns=0 vs=0 bw=%d%s'
+        % ((ROW_BOX[0] + 18 + HEAD_W + 16 + px - 8 - 150 - 16) // 2, hy, BR_R, BR_R, (px - 8 - 150 - 16) - (ROW_BOX[0] + 18 + HEAD_W + 16), wh),
         'readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=24 tcolor=%s tweight=bold talign=right%s'
         % (px - 8 - 75, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
         'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=24 tcolor=%s tweight=bold%s'
