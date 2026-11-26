@@ -1939,8 +1939,7 @@
    "min": 0,
    "max": 1,
    "default": 0.5,
-   "dynamic_display": true,
-   "refresh_display": true
+   "dynamic_display": true
   },
   {
    "key": "br_preset",
@@ -1948,8 +1947,7 @@
    "min": 0,
    "max": 1,
    "default": 0.5,
-   "dynamic_display": true,
-   "refresh_display": true
+   "dynamic_display": true
   }
  ],
  "sections": [

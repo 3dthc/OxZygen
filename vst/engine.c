@@ -322,6 +322,7 @@ typedef struct {
     int page;                 /* the page of that list shown */
     double tap_t[NPARAMS];    /* when each pad was last tapped (MPC echoes a tap; one within TAP_S is that echo) */
     double quiet_until;       /* after opening or a restore: pads ignore the values a project puts back */
+    double pick_t;            /* the BROWSE preset knob's last step (one per detent, see scroll()) */
     double bpm, ppq, mph;          /* the host's tempo and song position (song_pos), the synced Motion phase (cycles) */
     int playing, stop_req;
 } oxz_t;
@@ -446,6 +447,7 @@ static double wall_s(void) {
     return (double)t.tv_sec + t.tv_nsec / 1e9;
 }
 #define TAP_S 0.25
+#define PICK_S 0.07        /* the preset knob: events closer than this to its last step are one detent */
 #define QUIET_S 2.0
 /* Tempo sync (0.7.6). Delay: Free (the Time knob) or a note value. Motion: Free or one sway per 4 bars ... 1/4 note,
  * locked to the song position while the host plays (so it lands the same on every pass). Vibrato stays free. */
@@ -553,6 +555,11 @@ static void scroll(oxz_t *s, int i, float x) {
         s->rev++;
         return;
     }
+    /* a Live II detent arrives as a short burst of events (device report, 2026-11-25): one preset per detent, the rest
+       of the burst (within PICK_S of the last step) ignored, so a turn moves one preset per click, not several */
+    double now = wall_s();
+    if (now - s->pick_t < PICK_S) return;
+    s->pick_t = now;
     int m[NPRESET], n = members(s, m), cur = cur_preset(s), at = -1;
     if (!n) return;
     for (int k = 0; k < n; k++) if (m[k] == cur) at = k;

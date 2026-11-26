@@ -140,6 +140,8 @@ CAT_CW = (236 - (CAT_COLS - 1) * CAT_GAP) // CAT_COLS   # a category tile: 2 col
 ROW_LIST = (332, LIST_Y, 896, 3)       # x, y, width, columns
 ROW_COL_GAP = LIST_GAP              # the list widget uses one gap both ways
 PG_W, PG_H = 52, 30                    # page up / down pads, top right of the presets panel
+BR_R = 14                              # BROWSE's two small knobs (BANK under the categories, PRESET in the list header)
+HEAD_W = 260                           # the list heading ("STRINGS  12 PRESETS" fits); the PRESET knob takes the room after it
 THEME_BOX = (1000, 116, 1234, 148)     # the theme picker, right of the THEME heading (screen)
 THEME_PAD = 44   # 58: 126 px x 128 frames = 16128 px; 59 hits the 16384 limit and drifts on the device
 
@@ -689,7 +691,7 @@ def render_art():
             js = DRAW_JS if not TH["dir"] else DRAW_JS.replace(LIVE, TH["acc"]).replace("31,111,255", TH["glow"]).replace("80,150,255", TH["glow"]) \
                         .replace("#4d8dff", TH["ptr"])
             pg.add_script_tag(content=js)
-            for r in sorted({SLOT_R, FX_R}):
+            for r in sorted({SLOT_R, FX_R, BR_R}):
                 sz = 2 * r + 10
                 frames = [png(pg.evaluate("([s, v]) => knob2(s, v)", [sz, i / 127])) for i in range(128)]
                 strip(frames, sz).save(os.path.join(out, "knob%d.png" % r), optimize=True)
@@ -817,8 +819,16 @@ def write_layout():
         "tweight=semibold talign=left tx=14 img=%s img_on=%s%s" % (x, y, w, rows_h, cols, LIST_TH, LIST_GAP,
                                                                   th["row_tx"].lstrip("#"), art("row_off.png", th),
                                                                   art("row_on.png", th), wh),
-        'readout cx=%d cy=%d w=420 h=%d label="" key=b_head box=0 tsize=24 tcolor=%s tweight=bold talign=left%s'
-        % (ROW_BOX[0] + 18 + 210, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
+        'readout cx=%d cy=%d w=%d h=%d label="" key=b_head box=0 tsize=24 tcolor=%s tweight=bold talign=left%s'
+        % (ROW_BOX[0] + 18 + HEAD_W // 2, hy, HEAD_W, PG_H, th["txt_dim"].lstrip("#"), wh),
+        # BANK and PRESET: small knobs the data wheel can drive once tapped, and the Q-Links' controls on this page; each
+        # shows what it picked beside it (lay=side: knob at the left of the box, the value text in the rest)
+        'knob cx=%d cy=%d r=%d label="BANK" key=br_cat strip=%s lay=side bw=%d bh=%d vs=26 ink=%s ink_dim=%s%s'
+        % (cx_ + cw_ // 2, (cy_ + NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP + CAT_BOX[3]) // 2, BR_R, art("knob%d.png" % BR_R, th),
+           cw_, CAT_BOX[3] - (cy_ + NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP) - 16, th["txt"].lstrip("#"), th["txt"].lstrip("#"), wh),
+        'knob cx=%d cy=%d r=%d label="PRESET" key=br_preset strip=%s lay=side bw=%d bh=%d vs=22 ink=%s ink_dim=%s%s'
+        % ((ROW_BOX[0] + 18 + HEAD_W + 16 + px - 8 - 150 - 16) // 2, hy, BR_R, art("knob%d.png" % BR_R, th),
+           (px - 8 - 150 - 16) - (ROW_BOX[0] + 18 + HEAD_W + 16), PG_H + 6, th["txt"].lstrip("#"), th["txt"].lstrip("#"), wh),
         'readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=24 tcolor=%s tweight=bold talign=right%s'
         % (px - 8 - 75, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
         'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=24 tcolor=%s tweight=bold%s'
@@ -844,7 +854,7 @@ def write_layout():
 
     # SOUND: a category's sounds follow <slot>_look (theme x 8 + category), the knob names <slot>_lbl (theme x 23 + sound)
     # Q-Link 1: category, Q-Link 2: preset in it (one click per step, see scroll() in engine.c); the rest of the column empty
-    L.append('qlinks "BROWSE" = br_cat,br_preset,-,-')
+    L.append('qlinks "BROWSE" = br_cat,br_preset')
     L.append("[tab SOUND]")
     themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_sound.png", th), w)])
     for p, name, x0, y0 in SLOTS:
