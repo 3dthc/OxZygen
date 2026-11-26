@@ -322,7 +322,6 @@ typedef struct {
     int page;                 /* the page of that list shown */
     double tap_t[NPARAMS];    /* when each pad was last tapped (MPC echoes a tap; one within TAP_S is that echo) */
     double quiet_until;       /* after opening or a restore: pads ignore the values a project puts back */
-    double pick_t;            /* the BROWSE preset knob's last step (one per detent, see scroll()) */
     double bpm, ppq, mph;          /* the host's tempo and song position (song_pos), the synced Motion phase (cycles) */
     int playing, stop_req;
 } oxz_t;
@@ -447,7 +446,6 @@ static double wall_s(void) {
     return (double)t.tv_sec + t.tv_nsec / 1e9;
 }
 #define TAP_S 0.25
-#define PICK_S 0.07        /* the preset knob: events closer than this to its last step are one detent */
 #define QUIET_S 2.0
 /* Tempo sync (0.7.6). Delay: Free (the Time knob) or a note value. Motion: Free or one sway per 4 bars ... 1/4 note,
  * locked to the song position while the host plays (so it lands the same on every pass). Vibrato stays free. */
@@ -501,6 +499,7 @@ static int members(const oxz_t *s, int *out) {
 }
 static int pages(int n) { return n > 0 ? (n + ROWS - 1) / ROWS : 1; }
 /* the list shows the current preset: its category (unless ALL is listed) and the page it is on */
+static void sync_browse(oxz_t *s);
 static void follow(oxz_t *s) {
     int cur = cur_preset(s);
     if (s->view < 0) s->view = PRESET_CAT[cur] + 1;                       /* just opened or restored: its category */
@@ -508,6 +507,7 @@ static void follow(oxz_t *s) {
     int m[NPRESET], n = members(s, m);
     s->page = 0;
     for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
+    sync_browse(s);
 }
 static void apply_preset(oxz_t *s, int pr) {
     if (pr < 0) pr = 0;
@@ -538,34 +538,45 @@ static void step_preset(oxz_t *s, int dir) {
     int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
     if (m[k] != cur) apply_preset(s, m[k]);
 }
-/* BROWSE's Q-Links (and the data wheel). Each rests at 0.5: MPC sends every click as a small step from the value it last
- * read back (verified on Force, MPC OS 3.9.1: 1/128 for a Q-Link, 0.01 for the wheel), so the side of 0.5 says which way,
- * and every click moves exactly one category or one preset. They stop at the ends instead of wrapping. */
-static void scroll(oxz_t *s, int i, float x) {
-    s->val[i] = 0.5f;
-    if (fabsf(x - 0.5f) < 0.001f || wall_s() < s->quiet_until) return;   /* at rest, or a project putting 0.5 back */
-    int dir = x > 0.5f ? 1 : -1;
-    if (i == I_br_cat) {
-        int v = (s->view < 0 ? 0 : s->view) + dir;
-        if (v < 0 || v > NBCAT) return;
-        s->view = v;
-        int m[NPRESET], n = members(s, m), cur = cur_preset(s);
-        s->page = 0;
-        for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
-        s->rev++;
-        return;
-    }
-    /* a Live II detent arrives as a short burst of events (device report, 2026-11-25): one preset per detent, the rest
-       of the burst (within PICK_S of the last step) ignored, so a turn moves one preset per click, not several */
-    double now = wall_s();
-    if (now - s->pick_t < PICK_S) return;
-    s->pick_t = now;
-    int m[NPRESET], n = members(s, m), cur = cur_preset(s), at = -1;
-    if (!n) return;
+/* BROWSE's Q-Link group, as in the Odin 2 port: BANK steps the 11 banks (0 = VOICES .. 10 = KEYS; ALL stays a tap on the
+ * screen) and PRESET a place in the shown bank's list (0 .. the biggest bank's size), each a whole-number list the wrapper
+ * steps one value per qlink_ticks Q-Link or data wheel clicks. The engine keeps both on what the browser shows (a tap on a
+ * bank or a row moves them too), PRESET stops on the bank's last preset, and a turn of PRESET while ALL is listed goes to
+ * the loaded preset's own bank first. A preset loads only when the pick differs from the loaded one, so a project putting
+ * the saved positions back loads nothing. */
+static int own_bank(const oxz_t *s) { int c = PRESET_CAT[cur_preset(s)]; return c >= 0 ? c + 1 : 1; }
+static void sync_browse(oxz_t *s) {
+    int m[NPRESET], n, cur = cur_preset(s), at = 0;
+    if (s->view < 0) s->view = 0;
+    n = members(s, m);
     for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
-    int k = at < 0 ? (dir > 0 ? 0 : n - 1) : at + dir;   /* the current preset not in this category: its first or last */
-    if (k < 0 || k >= n) return;
-    if (m[k] != cur) apply_preset(s, m[k]);
+    s->val[I_br_cat] = (float)((s->view > 0 ? s->view : own_bank(s)) - 1);
+    s->val[I_br_preset] = (float)(at > (int)PARAMS[I_br_preset].max ? (int)PARAMS[I_br_preset].max : at);
+}
+static void set_view(oxz_t *s, int v) {
+    s->view = v;
+    int m[NPRESET], n = members(s, m), cur = cur_preset(s);
+    s->page = 0;
+    for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
+}
+static void browse_set(oxz_t *s, int i, float x) {
+    int want = (int)(x + 0.5f);
+    if (i == I_br_cat) {
+        want = (want < 0 ? 0 : want > NBCAT - 1 ? NBCAT - 1 : want) + 1;
+        if (s->view <= 0) want = own_bank(s);            /* from ALL, the first turn lands on the loaded preset's bank */
+        if (want != s->view) set_view(s, want);
+    } else {
+        if (s->view <= 0) set_view(s, own_bank(s));   /* ALL listed: the loaded preset's bank */
+        int m[NPRESET], n = members(s, m), cur = cur_preset(s), at = -1;
+        if (!n) return;
+        for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
+        if (want < 0) want = 0;
+        if (want > n - 1) want = n - 1;                  /* the bank's last preset: hold there */
+        if (at < 0) want = 0;                            /* the loaded preset is in another bank: the first turn picks this one's first */
+        if (m[want] != cur) { apply_preset(s, m[want]); return; }   /* apply_preset syncs and redraws */
+    }
+    sync_browse(s);
+    s->rev++;
 }
 static void step_page(oxz_t *s, int dir) {
     int m[NPRESET], np = pages(members(s, m));
@@ -590,6 +601,7 @@ static void pad(oxz_t *s, int i, float x) {
         int m[NPRESET], n = members(s, m), cur = cur_preset(s);
         s->page = 0;
         for (int k = 0; k < n; k++) if (m[k] == cur) s->page = k / ROWS;
+        sync_browse(s);
     } else {
         int pr = row_preset(s, i - I_rpick1);
         if (pr >= 0 && pr != cur_preset(s)) { apply_preset(s, pr); return; }
@@ -980,7 +992,7 @@ static void set_param(void *inst, const char *key, const char *val) {
     if (i == I_orb) { s->energy = fminf(1.0f, s->energy + 0.6f); s->rev++; return; }   /* a tap on the orb */
     if (i == I_preset) { int pr = (int)(x + 0.5f); if (pr != cur_preset(s)) apply_preset(s, pr); return; }
     if (is_pad(i)) { pad(s, i, x); return; }
-    if (i == I_br_cat || i == I_br_preset) { scroll(s, i, x); return; }
+    if (i == I_br_cat || i == I_br_preset) { browse_set(s, i, x); return; }
     if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next || i == I_th_prev || i == I_th_next ||
         i == I_ds_prev || i == I_ds_next || i == I_ms_prev || i == I_ms_next) {
         s->val[i] = x;
@@ -1041,7 +1053,8 @@ static int get_param(void *inst, const char *key, char *b, int n) {
     if (i < 0) return 0;
     if (i == I_orb) return snprintf(b, n, "%d", s->orb_frame);
     if (is_ui(i) && !is_pad(i) && PARAMS[i].string_display) return ui_text(s, i, 0, b, n);
-    if (is_pad(i) || i == I_br_cat || i == I_br_preset) return snprintf(b, n, "%g", s->val[i]);   /* at rest: 0.5, not rounded to 1 */
+    if (is_pad(i)) return snprintf(b, n, "%g", s->val[i]);   /* at rest: 0.5, not rounded to 1 */
+    if (i == I_br_cat || i == I_br_preset) return snprintf(b, n, "%d", (int)(s->val[i] + 0.5f));
     if (PARAMS[i].nopts) {
         int o = (int)(s->val[i] + 0.5f);
         if (o < 0) o = 0;

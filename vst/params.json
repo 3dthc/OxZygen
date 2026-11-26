@@ -1935,19 +1935,23 @@
   },
   {
    "key": "br_cat",
-   "name": "Browse Category",
+   "name": "BANK",
    "min": 0,
-   "max": 1,
-   "default": 0.5,
-   "dynamic_display": true
+   "max": 10,
+   "display": "int",
+   "qlink_ticks": 5,
+   "dynamic_display": true,
+   "refresh_display": true
   },
   {
    "key": "br_preset",
-   "name": "Browse Preset",
+   "name": "PRESET",
    "min": 0,
-   "max": 1,
-   "default": 0.5,
-   "dynamic_display": true
+   "max": 28,
+   "display": "int",
+   "qlink_ticks": 5,
+   "dynamic_display": true,
+   "refresh_display": true
   }
  ],
  "sections": [

@@ -34,6 +34,11 @@ def main():
     names = [p["name"] for p in presets]
     if params["preset"]["options"] != names:
         sys.exit("params.json: preset's options must be presets.json's names, in order")
+    if "br_preset" in params:   # BROWSE's PRESET list: a place in one bank, so its range is the biggest bank's size
+        from collections import Counter
+        big = max(Counter(n.split()[0] for n in names if " " in n).values())
+        if params["br_preset"]["max"] != big - 1:
+            sys.exit("params.json: br_preset's max must be %d (the biggest bank holds %d presets)" % (big - 1, big))
     keys = []
     for pr in presets:
         for k in pr["values"]:
