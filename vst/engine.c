@@ -342,7 +342,7 @@ static int I_theme, I_th_prev, I_th_next, I_th_name, I_look[2], I_lbl[2];
 #define NTHEME 5
 static const char *THEME_NAME[NTHEME] = {"ALUMINUM", "GREEN", "NAVY", "GRAPHITE", "NEBULA"};
 #define NBCAT 11                        /* the browser's categories, after ALL */
-static int I_br_cat, I_br_preset;   /* BROWSE Q-Links: a category, a preset, one click per step */
+static int I_br_cat, I_br_preset, I_br_none;   /* BROWSE Q-Links: a category, a preset, one click per step */
 static int I_preset, I_p_name, I_p_prev, I_p_next, I_b_head, I_b_page, I_pg_prev, I_pg_next, I_cat1, I_row1, I_cpick1, I_rpick1, I_catk[NBCAT + 1], I_cpk[NBCAT + 1];
 static int PRESET_IDX[NPRESET_KEYS];   /* PRESET_KEYS as parameter indices */
 #define ROWS 24                        /* presets on one page of the list: 3 columns of 8 */
@@ -357,7 +357,7 @@ static void init_idx(void) {
     X(theme); X(th_prev); X(th_next); X(th_name);
     X(dl_sync); X(mo_sync); X(ds_prev); X(ds_next); X(ds_name); X(ms_prev); X(ms_next); X(ms_name);
     I_look[0] = idx_of("a_look"); I_look[1] = idx_of("b_look"); I_lbl[0] = idx_of("a_lbl"); I_lbl[1] = idx_of("b_lbl");
-    X(br_cat); X(br_preset);
+    X(br_cat); X(br_preset); X(br_none);
     X(preset); X(p_name); X(p_prev); X(p_next); X(b_head); X(b_page); X(pg_prev); X(pg_next);
 #undef X
     for (int c = 0; c <= NBCAT; c++) { char k[16]; snprintf(k, sizeof k, "cat_%d", c + 1); I_catk[c] = idx_of(k);
@@ -484,7 +484,7 @@ static int is_ui(int i) {   /* the browser's own controls and texts: never part 
     return i == I_th_prev || i == I_th_next || i == I_th_name || i == I_ds_prev || i == I_ds_next || i == I_ds_name ||
            i == I_ms_prev || i == I_ms_next || i == I_ms_name || i == I_look[0] || i == I_look[1] || i == I_lbl[0] ||
            i == I_lbl[1] || i == I_p_name || i == I_p_prev || i == I_p_next || i == I_b_head || i == I_b_page || i == I_pg_prev ||
-           i == I_pg_next || i == I_br_cat || i == I_br_preset || cat_row(i) >= 0 || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
+           i == I_pg_next || i == I_br_cat || i == I_br_preset || i == I_br_none || cat_row(i) >= 0 || (i >= I_row1 && i < I_row1 + ROWS) || is_pad(i);
 }
 static int cur_preset(const oxz_t *s) {
     int p = (int)(s->val[I_preset] + 0.5f);
@@ -538,20 +538,21 @@ static void step_preset(oxz_t *s, int dir) {
     int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
     if (m[k] != cur) apply_preset(s, m[k]);
 }
-/* BROWSE's Q-Link group, as in the Odin 2 port: BANK steps the 11 banks (0 = VOICES .. 10 = KEYS; ALL stays a tap on the
- * screen) and PRESET a place in the shown bank's list (0 .. the biggest bank's size), each a whole-number list the wrapper
- * steps one value per qlink_ticks Q-Link or data wheel clicks. The engine keeps both on what the browser shows (a tap on a
- * bank or a row moves them too), PRESET stops on the bank's last preset, and a turn of PRESET while ALL is listed goes to
- * the loaded preset's own bank first. A preset loads only when the pick differs from the loaded one, so a project putting
- * the saved positions back loads nothing. */
-static int own_bank(const oxz_t *s) { int c = PRESET_CAT[cur_preset(s)]; return c >= 0 ? c + 1 : 1; }
+/* BROWSE's Q-Link group, as in the Odin 2 port: BANK steps ALL and the 11 banks (0 = ALL, 1 = VOICES .. 11 = KEYS) and
+ * PRESET the presets of the shown bank, each a whole-number list the wrapper steps one value per qlink_ticks Q-Link or data
+ * wheel clicks. In a bank PRESET is the place in its list (0 .. the biggest bank's size) and stops on the last preset. ALL
+ * lists every preset, more than that range holds, so there PRESET rests at the middle (ALL_REST) and each step moves one
+ * preset along the whole list from the loaded one. The engine keeps both on what the browser shows (a tap on a bank or a
+ * row moves them too), and a preset loads only when the pick differs from the loaded one, so a project putting the saved
+ * positions back loads nothing. */
+#define ALL_REST 14
 static void sync_browse(oxz_t *s) {
     int m[NPRESET], n, cur = cur_preset(s), at = 0;
     if (s->view < 0) s->view = 0;
     n = members(s, m);
     for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
-    s->val[I_br_cat] = (float)((s->view > 0 ? s->view : own_bank(s)) - 1);
-    s->val[I_br_preset] = (float)(at > (int)PARAMS[I_br_preset].max ? (int)PARAMS[I_br_preset].max : at);
+    s->val[I_br_cat] = (float)s->view;
+    s->val[I_br_preset] = (float)(s->view == 0 ? ALL_REST : at > (int)PARAMS[I_br_preset].max ? (int)PARAMS[I_br_preset].max : at);
 }
 static void set_view(oxz_t *s, int v) {
     s->view = v;
@@ -562,18 +563,22 @@ static void set_view(oxz_t *s, int v) {
 static void browse_set(oxz_t *s, int i, float x) {
     int want = (int)(x + 0.5f);
     if (i == I_br_cat) {
-        want = (want < 0 ? 0 : want > NBCAT - 1 ? NBCAT - 1 : want) + 1;
-        if (s->view <= 0) want = own_bank(s);            /* from ALL, the first turn lands on the loaded preset's bank */
+        want = want < 0 ? 0 : want > NBCAT ? NBCAT : want;
         if (want != s->view) set_view(s, want);
     } else {
-        if (s->view <= 0) set_view(s, own_bank(s));   /* ALL listed: the loaded preset's bank */
         int m[NPRESET], n = members(s, m), cur = cur_preset(s), at = -1;
         if (!n) return;
         for (int k = 0; k < n; k++) if (m[k] == cur) at = k;
-        if (want < 0) want = 0;
-        if (want > n - 1) want = n - 1;                  /* the bank's last preset: hold there */
-        if (at < 0) want = 0;                            /* the loaded preset is in another bank: the first turn picks this one's first */
-        if (m[want] != cur) { apply_preset(s, m[want]); return; }   /* apply_preset syncs and redraws */
+        int to;
+        if (s->view == 0) {                                  /* ALL: a step along the whole list from the loaded preset */
+            int d = want - ALL_REST;
+            to = (at < 0 ? 0 : at) + (d > 0 ? 1 : d < 0 ? -1 : 0);
+        } else {
+            to = at < 0 ? 0 : want;                          /* another bank's preset is loaded: the first turn picks this one's first */
+        }
+        if (to < 0) to = 0;
+        if (to > n - 1) to = n - 1;                          /* the list's last preset: hold there */
+        if (m[to] != cur) { apply_preset(s, m[to]); return; }   /* apply_preset syncs and redraws */
     }
     sync_browse(s);
     s->rev++;
@@ -993,6 +998,7 @@ static void set_param(void *inst, const char *key, const char *val) {
     if (i == I_preset) { int pr = (int)(x + 0.5f); if (pr != cur_preset(s)) apply_preset(s, pr); return; }
     if (is_pad(i)) { pad(s, i, x); return; }
     if (i == I_br_cat || i == I_br_preset) { browse_set(s, i, x); return; }
+    if (i == I_br_none) { s->val[i] = 0; return; }   /* BROWSE's empty Q-Link slots: a turn there does nothing */
     if (i == I_p_prev || i == I_p_next || i == I_pg_prev || i == I_pg_next || i == I_th_prev || i == I_th_next ||
         i == I_ds_prev || i == I_ds_next || i == I_ms_prev || i == I_ms_next) {
         s->val[i] = x;

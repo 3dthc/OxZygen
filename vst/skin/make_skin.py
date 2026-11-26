@@ -832,6 +832,9 @@ def write_layout():
         % (cx_ + cw_ // 2, (cy_ + NCAT_ROWS * CAT_TH + (NCAT_ROWS - 1) * CAT_GAP + CAT_BOX[3]) // 2, BR_R, BR_R, cw_, wh),
         'knob cx=%d cy=%d r=%d label="PRESET" key=br_preset strip=art/clear%d.png ns=0 vs=0 bw=%d%s'
         % ((ROW_BOX[0] + 18 + HEAD_W + 16 + px - 8 - 150 - 16) // 2, hy, BR_R, BR_R, (px - 8 - 150 - 16) - (ROW_BOX[0] + 18 + HEAD_W + 16), wh),
+        # and the do-nothing control that fills BROWSE's other Q-Link slots (over the heading's text, which takes no taps)
+        'knob cx=%d cy=%d r=%d label="-" key=br_none strip=art/clear%d.png ns=0 vs=0 bw=%d%s'
+        % (ROW_BOX[0] + 18 + 40, hy, BR_R, BR_R, 2 * BR_R + 10, wh),
         'readout cx=%d cy=%d w=150 h=%d label="" key=b_page box=0 tsize=24 tcolor=%s tweight=bold talign=right%s'
         % (px - 8 - 75, hy, PG_H, th["txt_dim"].lstrip("#"), wh),
         'readout cx=%d cy=%d w=%d h=%d label="" key=th_name box=0 tsize=24 tcolor=%s tweight=bold%s'
@@ -856,9 +859,10 @@ def write_layout():
     L.append("")
 
     # SOUND: a category's sounds follow <slot>_look (theme x 8 + category), the knob names <slot>_lbl (theme x 23 + sound)
-    # one Q-Link group, as in the Odin 2 port: bank on the first knob, preset on the second, every other slot empty
-    # (an unlisted slot is left to MPC; "-" says nothing is there, so no other knob reaches anything on this page)
-    L.append('qlinks "BROWSE" = br_cat,br_preset' + ',-' * 14)
+    # one Q-Link group, as in the Odin 2 port: bank on the first knob, preset on the second. Every other slot holds br_none,
+    # a control that does nothing: an empty slot ("-") keeps whatever that knob drove on the last page (device report,
+    # Live II, 2026-11-26: knob 3 on BROWSE moved SOUND's A knob 3), so none is left empty.
+    L.append('qlinks "BROWSE" = br_cat,br_preset' + ',br_none' * 14)
     L.append("[tab SOUND]")
     themed(lambda th, w: ["art file=%s fit=stretch%s" % (art("bg_sound.png", th), w)])
     for p, name, x0, y0 in SLOTS:
